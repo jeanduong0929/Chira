@@ -96,33 +96,23 @@ chira/
 
 ## 🚧 Project Status & Roadmap
 
-```mermaid
-gantt
-    title Development Phases
-    dateFormat  YYYY-MM-DD
-    section Core Features
-    Sprint Management     :done
-    Ticket System        :active
-    SCRUM Board          :active
-    section Future
-    Analytics Dashboard  :pending
-    Team Collaboration   :pending
-```
+### Current Progress
 
-## 🤝 Connect With Me
+| Feature              | Status      |
+| -------------------- | ----------- |
+| 🟢 Sprint Management | Completed   |
+| 🟡 Ticket System     | In Progress |
+| 🟡 SCRUM Board       | In Progress |
 
-<div align="center">
+### Future Plans
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](#)
-[![Portfolio](https://img.shields.io/badge/Portfolio-%23000000.svg?style=for-the-badge&logo=firefox&logoColor=#FF7139)](#)
-[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](#)
+| Feature                | Status  |
+| ---------------------- | ------- |
+| ⚪ Analytics Dashboard | Planned |
+| ⚪ Team Collaboration  | Planned |
 
-</div>
-
----
-
-<div align="center">
-
-_Built with ❤️ and modern web technologies_
-
-</div>
+> **Legend:**
+>
+> - 🟢 Completed
+> - 🟡 In Progress
+> - ⚪ Planned
