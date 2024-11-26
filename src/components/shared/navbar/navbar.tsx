@@ -6,6 +6,7 @@ import { ProjectDropdown } from "./project-dropdown";
 import { Button } from "../../ui/button";
 
 import { UserButton } from "@clerk/nextjs";
+import { Expand } from "lucide-react";
 
 export const Navbar = () => {
   const pathname = usePathname();
@@ -14,6 +15,10 @@ export const Navbar = () => {
     <div className="flex h-[56px] w-full items-center justify-between border-b">
       <nav className="mx-auto flex w-11/12 max-w-screen-2xl items-center justify-between">
         <div className="flex items-center gap-x-2">
+          <div className="mr-4 flex items-center">
+            <Expand className="mr-1 size-5" />
+            <h1 className="text-xl font-semibold">Chira</h1>
+          </div>
           <ProjectDropdown />
           <Button>Create</Button>
         </div>
