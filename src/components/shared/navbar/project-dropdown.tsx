@@ -12,7 +12,7 @@ import { ChevronDown } from "lucide-react";
 export const ProjectDropdown = () => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex h-9 items-center rounded-sm px-1 py-2 hover:bg-[#DDDFE5]">
+      <DropdownMenuTrigger className="flex h-9 items-center rounded-sm p-2 hover:bg-[#DDDFE5]">
         <span className="text-sm font-medium">Projects</span>
         <ChevronDown className="ml-1 size-4" />
       </DropdownMenuTrigger>

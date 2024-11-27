@@ -11,7 +11,7 @@ export default clerkMiddleware(async (auth, request) => {
   }
 
   // If user is signed in and the route is "/", redirect to dashboard
-  if ((await auth()).userId && request.nextUrl.pathname === "/") {
+  if (!!auth.protect() && request.nextUrl.pathname === "/") {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 });

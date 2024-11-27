@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Provider } from "jotai";
 
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -20,7 +21,11 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={inter.className}>{children}</body>
+        <body className={inter.className}>
+          <Provider>
+            <main>{children}</main>
+          </Provider>
+        </body>
       </html>
     </ClerkProvider>
   );
