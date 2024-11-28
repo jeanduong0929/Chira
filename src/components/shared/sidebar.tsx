@@ -123,7 +123,7 @@ const SidebarGroupLabel = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "flex h-9 items-center gap-x-2 px-3 py-2 font-medium",
+        "flex h-9 items-center gap-x-2 overflow-hidden truncate px-3 py-2 font-medium",
       )}
       {...props}
     >
@@ -139,7 +139,7 @@ const SidebarGroupLabel = React.forwardRef<
           )}
         />
       </Button>
-      {children}
+      <span className="truncate">{children}</span>
     </div>
   );
 });
@@ -163,7 +163,7 @@ const SidebarGroupItem = React.forwardRef<
       variant={"ghost"}
       className={cn(
         className,
-        "flex justify-start px-6 font-medium transition-opacity duration-200 ease-in-out hover:bg-[#E9F2FF] hover:text-muted-foreground",
+        "flex justify-start overflow-hidden px-6 font-medium transition-opacity duration-200 ease-in-out hover:bg-[#E9F2FF] hover:text-muted-foreground",
         pathname === href &&
           "border-l-4 border-l-[#0B66E4] bg-[#E9F2FF] text-[#0B66E4] hover:text-[#0B66E4]",
       )}
@@ -172,7 +172,7 @@ const SidebarGroupItem = React.forwardRef<
     >
       <Link href={href}>
         <Icon className="shrink-0" />
-        <span>{label}</span>
+        <span className="truncate">{label}</span>
       </Link>
     </Button>
   );

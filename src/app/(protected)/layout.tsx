@@ -19,10 +19,18 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-  const [isOpenGroups, setIsOpenGroups] = useState<Record<string, boolean>>({});
+  const [isOpenGroups, setIsOpenGroups] = useState<Record<string, boolean>>(
+    () => {
+      const initialGroups: Record<string, boolean> = {};
+      sidebarItems.forEach(({ label }) => {
+        initialGroups[label] = true;
+      });
+      return initialGroups;
+    },
+  );
 
   return (
-    <div>
+    <>
       <Navbar />
 
       <SidebarWrapper>
@@ -58,7 +66,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
           </main>
         </SidebarChildren>
       </SidebarWrapper>
-    </div>
+    </>
   );
 };
 
