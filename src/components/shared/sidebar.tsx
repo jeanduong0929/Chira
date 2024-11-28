@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { ChevronDown, ChevronRight, LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
@@ -48,8 +48,8 @@ const Sidebar = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "group fixed left-0 top-[56px] min-h-[calc(100vh-56px)] border-r-[2.5px] transition-all duration-300 ease-in-out",
-        isOpen ? "w-64 px-2 py-10" : "w-5",
+        "group fixed left-0 top-[56px] flex max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] flex-col border-r-[2.5px] transition-all duration-300 ease-in-out",
+        isOpen ? "w-64 px-2 py-6" : "w-5",
       )}
       {...props}
     >
@@ -57,17 +57,17 @@ const Sidebar = React.forwardRef<
         size={"iconSm"}
         variant="ghost"
         className={cn(
-          "absolute right-[-15px] top-10 flex flex-col rounded-full border bg-white transition-all duration-300 ease-in-out",
+          "absolute right-[-15px] top-10 rounded-full border bg-white transition-all duration-300 ease-in-out",
           isOpen
             ? "rotate-180 opacity-0 shadow-sm group-hover:opacity-100"
             : "rotate-0",
         )}
         onClick={() => toggle()}
       >
-        <ChevronRight className="size-6" />
+        <ChevronRight className="size-6 shrink-0" />
       </Button>
 
-      <div>{children}</div>
+      {children}
     </div>
   );
 });
@@ -83,7 +83,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "flex flex-col gap-y-10 transition-opacity duration-200 ease-in-out",
+        "flex h-full flex-col gap-y-10 overflow-y-auto overflow-x-hidden transition-opacity duration-200 ease-in-out",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
       {...props}
@@ -134,12 +134,12 @@ const SidebarGroupLabel = React.forwardRef<
       >
         <ChevronDown
           className={cn(
-            "transition-transform duration-300 ease-in-out",
+            "shrink-0 transition-transform duration-300 ease-in-out",
             isOpen ? "rotate-0" : "-rotate-90",
           )}
         />
       </Button>
-      <div>{children}</div>
+      {children}
     </div>
   );
 });
@@ -171,7 +171,7 @@ const SidebarGroupItem = React.forwardRef<
       asChild
     >
       <Link href={href}>
-        <Icon />
+        <Icon className="shrink-0" />
         <span>{label}</span>
       </Link>
     </Button>
