@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { ScrollText } from "lucide-react";
+import React, { useState } from "react";
 
 import { Navbar } from "@/components/shared/navbar/navbar";
 import {
@@ -20,6 +19,8 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
+  const [isOpenGroups, setIsOpenGroups] = useState<Record<string, boolean>>({});
+
   return (
     <div>
       <Navbar />
@@ -27,15 +28,23 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       <SidebarWrapper>
         <Sidebar>
           <SidebarContent>
-            {sidebarItems.map((group) => (
-              <SidebarGroup key={group.label}>
-                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
-                {group.items.map((item) => (
+            {sidebarItems.map(({ label, items }) => (
+              <SidebarGroup key={label}>
+                <SidebarGroupLabel
+                  isOpen={isOpenGroups[label]}
+                  setIsOpen={(isOpen) =>
+                    setIsOpenGroups({ ...isOpenGroups, [label]: isOpen })
+                  }
+                >
+                  {label}
+                </SidebarGroupLabel>
+                {items.map((item) => (
                   <SidebarGroupItem
                     key={item.label}
                     label={item.label}
                     href={item.href}
                     icon={item.icon}
+                    isOpen={isOpenGroups[label]}
                   />
                 ))}
               </SidebarGroup>

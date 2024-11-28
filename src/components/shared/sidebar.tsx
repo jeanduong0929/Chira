@@ -1,7 +1,7 @@
 "use client";
 
-import React from "react";
-import { ChevronRight, LucideIcon } from "lucide-react";
+import React, { useState } from "react";
+import { ChevronDown, ChevronRight, LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 
 import { cn } from "@/lib/utils";
@@ -83,7 +83,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "flex flex-col transition-opacity duration-200 ease-in-out",
+        "flex flex-col gap-y-10 transition-opacity duration-200 ease-in-out",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
       {...props}
@@ -113,15 +113,33 @@ const SidebarGroup = React.forwardRef<
 
 const SidebarGroupLabel = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
+  React.HTMLAttributes<HTMLDivElement> & {
+    isOpen: boolean;
+    setIsOpen: (isOpen: boolean) => void;
+  }
+>(({ className, children, isOpen, setIsOpen, ...props }, ref) => {
   return (
     <div
       ref={ref}
-      className={cn(className, "h-9 px-4 py-2 font-medium")}
+      className={cn(
+        className,
+        "flex h-9 items-center gap-x-2 px-3 py-2 font-medium",
+      )}
       {...props}
     >
-      {children}
+      <Button
+        variant={"ghost"}
+        size={"iconXs"}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <ChevronDown
+          className={cn(
+            "transition-transform duration-300 ease-in-out",
+            isOpen ? "rotate-0" : "-rotate-90",
+          )}
+        />
+      </Button>
+      <div>{children}</div>
     </div>
   );
 });
@@ -132,9 +150,12 @@ const SidebarGroupItem = React.forwardRef<
     label: string;
     href: string;
     icon: LucideIcon;
+    isOpen: boolean;
   }
->(({ className, label, href, icon: Icon, ...props }, ref) => {
+>(({ className, label, href, icon: Icon, isOpen, ...props }, ref) => {
   const pathname = usePathname();
+
+  if (!isOpen) return null;
 
   return (
     <Button
@@ -142,7 +163,7 @@ const SidebarGroupItem = React.forwardRef<
       variant={"ghost"}
       className={cn(
         className,
-        "flex justify-start font-medium hover:bg-[#E9F2FF] hover:text-muted-foreground",
+        "flex justify-start px-6 font-medium transition-opacity duration-200 ease-in-out hover:bg-[#E9F2FF] hover:text-muted-foreground",
         pathname === href &&
           "border-l-4 border-l-[#0B66E4] bg-[#E9F2FF] text-[#0B66E4] hover:text-[#0B66E4]",
       )}
