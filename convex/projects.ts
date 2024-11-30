@@ -35,6 +35,35 @@ export const getAllWithUser = query({
   },
 });
 
+export const getByIdWithUser = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const clekrId = await getClerkId(ctx.auth);
+
+      const project = await ctx.db.get(args.projectId);
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clekrId))
+        .unique();
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
+      return { ...project, user };
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -49,6 +78,23 @@ export const create = mutation({
       });
     } catch (e) {
       console.error(e);
+    }
+  },
+});
+
+export const update = mutation({
+  args: {
+    projectId: v.id("projects"),
+    name: v.string(),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+      await ctx.db.patch(args.projectId, { name: args.name });
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
     }
   },
 });
