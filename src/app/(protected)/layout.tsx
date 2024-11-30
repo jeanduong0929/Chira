@@ -34,16 +34,19 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     },
   );
 
-  const { isLoaded, isSignedIn } = useUser();
+  const { user } = useUser();
   const { mutate: createUser } = useMutation({
     mutationFn: useConvexMutation(api.users.create),
   });
 
   useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      createUser({});
+    if (user) {
+      createUser({
+        name: (user.fullName as string) ?? "",
+        imageUrl: user.imageUrl ?? "",
+      });
     }
-  }, [createUser, isLoaded, isSignedIn]);
+  }, [createUser, user]);
 
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({
