@@ -1,11 +1,11 @@
 "use client";
 
 import React from "react";
-import { ProjectDropdown } from "./project-dropdown";
 
 import { Button } from "@/components/ui/button";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ProjectDropdown } from "../projects/_components/project-dropdown";
 
 export const Navbar = () => {
   const { isLoaded } = useAuth();

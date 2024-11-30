@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
-import { ProjectDialog } from "../projects/_components/project-dialog";
+import { ProjectDialog } from "./project-dialog";
 
 import {
   DropdownMenu,
