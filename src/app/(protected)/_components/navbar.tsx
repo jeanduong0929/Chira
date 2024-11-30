@@ -1,10 +1,15 @@
+"use client";
+
 import React from "react";
 import { ProjectDropdown } from "./project-dropdown";
 
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/nextjs";
+import { useAuth, UserButton } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Navbar = () => {
+  const { isLoaded } = useAuth();
+
   return (
     <div className="h-[56px] w-full flex items-center border-b">
       <nav className="max-w-screen-2xl w-11/12 mx-auto flex items-center justify-between">
@@ -13,7 +18,11 @@ export const Navbar = () => {
           <Button>Create</Button>
         </div>
 
-        <UserButton />
+        {isLoaded ? (
+          <UserButton />
+        ) : (
+          <Skeleton className="size-[28px] rounded-full" />
+        )}
       </nav>
     </div>
   );
