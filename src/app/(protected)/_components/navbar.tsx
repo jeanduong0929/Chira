@@ -11,9 +11,9 @@ export const Navbar = () => {
   const { isLoaded } = useAuth();
 
   return (
-    <div className="h-[56px] w-full flex items-center border-b">
-      <nav className="max-w-screen-2xl w-11/12 mx-auto flex items-center justify-between">
-        <div>
+    <div className="flex h-[56px] w-full items-center border-b">
+      <nav className="mx-auto flex w-11/12 max-w-screen-2xl items-center justify-between">
+        <div className="flex items-center gap-x-2">
           <ProjectDropdown />
           <Button>Create</Button>
         </div>

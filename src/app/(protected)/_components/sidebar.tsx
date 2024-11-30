@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { ChevronRight, LucideIcon, Menu } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ChevronRight, LucideIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/store/user-sidebar";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const SidebarWrapper = React.forwardRef<
   HTMLDivElement,
@@ -97,7 +97,7 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "flex flex-col gap-y-10 overflow-y-auto overflow-x-hidden px-2 py-10 transition-opacity duration-200 ease-in-out",
+        "flex flex-col gap-y-10 overflow-y-auto overflow-x-hidden px-2 py-5 transition-opacity duration-200 ease-in-out",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
       {...props}
