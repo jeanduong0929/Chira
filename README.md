@@ -1,36 +1,118 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<div align="center">
 
-## Getting Started
+# 📋 Chira
 
-First, run the development server:
+### A Modern SCRUM Project Management Tool
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+[![Next.js](https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![Bun](https://img.shields.io/badge/Bun.js-%23000000.svg?style=for-the-badge&logo=bun&logoColor=white)](https://bun.sh/)
+[![Clerk](https://img.shields.io/badge/Clerk-purple?style=for-the-badge&logo=clerk&logoColor=white)](https://clerk.dev/)
+[![Convex](https://img.shields.io/badge/Convex-FF8C00?style=for-the-badge&logo=convex&logoColor=white)](https://www.convex.dev/)
+
+[Demo](#) · [Features](#-core-features) · [Tech Stack](#%EF%B8%8F-technology-stack) · [Architecture](#-technical-implementation)
+
+</div>
+
+## 🎯 Project Overview
+
+Chira simplifies the SCRUM process by focusing on essential features needed for sprint planning and ticket tracking. Built with a modern tech stack, it demonstrates real-time updates, user authentication, and responsive design principles.
+
+## 🌟 Key Highlights
+
+```mermaid
+graph LR
+    A[Real-time Updates] --> D[Modern UI/UX]
+    B[SCRUM Management] --> D
+    C[User Authentication] --> D
+    D --> E[Optimized Performance]
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Technology Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<div align="center">
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+| Category    | Technology | Purpose                                          |
+| ----------- | ---------- | ------------------------------------------------ |
+| 🔥 Frontend | Next.js    | Server-side rendering, routing, React components |
+| ⚡ Runtime  | Bun        | JavaScript runtime and tooling                   |
+| 🔒 Auth     | Clerk      | User authentication and management               |
+| 🚀 Backend  | Convex     | Real-time data sync and backend functions        |
 
-## Learn More
+</div>
 
-To learn more about Next.js, take a look at the following resources:
+## ✨ Core Features
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 📅 Sprint Management
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- Sprint creation and planning
+- Backlog management
+- Sprint timeline tracking
 
-## Deploy on Vercel
+### 🎫 Ticket System
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Create and manage user stories
+- Track ticket status and progress
+- Assign tickets to team members
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 📊 SCRUM Board
+
+- Kanban-style board visualization
+- Drag-and-drop functionality
+- Real-time updates across all users
+
+## 🏗️ Architecture
+
+```mermaid
+graph TD
+    A[Client Browser] -->|Next.js| B[Frontend Layer]
+    B -->|API Calls| C[Convex Backend]
+    B -->|Auth| D[Clerk Service]
+    C -->|Data Storage| E[Convex Database]
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#dfd,stroke:#333,stroke-width:2px
+    style D fill:#fdd,stroke:#333,stroke-width:2px
+    style E fill:#ddf,stroke:#333,stroke-width:2px
+```
+
+### 📁 Project Structure
+
+```
+chira/
+├── 📱 app/              # Next.js app router and pages
+├── 🧩 components/       # React components
+├── ⚙️ convex/          # Backend functions and schema
+├── 🔧 lib/             # Utility functions
+├── 📂 public/          # Static assets
+└── 🎨 styles/          # Styling files
+```
+
+## 💡 Design Decisions
+
+- **Performance First**: Built with Next.js for optimal loading and SEO
+- **Real-time Sync**: Leveraged Convex for instant data updates
+- **Security**: Implemented Clerk for robust authentication
+- **Developer Experience**: Utilized Bun for enhanced development
+
+## 🚧 Project Status & Roadmap
+
+### Current Progress
+
+| Feature              | Status      |
+| -------------------- | ----------- |
+| 🟢 Sprint Management | Completed   |
+| 🟡 Ticket System     | In Progress |
+| 🟡 SCRUM Board       | In Progress |
+
+### Future Plans
+
+| Feature                | Status  |
+| ---------------------- | ------- |
+| ⚪ Analytics Dashboard | Planned |
+| ⚪ Team Collaboration  | Planned |
+
+> **Legend:**
+>
+> - 🟢 Completed
+> - 🟡 In Progress
+> - ⚪ Planned
