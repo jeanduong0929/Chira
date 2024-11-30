@@ -41,8 +41,6 @@ export const getByIdWithUser = query({
   },
   handler: async (ctx, args) => {
     try {
-      const clekrId = await getClerkId(ctx.auth);
-
       const project = await ctx.db.get(args.projectId);
       if (!project) {
         throw new Error("Project not found");
@@ -50,7 +48,7 @@ export const getByIdWithUser = query({
 
       const user = await ctx.db
         .query("users")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clekrId))
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", project.clerkId))
         .unique();
 
       if (!user) {

@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { toast } from "sonner";
+import { DetailsDropdown } from "./_components/details-dropdown";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../../convex/_generated/dataModel";
 
@@ -10,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { toast } from "sonner";
+import { AlertTriangle, ChevronLeft, Loader2 } from "lucide-react";
+import Link from "next/link";
 
 const DetailsPage = () => {
   const { projectId } = useParams();
@@ -32,7 +35,29 @@ const DetailsPage = () => {
     }
   }, [project]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="flex min-h-[calc(100vh-136px)] flex-col items-center justify-center">
+        <Loader2 className="size-10 animate-spin" />
+      </div>
+    );
+
+  if (!project && !isLoading) {
+    return (
+      <div>
+        <Button variant={"ghost"} asChild>
+          <Link href="/projects">
+            <ChevronLeft />
+            Go back
+          </Link>
+        </Button>
+        <div className="flex min-h-[calc(100vh-136px)] flex-col items-center justify-center text-red-500">
+          <AlertTriangle className="size-10" />
+          <p className="text-lg font-semibold">Project not found.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -41,8 +66,11 @@ const DetailsPage = () => {
         description={"Are you sure you want to save this project?"}
       />
 
-      <div className="flex flex-col gap-y-10">
-        <h1 className="text-2xl font-semibold">Details</h1>
+      <div className="flex flex-col gap-y-32">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-semibold">Details</h1>
+          <DetailsDropdown />
+        </div>
 
         <form
           className="mx-auto flex w-[353px] flex-col gap-y-4"
