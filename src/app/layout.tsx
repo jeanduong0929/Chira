@@ -20,14 +20,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en">
-        <body className={inter.className}>
-          <Provider>
-            <ConvexClerkProvider>{children}</ConvexClerkProvider>
-          </Provider>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <Provider>
+          <ConvexClerkProvider>{children}</ConvexClerkProvider>
+        </Provider>
+      </body>
+    </html>
   );
 }

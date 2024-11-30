@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Navbar } from "./_components/navbar";
 import {
   Sidebar,
@@ -13,6 +13,11 @@ import {
   SidebarWrapper,
 } from "./_components/sidebar";
 import { getSidebarItems } from "./_constants/sidebar-items";
+import { api } from "../../../convex/_generated/api";
+
+import { useUser } from "@clerk/nextjs";
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
@@ -28,6 +33,17 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       return initialState;
     },
   );
+
+  const { isLoaded, isSignedIn } = useUser();
+  const { mutate: createUser } = useMutation({
+    mutationFn: useConvexMutation(api.users.create),
+  });
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      createUser({});
+    }
+  }, [createUser, isLoaded, isSignedIn]);
 
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({
