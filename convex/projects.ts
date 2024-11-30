@@ -53,6 +53,28 @@ export const create = mutation({
   },
 });
 
+export const remove = mutation({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const project = await ctx.db.get(args.projectId);
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      await ctx.db.delete(args.projectId);
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});
+
 const getClerkId = async (auth: Auth) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {
