@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Navbar } from "./_components/navbar";
 import {
   Sidebar,
@@ -19,6 +19,23 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
+  const [sidebarOpen, setSidebarOpen] = useState<Record<string, boolean>>(
+    () => {
+      const initialState: Record<string, boolean> = {};
+      for (const group of getSidebarItems()) {
+        initialState[group.label] = true;
+      }
+      return initialState;
+    },
+  );
+
+  const handleSidebarClick = (group: string) => {
+    setSidebarOpen((prev) => ({
+      ...prev,
+      [group]: !prev[group],
+    }));
+  };
+
   return (
     <div>
       <Navbar />
@@ -29,9 +46,18 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
           <SidebarContent>
             {getSidebarItems("").map((group) => (
               <SidebarGroup key={group.label}>
-                <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+                <SidebarGroupLabel
+                  open={sidebarOpen[group.label]}
+                  setOpen={() => handleSidebarClick(group.label)}
+                >
+                  {group.label}
+                </SidebarGroupLabel>
                 {group.items.map((item) => (
-                  <SidebarGroupItem key={item.label} {...item} />
+                  <SidebarGroupItem
+                    open={sidebarOpen[group.label]}
+                    key={item.label}
+                    {...item}
+                  />
                 ))}
               </SidebarGroup>
             ))}

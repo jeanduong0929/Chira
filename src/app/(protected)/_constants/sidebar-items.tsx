@@ -11,7 +11,7 @@ type SidebarGroup = {
   items: SidebarItem[];
 };
 
-export const getSidebarItems = (pathname: string): SidebarGroup[] => [
+export const getSidebarItems = (pathname?: string): SidebarGroup[] => [
   {
     label: "Planning",
     items: [

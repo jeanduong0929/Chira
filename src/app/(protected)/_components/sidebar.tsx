@@ -123,17 +123,34 @@ const SidebarGroup = React.forwardRef<
 });
 
 const SidebarGroupLabel = React.forwardRef<
-  HTMLLabelElement,
-  React.HTMLAttributes<HTMLLabelElement>
->(({ className, children, ...props }, ref) => {
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    open: boolean;
+    setOpen: (open: boolean) => void;
+  }
+>(({ className, children, open, setOpen, ...props }, ref) => {
   return (
-    <Label
+    <div
       ref={ref}
-      className={cn(className, "h-9 overflow-hidden truncate px-4 py-2")}
+      className={cn(className, "flex h-9 items-center px-2")}
       {...props}
     >
-      {children}
-    </Label>
+      <Button
+        variant={"ghost"}
+        size={"iconXs"}
+        className="mr-1"
+        onClick={() => setOpen(!open)}
+      >
+        <ChevronRight
+          className={cn(
+            "transition-transform duration-300 ease-in-out",
+            open ? "rotate-90" : "rotate-0",
+          )}
+        />
+      </Button>
+
+      <Label className="overflow-hidden truncate">{children}</Label>
+    </div>
   );
 });
 
@@ -143,28 +160,32 @@ const SidebarGroupItem = React.forwardRef<
     label: string;
     href: string;
     icon: LucideIcon;
+    open: boolean;
   }
->(({ className, label, href, icon: Icon, ...props }, ref) => {
+>(({ className, label, href, icon: Icon, open, ...props }, ref) => {
   const pathname = usePathname();
 
-  return (
-    <Button
-      ref={ref}
-      className={cn(
-        className,
-        "flex justify-start hover:bg-[#EAF3FF]",
-        pathname === href && "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8]",
-      )}
-      variant="ghost"
-      {...props}
-      asChild
-    >
-      <Link href={href}>
-        <Icon className="size-4" />
-        <span className="overflow-hidden truncate">{label}</span>
-      </Link>
-    </Button>
-  );
+  if (open) {
+    return (
+      <Button
+        ref={ref}
+        className={cn(
+          className,
+          "flex justify-start px-6 hover:bg-[#EAF3FF]",
+          pathname === href &&
+            "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8]",
+        )}
+        variant="ghost"
+        {...props}
+        asChild
+      >
+        <Link href={href}>
+          <Icon className="size-4" />
+          <span className="overflow-hidden truncate">{label}</span>
+        </Link>
+      </Button>
+    );
+  }
 });
 
 SidebarWrapper.displayName = "SidebarWrapper";
