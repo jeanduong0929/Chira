@@ -12,7 +12,7 @@ import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useDrag, useDrop } from "react-dnd";
 import { SprintCard } from "./_components/sprint-card";
-import { BacklogDropdown } from "./_components/backlog-dropdown";
+import { Issue } from "./_components/issue";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -23,8 +23,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SprintEditIssueDialog } from "./_components/sprint-edit-issue-dialog";
-import { MoveToDropdown } from "./_components/move-to-dropdown";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -292,51 +290,5 @@ const DraggableIssue = ({
     </Issue>
   );
 };
-
-const Issue = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    issue: Doc<"issues">;
-    projectId: Id<"projects">;
-  }
->(({ className, issue, projectId, children, ...props }, ref) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <>
-      <div
-        ref={ref}
-        className={cn(
-          "relative flex items-center justify-between border bg-white px-10 py-2",
-          className,
-        )}
-        {...props}
-      >
-        <div className="flex items-center gap-x-2">
-          <Button
-            variant={"ghost"}
-            className="p-0 text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]"
-            onClick={() => setOpen(true)}
-          >
-            {issue.title}
-          </Button>
-        </div>
-        <div className="flex items-center gap-x-2">
-          <MoveToDropdown projectId={projectId} issueId={issue._id} />
-          <BacklogDropdown issueId={issue._id} projectId={projectId} />
-        </div>
-        {children}
-      </div>
-
-      <SprintEditIssueDialog
-        open={open}
-        setOpen={setOpen}
-        issueId={issue._id}
-      />
-    </>
-  );
-});
-
-Issue.displayName = "Issue";
 
 export default BacklogPage;

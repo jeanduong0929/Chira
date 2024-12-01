@@ -17,12 +17,20 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { toast } from "sonner";
 
 interface MoveToDropdownProps {
+  sprintId: Id<"sprints">;
   projectId: Id<"projects">;
   issueId: Id<"issues">;
+  inSprint: boolean;
 }
 
-export const MoveToDropdown = ({ projectId, issueId }: MoveToDropdownProps) => {
+export const MoveToDropdown = ({
+  sprintId,
+  projectId,
+  issueId,
+  inSprint,
+}: MoveToDropdownProps) => {
   const [confirm, ConfirmDialog] = useConfirm();
+  const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
 
   const { data: sprints } = useQuery(
     convexQuery(api.sprints.getAll, {
@@ -31,6 +39,9 @@ export const MoveToDropdown = ({ projectId, issueId }: MoveToDropdownProps) => {
   );
   const { mutate: moveToSprint } = useMutation({
     mutationFn: useConvexMutation(api.issues.moveToSprint),
+  });
+  const { mutate: moveToBacklog } = useMutation({
+    mutationFn: useConvexMutation(api.issues.moveToBacklog),
   });
 
   return (
@@ -42,39 +53,71 @@ export const MoveToDropdown = ({ projectId, issueId }: MoveToDropdownProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[200px]">
-          <DropdownMenuLabel>Recent sprints</DropdownMenuLabel>
+          <DropdownMenuLabel>Sprints</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {sprints?.map((sprint) => (
+          {sprints
+            ?.filter((sprint) => sprint._id !== sprintId)
+            .map((sprint) => (
+              <DropdownMenuItem
+                key={sprint._id}
+                onClick={async () => {
+                  const ok = await confirm();
+                  if (!ok) return;
+
+                  moveToSprint(
+                    {
+                      issueId: issueId,
+                      sprintId: sprint._id,
+                    },
+                    {
+                      onSuccess: (data) => {
+                        if (data) {
+                          toast.success("Issue moved to sprint");
+                        }
+                      },
+                    },
+                  );
+                }}
+              >
+                {sprint.name}
+              </DropdownMenuItem>
+            ))}
+          {inSprint && (
             <DropdownMenuItem
-              key={sprint._id}
               onClick={async () => {
-                const ok = await confirm();
+                const ok = await backlogConfirm();
                 if (!ok) return;
 
-                moveToSprint(
+                moveToBacklog(
                   {
                     issueId: issueId,
-                    sprintId: sprint._id,
                   },
                   {
                     onSuccess: (data) => {
                       if (data) {
-                        toast.success("Issue moved to sprint");
+                        toast.success("Issue moved to backlog");
                       }
+                    },
+                    onError: (error) => {
+                      toast.error(error.message);
                     },
                   },
                 );
               }}
             >
-              {sprint.name}
+              Move to backlog
             </DropdownMenuItem>
-          ))}
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 
       <ConfirmDialog
         title="Move to sprint"
         description="Are you sure you want to move this issue to the selected sprint?"
+      />
+      <BacklogConfirmDialog
+        title="Move to backlog"
+        description="Are you sure you want to move this issue to the backlog?"
       />
     </>
   );

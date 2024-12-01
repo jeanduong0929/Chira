@@ -44,7 +44,11 @@ export const DraggableIssue = ({
         <p className="text-sm font-medium">{issue.title}</p>
       </div>
       <div className="flex items-center gap-x-2">
-        <BacklogDropdown issueId={issue._id} projectId={projectId} />
+        <BacklogDropdown
+          issueId={issue._id}
+          projectId={projectId}
+          inSprint={false}
+        />
       </div>
     </div>
   );

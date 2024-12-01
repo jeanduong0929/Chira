@@ -1,6 +1,7 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { SprintDropdown } from "./sprint-dropdown";
+import { Issue } from "./issue";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import {
@@ -52,7 +53,21 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
         <CardDescription className="hidden" />
       </CardHeader>
 
-      {open && <EmptySprintCardContent issues={sprint.issues} />}
+      {open && (
+        <>
+          <EmptySprintCardContent issues={sprint.issues} />
+          <div className="mx-2 mb-5">
+            {sprint.issues.map((issue) => (
+              <Issue
+                key={issue._id}
+                issue={issue}
+                projectId={issue.projectId}
+                inSprint={true}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </Card>
   );
 };

@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
 import { mutation, query } from "./_generated/server";
+import { Id } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -179,6 +180,32 @@ export const moveToSprint = mutation({
 
       await ctx.db.patch(args.issueId, {
         sprintId: args.sprintId,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
+export const moveToBacklog = mutation({
+  args: {
+    issueId: v.id("issues"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      console.log("Moving issue to backlog");
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      await ctx.db.patch(args.issueId, {
+        sprintId: undefined,
       });
 
       return true;

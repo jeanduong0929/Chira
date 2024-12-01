@@ -20,9 +20,11 @@ import { SprintEditIssueDialog } from "./sprint-edit-issue-dialog";
 export const BacklogDropdown = ({
   issueId,
   projectId,
+  inSprint,
 }: {
   issueId: Id<"issues">;
   projectId: Id<"projects">;
+  inSprint: boolean;
 }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [confirm, ConfirmDialog] = useConfirm();
@@ -46,22 +48,24 @@ export const BacklogDropdown = ({
           <DropdownMenuItem onClick={() => setOpenEdit(true)}>
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              moveToTop(
-                { issueId: issueId, projectId: projectId },
-                {
-                  onSuccess: (data) => {
-                    if (data) {
-                      toast.success("Issue moved to top of backlog");
-                    }
+          {!inSprint && (
+            <DropdownMenuItem
+              onClick={() => {
+                moveToTop(
+                  { issueId: issueId, projectId: projectId },
+                  {
+                    onSuccess: (data) => {
+                      if (data) {
+                        toast.success("Issue moved to top of backlog");
+                      }
+                    },
                   },
-                },
-              );
-            }}
-          >
-            Top of backlog
-          </DropdownMenuItem>
+                );
+              }}
+            >
+              Top of backlog
+            </DropdownMenuItem>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={async () => {
