@@ -116,11 +116,33 @@ const SidebarHeader = React.forwardRef<
       )}
       {...props}
     >
-      {project && <ProjectSwitchDropdown project={project} />}
-      <div className="flex flex-col">
-        <h2 className="text-md font-semibold">{project?.name}</h2>
-        <p className="text-xs text-muted-foreground">Software Development</p>
-      </div>
+      {project ? (
+        <>
+          <ProjectSwitchDropdown project={project} />
+          <div className="flex flex-col">
+            <h2 className="text-md font-semibold">{project?.name}</h2>
+            <p className="text-xs text-muted-foreground">
+              Software Development
+            </p>
+          </div>
+        </>
+      ) : (
+        <div
+          ref={ref}
+          className={cn(
+            className,
+            "flex min-w-64 items-center gap-x-2 transition-opacity duration-200 ease-in-out",
+            isOpen ? "opacity-100" : "pointer-events-none opacity-0",
+          )}
+          {...props}
+        >
+          <Skeleton className="size-10 rounded-lg" />
+          <div className="flex flex-col gap-y-1">
+            <Skeleton className="h-4 w-16 rounded-lg" />
+            <Skeleton className="h-4 w-24 rounded-lg" />
+          </div>
+        </div>
+      )}
     </div>
   );
 });

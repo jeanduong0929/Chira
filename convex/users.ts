@@ -1,6 +1,24 @@
 import { Auth } from "convex/server";
 import { v } from "convex/values";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
+
+export const getAuth = query({
+  handler: async (ctx, args) => {
+    try {
+      const clerkId = await getClerkId(ctx.auth);
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+        .unique();
+      if (!user) {
+        throw new Error("User not found");
+      }
+      return user;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
 
 export const create = mutation({
   args: {

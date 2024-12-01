@@ -8,10 +8,12 @@ import { CreateIssueDialog } from "../projects/[projectId]/backlog/_components/s
 import { Button } from "@/components/ui/button";
 import { useAuth, UserButton } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useProject } from "@/store/use-project";
 
 export const Navbar = () => {
   const { isLoaded } = useAuth();
 
+  const [projectId, _] = useProject();
   const [openCreateIssueDialog, setOpenCreateIssueDialog] = useState(false);
 
   return (
@@ -24,7 +26,10 @@ export const Navbar = () => {
               <h1 className="text-xl font-semibold">Chira</h1>
             </div>
             <ProjectDropdown />
-            <Button onClick={() => setOpenCreateIssueDialog(true)}>
+            <Button
+              onClick={() => setOpenCreateIssueDialog(true)}
+              disabled={!projectId}
+            >
               Create
             </Button>
           </div>

@@ -1,10 +1,15 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Bookmark } from "lucide-react";
+import { TiptapEditor } from "./tiptap-editor";
+import { AssigneeCombobox } from "./assignee-combobox";
+import { api } from "../../../../../../../convex/_generated/api";
+import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -18,7 +23,10 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { TiptapEditor } from "./tiptap-editor";
+import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { convexQuery } from "@convex-dev/react-query";
+import { useProject } from "@/store/use-project";
 
 interface CreateIssueDialogProps {
   open: boolean;
@@ -29,7 +37,21 @@ export const CreateIssueDialog = ({
   open,
   setOpen,
 }: CreateIssueDialogProps) => {
+  const [projectId, setProjectId] = useProject();
   const [issueType, setIssueType] = useState<"story" | "bug" | "task">("story");
+  const [summary, setSummary] = useState("");
+  const [description, setDescription] = useState("");
+  const [assignee, setAssignee] = useState<Omit<
+    Doc<"users">,
+    "_creationTime"
+  > | null>(null);
+
+  const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
+  const { data: members } = useQuery(
+    convexQuery(api.members.getMembers, {
+      projectId: projectId as Id<"projects">,
+    }),
+  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -50,14 +72,51 @@ export const CreateIssueDialog = ({
           <Separator className="" />
 
           <div className="flex flex-col gap-y-1">
-            <Label className="text-sm font-medium">Summary</Label>
-            <Input placeholder="Summary" />
+            <Label className="text-sm font-medium">
+              Summary
+              <span className="ml-1 text-red-500">*</span>
+            </Label>
+            <Input
+              placeholder="Summary"
+              value={summary}
+              onChange={(e) => setSummary(e.target.value)}
+            />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Description</Label>
-            <TiptapEditor />
+            <TiptapEditor content={description} setContent={setDescription} />
+          </div>
+          <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Assignee</Label>
+            <AssigneeCombobox
+              members={members ?? []}
+              value={assignee}
+              setValue={setAssignee}
+            />
+            <Button
+              variant="link"
+              className="w-fit px-0 text-[#0B66E4]"
+              onClick={() => {
+                // TODO: Assign to me
+                setAssignee({
+                  _id: user?._id as Id<"users">,
+                  imageUrl: user?.imageUrl,
+                  name: user?.name as string,
+                  clerkId: user?.clerkId as string,
+                });
+              }}
+            >
+              Assign to me
+            </Button>
           </div>
         </div>
+
+        <DialogFooter className="mt-5">
+          <Button variant="outline" onClick={() => setOpen(false)}>
+            Cancel
+          </Button>
+          <Button disabled={!summary}>Create</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

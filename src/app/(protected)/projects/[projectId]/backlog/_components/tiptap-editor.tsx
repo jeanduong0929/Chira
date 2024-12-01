@@ -1,12 +1,18 @@
+import { Dispatch, SetStateAction } from "react";
 import { Bold, Italic, List } from "lucide-react";
 
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
-export const TiptapEditor = () => {
+interface TiptapEditorProps {
+  content: string;
+  setContent: Dispatch<SetStateAction<string>>;
+}
+
+export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
   const editor = useEditor({
     extensions: [StarterKit],
-    content: "",
+    content: content,
     editorProps: {
       attributes: {
         class: "p-10 text-sm prose",
@@ -44,7 +50,11 @@ export const TiptapEditor = () => {
           <List className="h-4 w-4" />
         </button>
       </div>
-      <EditorContent editor={editor} className="marker:text-black" />
+      <EditorContent
+        editor={editor}
+        className="marker:text-black"
+        onChange={() => setContent(editor.getHTML())}
+      />
     </div>
   );
 };
