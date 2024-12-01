@@ -67,6 +67,45 @@ const Sidebar = React.forwardRef<
   );
 });
 
+const SidebarHeader = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, children, ...props }, ref) => {
+  const [projectId, _] = useProject();
+
+  const { isOpen } = useSidebar();
+  const { data: project, isLoading } = useQuery(
+    convexQuery(api.projects.getByIdWithUser, {
+      projectId: projectId as Id<"projects">,
+    }),
+  );
+
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        className,
+        "flex min-w-64 items-center gap-x-2 px-4 pt-5 transition-opacity duration-200 ease-in-out",
+        isOpen ? "opacity-100" : "pointer-events-none opacity-0",
+      )}
+      {...props}
+    >
+      <Button
+        className="size-10 shrink-0 bg-[#FF5631] hover:bg-[#FF5631]/90"
+        size={"icon"}
+      >
+        {project?.name?.[0]
+          .toUpperCase()
+          .concat(project?.name?.[1].toUpperCase())}
+      </Button>
+      <div className="flex flex-col">
+        <h2 className="text-md font-semibold">{project?.name}</h2>
+        <p className="text-xs text-muted-foreground">Software Development</p>
+      </div>
+    </div>
+  );
+});
+
 const SidebarTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -102,51 +141,12 @@ const SidebarContent = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "flex min-w-64 flex-col gap-y-10 overflow-y-auto overflow-x-hidden px-2 transition-opacity duration-200 ease-in-out",
+        "flex min-w-64 flex-col gap-y-10 overflow-y-auto overflow-x-hidden px-2 py-5 transition-opacity duration-200 ease-in-out",
         isOpen ? "opacity-100" : "pointer-events-none opacity-0",
       )}
       {...props}
     >
       {children}
-    </div>
-  );
-});
-
-const SidebarHeader = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
-  const [projectId, _] = useProject();
-
-  const { isOpen } = useSidebar();
-  const { data: project, isLoading } = useQuery(
-    convexQuery(api.projects.getByIdWithUser, {
-      projectId: projectId as Id<"projects">,
-    }),
-  );
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        className,
-        "flex min-w-64 items-center gap-x-2 px-4 py-5 transition-opacity duration-200 ease-in-out",
-        isOpen ? "opacity-100" : "pointer-events-none opacity-0",
-      )}
-      {...props}
-    >
-      <Button
-        className="size-10 shrink-0 bg-[#FF5631] hover:bg-[#FF5631]/90"
-        size={"icon"}
-      >
-        {project?.name?.[0]
-          .toUpperCase()
-          .concat(project?.name?.[1].toUpperCase())}
-      </Button>
-      <div className="flex flex-col">
-        <h2 className="text-md font-semibold">{project?.name}</h2>
-        <p className="text-xs text-muted-foreground">Software Development</p>
-      </div>
     </div>
   );
 });
