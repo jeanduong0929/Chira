@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
@@ -32,11 +32,15 @@ export const SprintEditDialog = ({
     mutationFn: useConvexMutation(api.sprints.update),
   });
 
+  useEffect(() => {
+    setName(sprint.name);
+  }, [sprint]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit sprint: {sprint.name}</DialogTitle>
+          <DialogTitle>Edit sprint: {name}</DialogTitle>
           <DialogDescription>Update the name of the sprint.</DialogDescription>
         </DialogHeader>
 
