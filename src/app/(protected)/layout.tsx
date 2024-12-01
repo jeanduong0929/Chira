@@ -15,6 +15,7 @@ import {
 } from "./_components/sidebar";
 import { getSidebarItems } from "./_constants/sidebar-items";
 import { api } from "../../../convex/_generated/api";
+import { Id } from "../../../convex/_generated/dataModel";
 
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
@@ -27,7 +28,7 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
-  const [project, setProject] = useProject();
+  const [projectId, setProjectId] = useProject();
   const [sidebarOpen, setSidebarOpen] = useState<Record<string, boolean>>(
     () => {
       const initialState: Record<string, boolean> = {};
@@ -38,6 +39,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     },
   );
 
+  const { data: project, isLoading: projectLoading } = useQuery(
+    convexQuery(api.projects.getByIdWithUser, {
+      projectId: projectId as Id<"projects">,
+    }),
+  );
   const { data: projects, isLoading } = useQuery(
     convexQuery(api.projects.getAllWithUser, {}),
   );
@@ -54,10 +60,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       });
     }
 
-    if (!project && projects && projects.length > 0) {
-      setProject(projects[0]._id);
+    // Set the projectId to the first project if it's not set
+    if (!projectId && projects && projects.length > 0) {
+      setProjectId(projects[0]._id);
     }
-  }, [createUser, project, projects, setProject, user]);
+  }, [createUser, projectId, projects, setProjectId, user]);
 
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({
@@ -75,7 +82,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
           <SidebarHeader />
           <SidebarTrigger />
           <SidebarContent>
-            {getSidebarItems(projects?.[0]?._id).map((group) => (
+            {getSidebarItems(project?._id).map((group) => (
               <SidebarGroup key={group.label}>
                 <SidebarGroupLabel
                   open={sidebarOpen[group.label]}

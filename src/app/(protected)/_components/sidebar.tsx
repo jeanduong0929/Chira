@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, LucideIcon } from "lucide-react";
@@ -250,6 +250,7 @@ const SidebarGroupItem = React.forwardRef<
   }
 >(({ className, label, href, icon: Icon, open, disabled, ...props }, ref) => {
   const pathname = usePathname();
+  console.log("href", href);
 
   if (open) {
     return (
@@ -258,7 +259,7 @@ const SidebarGroupItem = React.forwardRef<
         className={cn(
           className,
           "flex justify-start px-6 hover:bg-[#EAF3FF]",
-          pathname === href &&
+          pathname.includes(href.split("/").pop() ?? "") &&
             "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8]",
           disabled && "pointer-events-none opacity-50",
         )}

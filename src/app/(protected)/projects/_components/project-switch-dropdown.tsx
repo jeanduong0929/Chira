@@ -69,8 +69,10 @@ export const ProjectSwitchDropdown = ({
                 setProject(project._id);
 
                 const split = pathname.split("/").slice(1);
-                split[1] = project._id;
-                router.push(`/${split.join("/")}`);
+                if (split.length > 1) {
+                  split[1] = project._id;
+                  router.replace(`/${split.join("/")}`);
+                }
               }}
             >
               <div className="rounded-md bg-[#00A4BF]/20 px-2 py-1 text-xs font-semibold">

@@ -1,4 +1,5 @@
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
+import { toast } from "sonner";
 import { Bookmark } from "lucide-react";
 import { TiptapEditor } from "./tiptap-editor";
 import { AssigneeCombobox } from "./assignee-combobox";
@@ -27,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useProject } from "@/store/use-project";
-import { toast } from "sonner";
 
 interface CreateIssueDialogProps {
   open: boolean;
