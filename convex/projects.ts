@@ -16,19 +16,21 @@ export const getAllWithUser = query({
         return [];
       }
 
-      const user = await ctx.db
-        .query("users")
-        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
-        .unique();
+      const projectsWithUser = [];
+      for (const p of projects) {
+        const user = await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q) => q.eq("clerkId", p.clerkId))
+          .unique();
 
-      if (!user) {
-        throw new Error("User not found");
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        projectsWithUser.push({ ...p, user });
       }
 
-      return projects.map((project) => ({
-        ...project,
-        user,
-      }));
+      return projectsWithUser;
     } catch (e) {
       console.error(e);
     }

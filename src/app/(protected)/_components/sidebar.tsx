@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronRight, LucideIcon } from "lucide-react";
+import { ProjectSwitchDropdown } from "../projects/_components/project-switch-dropdown";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 
@@ -20,6 +21,10 @@ const SidebarWrapper = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
+  const { mounted } = useSidebar();
+
+  if (!mounted) return null;
+
   return (
     <div ref={ref} className={cn(className, "flex")} {...props}>
       {children}
@@ -111,14 +116,7 @@ const SidebarHeader = React.forwardRef<
       )}
       {...props}
     >
-      <Button
-        className="size-10 shrink-0 bg-[#FF5631] hover:bg-[#FF5631]/90"
-        size={"icon"}
-      >
-        {project?.name?.[0]
-          .toUpperCase()
-          .concat(project?.name?.[1].toUpperCase())}
-      </Button>
+      {project && <ProjectSwitchDropdown project={project} />}
       <div className="flex flex-col">
         <h2 className="text-md font-semibold">{project?.name}</h2>
         <p className="text-xs text-muted-foreground">Software Development</p>
