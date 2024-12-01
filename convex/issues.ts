@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
-import { mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const create = mutation({
   args: {
@@ -13,6 +13,15 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     try {
+      await getClerkId(ctx.auth);
+
+      const issues = await ctx.db
+        .query("issues")
+        .withIndex("by_project_id_sequence", (q) =>
+          q.eq("projectId", args.projectId),
+        )
+        .collect();
+
       return await ctx.db.insert("issues", {
         title: args.title,
         description: args.description,
@@ -20,7 +29,27 @@ export const create = mutation({
         sprintId: args.sprintId,
         assigneeId: args.assigneeId,
         projectId: args.projectId,
+        sequence: issues.length,
       });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+});
+
+export const getAll = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      return await ctx.db
+        .query("issues")
+        .withIndex("by_project_id_sequence", (q) =>
+          q.eq("projectId", args.projectId).gte("sequence", 0),
+        )
+        .order("asc")
+        .collect();
     } catch (error) {
       console.error(error);
     }
