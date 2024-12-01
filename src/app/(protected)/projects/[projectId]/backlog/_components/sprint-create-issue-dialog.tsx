@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
+import { Bookmark } from "lucide-react";
 import { api } from "../../../../../../../convex/_generated/api";
-import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
+import { Id } from "../../../../../../../convex/_generated/dataModel";
 
 import {
   Dialog,
@@ -20,7 +21,8 @@ import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { useProject } from "@/store/use-project";
 import { Label } from "@/components/ui/label";
-import { Bookmark } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 
 interface CreateIssueDialogProps {
   open: boolean;
@@ -51,10 +53,21 @@ export const CreateIssueDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-y-8">
+        <div className="flex flex-col gap-y-5">
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
             <IssueTypeSelect setIssueType={setIssueType} />
+          </div>
+
+          <Separator className="" />
+
+          <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Summary</Label>
+            <Input placeholder="Summary" />
+          </div>
+          <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Description</Label>
+            <Input placeholder="Description" />
           </div>
         </div>
       </DialogContent>
