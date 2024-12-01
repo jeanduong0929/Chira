@@ -18,6 +18,9 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
         class: "p-10 text-sm prose",
       },
     },
+    onUpdate: ({ editor }) => {
+      setContent(editor.getHTML());
+    },
   });
 
   if (!editor) return null;
@@ -50,11 +53,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
           <List className="h-4 w-4" />
         </button>
       </div>
-      <EditorContent
-        editor={editor}
-        className="marker:text-black"
-        onChange={() => setContent(editor.getHTML())}
-      />
+      <EditorContent editor={editor} className="marker:text-black" />
     </div>
   );
 };
