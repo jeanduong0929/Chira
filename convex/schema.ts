@@ -30,6 +30,7 @@ export default defineSchema({
     description: v.optional(v.string()),
     storyPoints: v.optional(v.number()),
     sequence: v.number(),
+    issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
     projectId: v.id("projects"),

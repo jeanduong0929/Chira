@@ -9,6 +9,7 @@ export const create = mutation({
     storyPoints: v.optional(v.number()),
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
+    issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
     projectId: v.id("projects"),
   },
   handler: async (ctx, args) => {
@@ -29,6 +30,7 @@ export const create = mutation({
         sprintId: args.sprintId,
         assigneeId: args.assigneeId,
         projectId: args.projectId,
+        issueType: args.issueType,
         sequence: issues.length,
       });
     } catch (error) {

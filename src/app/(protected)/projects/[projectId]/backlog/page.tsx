@@ -1,6 +1,12 @@
 "use client";
 
-import React, { SetStateAction, Dispatch, useState, useEffect } from "react";
+import React, {
+  SetStateAction,
+  Dispatch,
+  useState,
+  useEffect,
+  useMemo,
+} from "react";
 import { toast } from "sonner";
 import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
@@ -66,6 +72,7 @@ const BacklogPage = () => {
         )}
 
         <BacklogCard
+          name={name}
           projectId={projectId as Id<"projects">}
           sprints={sprints ?? []}
         />
@@ -98,9 +105,11 @@ const BacklogHeader = ({
 };
 
 const BacklogCard = ({
+  name,
   projectId,
   sprints,
 }: {
+  name: string;
   projectId: Id<"projects">;
   sprints: Doc<"sprints">[];
 }) => {
@@ -122,6 +131,14 @@ const BacklogCard = ({
       setFilteredIssues(issues.filter((issue) => !issue.sprintId));
     }
   }, [issues]);
+
+  const searchIssues = useMemo(() => {
+    if (!filteredIssues) return [];
+    if (name === "") return filteredIssues;
+    return filteredIssues?.filter((issue) =>
+      issue.title.toLowerCase().includes(name.toLowerCase()),
+    );
+  }, [name, filteredIssues]);
 
   return (
     <>
@@ -185,15 +202,19 @@ const BacklogCard = ({
             </div>
           ) : (
             <div className="flex flex-col">
-              {filteredIssues.map((issue, idx) => (
-                <DraggableIssue
-                  key={issue._id}
-                  issue={issue}
-                  index={idx}
-                  projectId={projectId}
-                  setFilteredIssues={setFilteredIssues}
-                />
-              ))}
+              {searchIssues.map((issue, idx) =>
+                name ? (
+                  <Issue key={issue._id} issue={issue} projectId={projectId} />
+                ) : (
+                  <DraggableIssue
+                    key={issue._id}
+                    issue={issue}
+                    index={idx}
+                    projectId={projectId}
+                    setFilteredIssues={setFilteredIssues}
+                  />
+                ),
+              )}
             </div>
           ))}
       </div>
@@ -273,6 +294,25 @@ const DraggableIssue = ({
       {isOver && canDrop && (
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
       )}
+    </div>
+  );
+};
+
+const Issue = ({
+  issue,
+  projectId,
+}: {
+  issue: Doc<"issues">;
+  projectId: Id<"projects">;
+}) => {
+  return (
+    <div className="relative flex items-center justify-between border bg-white px-10 py-2">
+      <div className="flex items-center gap-x-2">
+        <p className="text-sm font-medium">{issue.title}</p>
+      </div>
+      <div className="flex items-center gap-x-2">
+        <BacklogDropdown issueId={issue._id} projectId={projectId} />
+      </div>
     </div>
   );
 };

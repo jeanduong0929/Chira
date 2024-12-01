@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Check, CheckCheck, CheckIcon, Circle } from "lucide-react";
 import { TiptapEditor } from "./tiptap-editor";
 import { AssigneeCombobox } from "./assignee-combobox";
 import { api } from "../../../../../../../convex/_generated/api";
@@ -66,6 +66,7 @@ export const CreateIssueDialog = ({
         title: summary,
         description: description,
         storyPoints: parseInt(storyPoints) ?? undefined,
+        issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
       },
@@ -190,11 +191,27 @@ const IssueTypeSelect = ({
       </SelectTrigger>
       <SelectContent>
         <SelectItem key="story" value="story">
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-3">
             <div className="shrink-0 bg-[#64BA3B] p-1">
               <Bookmark className="size-3" fill="#fff" stroke="#fff" />
             </div>
             <span>Story</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="task" value="task">
+          <div className="flex items-center gap-x-3">
+            <div className="shrink-0 bg-[#0B66E4] p-1">
+              <CheckIcon className="size-3 text-white" strokeWidth={4} />
+            </div>
+            <span>Task</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="bug" value="bug">
+          <div className="flex items-center gap-x-3">
+            <div className="shrink-0 bg-[#E84C3D] p-1">
+              <Circle className="size-3" fill="#fff" stroke="#fff" />
+            </div>
+            <span>Bug</span>
           </div>
         </SelectItem>
       </SelectContent>

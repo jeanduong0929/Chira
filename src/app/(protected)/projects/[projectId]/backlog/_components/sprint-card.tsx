@@ -22,7 +22,6 @@ interface SprintCardProps {
 }
 
 export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
-  console.log(sprint);
   return (
     <Card className="border-none bg-[#F7F8F9]">
       <CardHeader className="py-1">
