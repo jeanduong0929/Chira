@@ -6,7 +6,7 @@ export const create = mutation({
   args: {
     title: v.string(),
     description: v.optional(v.string()),
-    storyPoints: v.optional(v.number()),
+    storyPoints: v.optional(v.string()),
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
@@ -15,6 +15,8 @@ export const create = mutation({
   handler: async (ctx, args) => {
     try {
       await getClerkId(ctx.auth);
+
+      console.log(args.storyPoints);
 
       const issues = await ctx.db
         .query("issues")
@@ -54,6 +56,68 @@ export const getAll = query({
         .collect();
     } catch (error) {
       console.error(error);
+    }
+  },
+});
+
+export const getById = query({
+  args: {
+    issueId: v.id("issues"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      const assignee = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) =>
+          q.eq("clerkId", issue.assigneeId as string),
+        )
+        .unique();
+
+      return { ...issue, assignee };
+    } catch (error) {
+      console.error(error);
+    }
+  },
+});
+
+export const update = mutation({
+  args: {
+    issueId: v.id("issues"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    storyPoints: v.optional(v.string()),
+    sprintId: v.optional(v.id("sprints")),
+    assigneeId: v.optional(v.string()),
+    issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      await ctx.db.patch(args.issueId, {
+        title: args.title,
+        description: args.description,
+        storyPoints: args.storyPoints,
+        sprintId: args.sprintId,
+        assigneeId: args.assigneeId,
+        projectId: args.projectId,
+        issueType: args.issueType,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   },
 });

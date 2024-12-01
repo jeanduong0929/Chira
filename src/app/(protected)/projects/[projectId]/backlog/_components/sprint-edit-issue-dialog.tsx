@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Bookmark, Check, CheckCheck, CheckIcon, Circle } from "lucide-react";
 import { TiptapEditor } from "./tiptap-editor";
@@ -30,11 +30,13 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useProject } from "@/store/use-project";
 
 interface SprintEditIssueDialogProps {
+  issueId: Id<"issues">;
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const SprintEditIssueDialog = ({
+  issueId,
   open,
   setOpen,
 }: SprintEditIssueDialogProps) => {
@@ -54,18 +56,36 @@ export const SprintEditIssueDialog = ({
       projectId: projectId as Id<"projects">,
     }),
   );
+  const { data: issue } = useQuery(
+    convexQuery(api.issues.getById, {
+      issueId: issueId,
+    }),
+  );
   const { mutate: createIssue } = useMutation({
     mutationFn: useConvexMutation(api.issues.create),
   });
+  const { mutate: updateIssue } = useMutation({
+    mutationFn: useConvexMutation(api.issues.update),
+  });
+
+  useEffect(() => {
+    if (issue) {
+      setSummary(issue.title);
+      setDescription(issue.description ?? "");
+      setStoryPoints(issue.storyPoints?.toString() ?? "");
+      setAssignee(issue.assignee);
+    }
+  }, [issue]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createIssue(
+    updateIssue(
       {
+        issueId: issueId,
         title: summary,
         description: description,
-        storyPoints: parseInt(storyPoints) ?? undefined,
+        storyPoints: storyPoints || undefined,
         issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
@@ -73,7 +93,7 @@ export const SprintEditIssueDialog = ({
       {
         onSuccess: (data) => {
           if (data) {
-            toast.success("Issue created");
+            toast.success("Issue updated");
             setSummary("");
             setDescription("");
             setAssignee(null);
@@ -126,10 +146,11 @@ export const SprintEditIssueDialog = ({
               onChange={(e) => {
                 if (e.target.value === "") {
                   setStoryPoints("");
+                  return;
                 }
                 const value = parseInt(e.target.value);
                 if (value > 0) {
-                  setStoryPoints(value.toString());
+                  setStoryPoints(e.target.value);
                 }
               }}
             />

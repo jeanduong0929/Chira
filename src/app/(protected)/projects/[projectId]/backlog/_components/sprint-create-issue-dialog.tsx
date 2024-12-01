@@ -65,7 +65,7 @@ export const CreateIssueDialog = ({
       {
         title: summary,
         description: description,
-        storyPoints: parseInt(storyPoints) ?? undefined,
+        storyPoints: storyPoints,
         issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
@@ -129,7 +129,7 @@ export const CreateIssueDialog = ({
                 }
                 const value = parseInt(e.target.value);
                 if (value > 0) {
-                  setStoryPoints(value.toString());
+                  setStoryPoints(e.target.value);
                 }
               }}
             />

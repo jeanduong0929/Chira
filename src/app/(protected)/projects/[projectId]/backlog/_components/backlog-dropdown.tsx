@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
+import { SprintEditIssueDialog } from "./sprint-edit-issue-dialog";
 
 export const BacklogDropdown = ({
   issueId,
@@ -23,7 +24,7 @@ export const BacklogDropdown = ({
   issueId: Id<"issues">;
   projectId: Id<"projects">;
 }) => {
-  const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
   const [confirm, ConfirmDialog] = useConfirm();
 
   const { mutate: removeIssue } = useMutation({
@@ -42,7 +43,9 @@ export const BacklogDropdown = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>Edit</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+            Edit
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
               moveToTop(
@@ -86,6 +89,11 @@ export const BacklogDropdown = ({
         title="Delete issue"
         description="Are you sure you want to delete this issue?"
         variant="destructive"
+      />
+      <SprintEditIssueDialog
+        open={openEdit}
+        setOpen={setOpenEdit}
+        issueId={issueId}
       />
     </>
   );

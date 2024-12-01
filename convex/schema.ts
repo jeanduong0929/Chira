@@ -28,7 +28,7 @@ export default defineSchema({
   issues: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
-    storyPoints: v.optional(v.number()),
+    storyPoints: v.optional(v.string()),
     sequence: v.number(),
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
     sprintId: v.optional(v.id("sprints")),
