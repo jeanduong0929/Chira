@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
+import { toast } from "sonner";
 import { Ellipsis } from "lucide-react";
+import { SprintEditDialog } from "./sprint-edit-dialog";
 import { api } from "../../../../../../../convex/_generated/api";
-import { Id } from "../../../../../../../convex/_generated/dataModel";
+import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import {
   DropdownMenu,
@@ -14,11 +16,12 @@ import { useConfirm } from "@/hooks/use-confirm";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 
-interface SpringDropdownProps {
-  sprintId: Id<"sprints">;
+interface SprintDropdownProps {
+  sprint: Doc<"sprints">;
 }
 
-export const SpringDropdown = ({ sprintId }: SpringDropdownProps) => {
+export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
+  const [openEdit, setOpenEdit] = useState(false);
   const [confirm, ConfirmDialog] = useConfirm();
 
   const { mutate: removeSprint } = useMutation({
@@ -34,15 +37,26 @@ export const SpringDropdown = ({ sprintId }: SpringDropdownProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>Edit sprint</DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+            Edit sprint
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={async () => {
               const ok = await confirm();
               if (!ok) return;
 
-              removeSprint({
-                sprintId,
-              });
+              removeSprint(
+                {
+                  sprintId: sprint._id,
+                },
+                {
+                  onSuccess: (data) => {
+                    if (data) {
+                      toast.success("Sprint deleted");
+                    }
+                  },
+                },
+              );
             }}
           >
             Delete sprint
@@ -50,6 +64,11 @@ export const SpringDropdown = ({ sprintId }: SpringDropdownProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <SprintEditDialog
+        sprint={sprint}
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+      />
       <ConfirmDialog
         title={"Delete Sprint"}
         description={"Are you sure you want to delete this sprint?"}

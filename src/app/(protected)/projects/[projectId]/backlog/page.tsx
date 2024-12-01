@@ -1,6 +1,7 @@
 "use client";
 
-import React, { SetStateAction, Dispatch, useState } from "react";
+import React, { SetStateAction, Dispatch, useState, useEffect } from "react";
+import { toast } from "sonner";
 import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { SprintCard } from "./_components/sprint-card";
@@ -13,14 +14,18 @@ import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
+  const [openSprints, setOpenSprints] = useState<
+    Record<Id<"sprints">, boolean>
+  >({});
 
   const { projectId } = useParams();
-  const { data: sprints } = useQuery(
+  const { data: sprints, isLoading } = useQuery(
     convexQuery(api.sprints.getAll, {
       projectId: projectId as Id<"projects">,
     }),
@@ -29,15 +34,40 @@ const BacklogPage = () => {
     mutationFn: useConvexMutation(api.sprints.create),
   });
 
+  useEffect(() => {
+    if (sprints && sprints.length > 0) {
+      setOpenSprints(
+        sprints.reduce(
+          (acc, sprint) => {
+            acc[sprint._id] = true;
+            return acc;
+          },
+          {} as Record<Id<"sprints">, boolean>,
+        ),
+      );
+    }
+  }, [sprints]);
+
   return (
     <>
       <div className="flex flex-col gap-y-10">
         <BacklogHeader name={name} setName={setName} />
 
         <div className="flex flex-col gap-y-5">
-          {sprints?.map((sprint, index) => (
-            <SprintCard key={sprint._id} index={index} sprint={sprint} />
-          ))}
+          {isLoading ? (
+            <Skeleton className="h-[252px] w-full rounded-xl" />
+          ) : (
+            sprints?.map((sprint) => (
+              <SprintCard
+                key={sprint._id}
+                sprint={sprint}
+                open={openSprints[sprint._id]}
+                setOpen={(open) =>
+                  setOpenSprints({ ...openSprints, [sprint._id]: open })
+                }
+              />
+            ))
+          )}
 
           <div className="flex flex-col gap-y-2">
             <div className="flex items-center justify-between gap-x-1">
@@ -62,10 +92,19 @@ const BacklogPage = () => {
                   const ok = await confirm();
                   if (!ok) return;
 
-                  createSprint({
-                    projectId: projectId as Id<"projects">,
-                    index: sprints?.length ?? 0,
-                  });
+                  createSprint(
+                    {
+                      projectId: projectId as Id<"projects">,
+                      index: sprints?.length ?? 0,
+                    },
+                    {
+                      onSuccess: (data) => {
+                        if (data) {
+                          toast.success("Sprint created");
+                        }
+                      },
+                    },
+                  );
                 }}
               >
                 Create Sprint
