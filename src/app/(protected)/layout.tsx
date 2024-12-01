@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import { Navbar } from "./_components/navbar";
 import {
   Sidebar,
@@ -104,9 +106,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
         </Sidebar>
 
         <SidebarChildren>
-          <main className="mx-auto w-11/12 max-w-screen-2xl py-10">
-            {children}
-          </main>
+          <DndProvider backend={HTML5Backend}>
+            <main className="mx-auto w-11/12 max-w-screen-2xl py-10">
+              {children}
+            </main>
+          </DndProvider>
         </SidebarChildren>
       </SidebarWrapper>
     </div>

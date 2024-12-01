@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { SprintCard } from "./_components/sprint-card";
+import { BacklogDropdown } from "./_components/backlog-dropdown";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -15,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BacklogDropdown } from "./_components/backlog-dropdown";
+import { useDrag, useDrop } from "react-dnd";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -105,6 +106,7 @@ const BacklogCard = ({
 }) => {
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
+  const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
 
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
@@ -114,6 +116,12 @@ const BacklogCard = ({
       projectId: projectId as Id<"projects">,
     }),
   );
+
+  useEffect(() => {
+    if (issues) {
+      setFilteredIssues(issues.filter((issue) => !issue.sprintId));
+    }
+  }, [issues]);
 
   return (
     <>
@@ -172,28 +180,90 @@ const BacklogCard = ({
             </div>
           ) : (
             <div className="flex flex-col">
-              {issues
-                ?.filter((issue) => !issue.sprintId)
-                .map((issue) => (
-                  <div
-                    key={issue._id}
-                    className="flex items-center justify-between border px-10 py-2"
-                  >
-                    <div className="flex items-center gap-x-2">
-                      <p className="text-sm font-medium">{issue.title}</p>
-                    </div>
-                    <div className="flex items-center gap-x-2">
-                      <BacklogDropdown
-                        issueId={issue._id}
-                        projectId={projectId}
-                      />
-                    </div>
-                  </div>
-                ))}
+              {filteredIssues.map((issue, idx) => (
+                <DraggableIssue
+                  key={issue._id}
+                  issue={issue}
+                  index={idx}
+                  projectId={projectId}
+                  setFilteredIssues={setFilteredIssues}
+                />
+              ))}
             </div>
           ))}
       </div>
     </>
+  );
+};
+
+const DraggableIssue = ({
+  issue,
+  index,
+  projectId,
+  setFilteredIssues,
+}: {
+  issue: Doc<"issues">;
+  index: number;
+  projectId: Id<"projects">;
+  setFilteredIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
+}) => {
+  const moveIssue = (fromIndex: number, toIndex: number) => {
+    setFilteredIssues((prevItems) => {
+      const newItems = [...prevItems];
+      const [movedItem] = newItems.splice(fromIndex, 1);
+      newItems.splice(toIndex, 0, movedItem);
+
+      // setTimeout(() => {
+      //   updateSequenceIssue({
+      //     issues: newItems.map((issue, idx) => ({
+      //       id: issue._id,
+      //       sequence: idx,
+      //     })),
+      //   });
+      // }, 0);
+      return newItems;
+    });
+  };
+
+  const [, drag] = useDrag({
+    type: "ISSUE",
+    item: { index, type: "ISSUE" },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  const [{ isOver, canDrop }, drop] = useDrop({
+    accept: "ISSUE",
+    drop: (draggedItem: { index: number; type: string }) => {
+      if (draggedItem.type === "ISSUE" && draggedItem.index !== index) {
+        moveIssue(draggedItem.index, index);
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+    }),
+  });
+  return (
+    <div
+      key={issue._id}
+      className="relative flex items-center justify-between border bg-white px-10 py-2"
+      ref={(node) => {
+        if (node) drag(drop(node));
+      }}
+    >
+      <div className="flex items-center gap-x-2">
+        <p className="text-sm font-medium">{issue.title}</p>
+      </div>
+      <div className="flex items-center gap-x-2">
+        <BacklogDropdown issueId={issue._id} projectId={projectId} />
+      </div>
+
+      {isOver && canDrop && (
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+      )}
+    </div>
   );
 };
 
