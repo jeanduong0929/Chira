@@ -49,10 +49,7 @@ export function AssigneeCombobox({
           aria-expanded={open}
           className="w-[350px] justify-between"
         >
-          {value
-            ? members.find((member) => member.user._id === value?._id)?.user
-                .name
-            : "Select member..."}
+          {value ? value.name : "Select member..."}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -66,10 +63,10 @@ export function AssigneeCombobox({
                 <CommandItem
                   key={member.user._id}
                   value={member.user.name}
-                  onSelect={(currentValue) => {
-                    // if the current value is the same as the value, set it to empty string
-                    // otherwise, set it to the member id
-                    setValue(currentValue === value?._id ? null : member.user);
+                  onSelect={() => {
+                    setValue(
+                      value?._id === member.user._id ? null : member.user,
+                    );
                     setOpen(false);
                   }}
                 >

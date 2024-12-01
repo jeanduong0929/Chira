@@ -97,7 +97,6 @@ export const CreateIssueDialog = ({
               variant="link"
               className="w-fit px-0 text-[#0B66E4]"
               onClick={() => {
-                // TODO: Assign to me
                 setAssignee({
                   _id: user?._id as Id<"users">,
                   imageUrl: user?.imageUrl,
