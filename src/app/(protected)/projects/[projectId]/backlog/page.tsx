@@ -277,12 +277,35 @@ const DraggableIssue = ({
   });
 
   return (
-    <div
-      key={issue._id}
-      className="relative flex items-center justify-between border bg-white px-10 py-2"
+    <Issue
+      issue={issue}
+      projectId={projectId}
       ref={(node) => {
         if (node) drag(drop(node));
       }}
+    >
+      {isOver && canDrop && (
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+      )}
+    </Issue>
+  );
+};
+
+const Issue = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement> & {
+    issue: Doc<"issues">;
+    projectId: Id<"projects">;
+  }
+>(({ className, issue, projectId, children, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        "relative flex items-center justify-between border bg-white px-10 py-2",
+        className,
+      )}
+      {...props}
     >
       <div className="flex items-center gap-x-2">
         <p className="text-sm font-medium">{issue.title}</p>
@@ -290,31 +313,11 @@ const DraggableIssue = ({
       <div className="flex items-center gap-x-2">
         <BacklogDropdown issueId={issue._id} projectId={projectId} />
       </div>
-
-      {isOver && canDrop && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
-      )}
+      {children}
     </div>
   );
-};
+});
 
-const Issue = ({
-  issue,
-  projectId,
-}: {
-  issue: Doc<"issues">;
-  projectId: Id<"projects">;
-}) => {
-  return (
-    <div className="relative flex items-center justify-between border bg-white px-10 py-2">
-      <div className="flex items-center gap-x-2">
-        <p className="text-sm font-medium">{issue.title}</p>
-      </div>
-      <div className="flex items-center gap-x-2">
-        <BacklogDropdown issueId={issue._id} projectId={projectId} />
-      </div>
-    </div>
-  );
-};
+Issue.displayName = "Issue";
 
 export default BacklogPage;
