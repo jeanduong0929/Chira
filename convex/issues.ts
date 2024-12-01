@@ -163,6 +163,32 @@ export const moveToTop = mutation({
   },
 });
 
+export const moveToSprint = mutation({
+  args: {
+    issueId: v.id("issues"),
+    sprintId: v.id("sprints"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      await ctx.db.patch(args.issueId, {
+        sprintId: args.sprintId,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 export const updateSequence = mutation({
   args: {
     issues: v.array(

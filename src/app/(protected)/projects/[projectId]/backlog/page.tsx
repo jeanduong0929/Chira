@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SprintEditIssueDialog } from "./_components/sprint-edit-issue-dialog";
+import { MoveToDropdown } from "./_components/move-to-dropdown";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -195,7 +196,7 @@ const BacklogCard = ({
           </Button>
         </div>
         {showBacklog &&
-          (issues?.length === 0 ? (
+          (filteredIssues?.length === 0 ? (
             <div className="rounded-lg border-2 border-dashed border-gray-200 p-4">
               <p className="text-center text-xs text-gray-500">
                 Your backlog is empty
@@ -313,14 +314,15 @@ const Issue = React.forwardRef<
       >
         <div className="flex items-center gap-x-2">
           <Button
-            variant={"link"}
-            className="p-0 text-sm font-medium text-[#0B66E4]"
+            variant={"ghost"}
+            className="p-0 text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]"
             onClick={() => setOpen(true)}
           >
             {issue.title}
           </Button>
         </div>
         <div className="flex items-center gap-x-2">
+          <MoveToDropdown projectId={projectId} issueId={issue._id} />
           <BacklogDropdown issueId={issue._id} projectId={projectId} />
         </div>
         {children}
