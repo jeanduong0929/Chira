@@ -172,19 +172,24 @@ const BacklogCard = ({
             </div>
           ) : (
             <div className="flex flex-col">
-              {issues?.map((issue) => (
-                <div
-                  key={issue._id}
-                  className="flex items-center justify-between border px-10 py-2"
-                >
-                  <div className="flex items-center gap-x-2">
-                    <p className="text-sm font-medium">{issue.title}</p>
+              {issues
+                ?.filter((issue) => !issue.sprintId)
+                .map((issue) => (
+                  <div
+                    key={issue._id}
+                    className="flex items-center justify-between border px-10 py-2"
+                  >
+                    <div className="flex items-center gap-x-2">
+                      <p className="text-sm font-medium">{issue.title}</p>
+                    </div>
+                    <div className="flex items-center gap-x-2">
+                      <BacklogDropdown
+                        issueId={issue._id}
+                        projectId={projectId}
+                      />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-x-2">
-                    <BacklogDropdown />
-                  </div>
-                </div>
-              ))}
+                ))}
             </div>
           ))}
       </div>

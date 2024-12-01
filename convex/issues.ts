@@ -56,6 +56,67 @@ export const getAll = query({
   },
 });
 
+export const moveToTop = mutation({
+  args: {
+    issueId: v.id("issues"),
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issues = await ctx.db
+        .query("issues")
+        .withIndex("by_project_id_sequence", (q) =>
+          q.eq("projectId", args.projectId).gte("sequence", 0),
+        )
+        .collect();
+
+      // If issue is already at top, do nothing
+      if (issues[0]._id === args.issueId) {
+        return true;
+      }
+
+      // Shift all issues down
+      for (let i = 0; i < issues.length; i++) {
+        await ctx.db.patch(issues[i]._id, {
+          sequence: i + 1,
+        });
+      }
+
+      // Move issue to top
+      await ctx.db.patch(args.issueId, {
+        sequence: 0,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
+export const remove = mutation({
+  args: {
+    issueId: v.id("issues"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+      await ctx.db.delete(args.issueId);
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 const getClerkId = async (auth: Auth) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {
