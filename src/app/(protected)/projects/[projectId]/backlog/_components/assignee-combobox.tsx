@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import { Dispatch, SetStateAction } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AssigneeComboboxProps {
   members: (Doc<"members"> & { user: Doc<"users"> })[];
@@ -49,7 +50,22 @@ export function AssigneeCombobox({
           aria-expanded={open}
           className="w-[350px] justify-between"
         >
-          {value ? value.name : "Select member..."}
+          {value ? (
+            <div className="flex items-center gap-x-2">
+              <Avatar className="size-5">
+                <AvatarImage src={value.imageUrl} />
+                <AvatarFallback>
+                  {value.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </AvatarFallback>
+              </Avatar>
+              <span>{value.name}</span>
+            </div>
+          ) : (
+            "Select member..."
+          )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -70,6 +86,16 @@ export function AssigneeCombobox({
                     setOpen(false);
                   }}
                 >
+                  <Avatar className="size-5">
+                    <AvatarImage src={member.user.imageUrl} />
+                    <AvatarFallback>
+                      {member.user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
+                    </AvatarFallback>
+                  </Avatar>
+                  {member.user.name}
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
@@ -78,7 +104,6 @@ export function AssigneeCombobox({
                         : "opacity-0",
                     )}
                   />
-                  {member.user.name}
                 </CommandItem>
               ))}
             </CommandGroup>
