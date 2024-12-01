@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SprintEditIssueDialog } from "./_components/sprint-edit-issue-dialog";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -298,23 +299,39 @@ const Issue = React.forwardRef<
     projectId: Id<"projects">;
   }
 >(({ className, issue, projectId, children, ...props }, ref) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div
-      ref={ref}
-      className={cn(
-        "relative flex items-center justify-between border bg-white px-10 py-2",
-        className,
-      )}
-      {...props}
-    >
-      <div className="flex items-center gap-x-2">
-        <p className="text-sm font-medium">{issue.title}</p>
+    <>
+      <div
+        ref={ref}
+        className={cn(
+          "relative flex items-center justify-between border bg-white px-10 py-2",
+          className,
+        )}
+        {...props}
+      >
+        <div className="flex items-center gap-x-2">
+          <Button
+            variant={"link"}
+            className="p-0 text-sm font-medium text-[#0B66E4]"
+            onClick={() => setOpen(true)}
+          >
+            {issue.title}
+          </Button>
+        </div>
+        <div className="flex items-center gap-x-2">
+          <BacklogDropdown issueId={issue._id} projectId={projectId} />
+        </div>
+        {children}
       </div>
-      <div className="flex items-center gap-x-2">
-        <BacklogDropdown issueId={issue._id} projectId={projectId} />
-      </div>
-      {children}
-    </div>
+
+      <SprintEditIssueDialog
+        open={open}
+        setOpen={setOpen}
+        issueId={issue._id}
+      />
+    </>
   );
 });
 
