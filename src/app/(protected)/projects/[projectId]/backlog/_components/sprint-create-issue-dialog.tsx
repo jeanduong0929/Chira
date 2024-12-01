@@ -24,9 +24,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useProject } from "@/store/use-project";
+import { toast } from "sonner";
 
 interface CreateIssueDialogProps {
   open: boolean;
@@ -41,6 +42,7 @@ export const CreateIssueDialog = ({
   const [issueType, setIssueType] = useState<"story" | "bug" | "task">("story");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
+  const [storyPoints, setStoryPoints] = useState<string>("");
   const [assignee, setAssignee] = useState<Omit<
     Doc<"users">,
     "_creationTime"
@@ -52,6 +54,35 @@ export const CreateIssueDialog = ({
       projectId: projectId as Id<"projects">,
     }),
   );
+  const { mutate: createIssue } = useMutation({
+    mutationFn: useConvexMutation(api.issues.create),
+  });
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    createIssue(
+      {
+        title: summary,
+        description: description,
+        storyPoints: parseInt(storyPoints) ?? undefined,
+        assigneeId: assignee?.clerkId,
+        projectId: projectId as Id<"projects">,
+      },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            toast.success("Issue created");
+            setSummary("");
+            setDescription("");
+            setAssignee(null);
+            setStoryPoints("");
+            setOpen(false);
+          }
+        },
+      },
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -63,7 +94,7 @@ export const CreateIssueDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex flex-col gap-y-5">
+        <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
             <IssueTypeSelect setIssueType={setIssueType} />
@@ -87,6 +118,22 @@ export const CreateIssueDialog = ({
             <TiptapEditor content={description} setContent={setDescription} />
           </div>
           <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Story Points</Label>
+            <Input
+              placeholder="Story Points"
+              value={storyPoints}
+              onChange={(e) => {
+                if (e.target.value === "") {
+                  setStoryPoints("");
+                }
+                const value = parseInt(e.target.value);
+                if (value > 0) {
+                  setStoryPoints(value.toString());
+                }
+              }}
+            />
+          </div>
+          <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>
             <AssigneeCombobox
               members={members ?? []}
@@ -94,6 +141,7 @@ export const CreateIssueDialog = ({
               setValue={setAssignee}
             />
             <Button
+              type="button"
               variant="link"
               className="w-fit px-0 text-[#0B66E4]"
               onClick={() => {
@@ -108,14 +156,18 @@ export const CreateIssueDialog = ({
               Assign to me
             </Button>
           </div>
-        </div>
 
-        <DialogFooter className="mt-5">
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button disabled={!summary}>Create</Button>
-        </DialogFooter>
+          <DialogFooter className="mt-5">
+            <Button
+              type="submit"
+              variant="outline"
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button disabled={!summary}>Create</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

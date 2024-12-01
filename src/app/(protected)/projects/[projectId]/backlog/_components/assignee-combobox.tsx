@@ -1,7 +1,8 @@
 "use client";
 
-import * as React from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
+import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,8 +19,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Doc } from "../../../../../../../convex/_generated/dataModel";
-import { Dispatch, SetStateAction } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface AssigneeComboboxProps {
@@ -35,11 +34,7 @@ export function AssigneeCombobox({
   value,
   setValue,
 }: AssigneeComboboxProps) {
-  const [open, setOpen] = React.useState(false);
-
-  React.useEffect(() => {
-    console.log("value", value);
-  }, [value]);
+  const [open, setOpen] = useState(false);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
