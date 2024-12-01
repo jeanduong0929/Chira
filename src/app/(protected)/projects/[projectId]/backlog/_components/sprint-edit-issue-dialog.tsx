@@ -61,9 +61,6 @@ export const SprintEditIssueDialog = ({
       issueId: issueId,
     }),
   );
-  const { mutate: createIssue } = useMutation({
-    mutationFn: useConvexMutation(api.issues.create),
-  });
   const { mutate: updateIssue } = useMutation({
     mutationFn: useConvexMutation(api.issues.update),
   });
@@ -74,6 +71,7 @@ export const SprintEditIssueDialog = ({
       setDescription(issue.description ?? "");
       setStoryPoints(issue.storyPoints?.toString() ?? "");
       setAssignee(issue.assignee);
+      setIssueType(issue.issueType);
     }
   }, [issue]);
 
@@ -85,7 +83,7 @@ export const SprintEditIssueDialog = ({
         issueId: issueId,
         title: summary,
         description: description,
-        storyPoints: storyPoints || undefined,
+        storyPoints: storyPoints,
         issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
@@ -118,7 +116,10 @@ export const SprintEditIssueDialog = ({
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
-            <IssueTypeSelect setIssueType={setIssueType} />
+            <IssueTypeSelect
+              issueType={issueType}
+              setIssueType={setIssueType}
+            />
           </div>
 
           <Separator className="" />
@@ -187,7 +188,7 @@ export const SprintEditIssueDialog = ({
             >
               Cancel
             </Button>
-            <Button disabled={!summary}>Create</Button>
+            <Button disabled={!summary}>Update</Button>
           </DialogFooter>
         </form>
       </DialogContent>
@@ -196,13 +197,15 @@ export const SprintEditIssueDialog = ({
 };
 
 const IssueTypeSelect = ({
+  issueType,
   setIssueType,
 }: {
+  issueType: "story" | "bug" | "task";
   setIssueType: Dispatch<SetStateAction<"story" | "bug" | "task">>;
 }) => {
   return (
     <Select
-      defaultValue="story"
+      defaultValue={issueType}
       onValueChange={(value) => {
         setIssueType(value as "story" | "bug" | "task");
       }}
