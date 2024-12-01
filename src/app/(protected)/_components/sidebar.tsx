@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { useProject } from "@/store/use-project";
 import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const SidebarWrapper = React.forwardRef<
   HTMLDivElement,
@@ -79,6 +80,26 @@ const SidebarHeader = React.forwardRef<
       projectId: projectId as Id<"projects">,
     }),
   );
+
+  if (isLoading) {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          className,
+          "flex min-w-64 items-center gap-x-2 px-4 pt-5 transition-opacity duration-200 ease-in-out",
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0",
+        )}
+        {...props}
+      >
+        <Skeleton className="size-10 rounded-lg" />
+        <div className="flex flex-col gap-y-1">
+          <Skeleton className="h-4 w-16 rounded-lg" />
+          <Skeleton className="h-4 w-24 rounded-lg" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

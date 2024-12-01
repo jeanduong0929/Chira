@@ -21,12 +21,14 @@ import {
 import { convexQuery } from "@convex-dev/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { useProject } from "@/store/use-project";
 
 const ProjectsPage = () => {
   const { data: projects } = useQuery(
     convexQuery(api.projects.getAllWithUser, {}),
   );
 
+  const [_, setProject] = useProject();
   const [name, setName] = useState("");
 
   const filterProjects = useMemo(() => {
@@ -65,7 +67,12 @@ const ProjectsPage = () => {
           {filterProjects?.map((project) => (
             <TableRow key={project._id}>
               <TableCell>
-                <Button variant={"link"} className="p-0 text-[#0B66E4]" asChild>
+                <Button
+                  variant={"link"}
+                  className="p-0 text-[#0B66E4]"
+                  onClick={() => setProject(project._id)}
+                  asChild
+                >
                   <Link href={`/projects/${project._id}/board`}>
                     {project.name}
                   </Link>
