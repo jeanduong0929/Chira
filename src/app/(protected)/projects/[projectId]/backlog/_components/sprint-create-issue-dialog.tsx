@@ -160,13 +160,15 @@ export const CreateIssueDialog = ({
 
           <DialogFooter className="mt-5">
             <Button
-              type="submit"
+              type="button"
               variant="outline"
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
-            <Button disabled={!summary}>Create</Button>
+            <Button type="submit" disabled={!summary}>
+              Create
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

@@ -107,10 +107,8 @@ export const SprintEditIssueDialog = ({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Issue</DialogTitle>
-          <DialogDescription>
-            Create a new issue for this sprint.
-          </DialogDescription>
+          <DialogTitle>Edit Issue</DialogTitle>
+          <DialogDescription>Edit the issue.</DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
@@ -182,13 +180,15 @@ export const SprintEditIssueDialog = ({
 
           <DialogFooter className="mt-5">
             <Button
-              type="submit"
+              type="button"
               variant="outline"
               onClick={() => setOpen(false)}
             >
               Cancel
             </Button>
-            <Button disabled={!summary}>Update</Button>
+            <Button type="submit" disabled={!summary}>
+              Update
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
