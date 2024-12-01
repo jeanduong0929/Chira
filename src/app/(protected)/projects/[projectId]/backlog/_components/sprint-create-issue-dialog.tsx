@@ -1,7 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { Bookmark } from "lucide-react";
-import { api } from "../../../../../../../convex/_generated/api";
-import { Id } from "../../../../../../../convex/_generated/dataModel";
 
 import {
   Dialog,
@@ -17,12 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
-import { useProject } from "@/store/use-project";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { TiptapEditor } from "./tiptap-editor";
 
 interface CreateIssueDialogProps {
   open: boolean;
@@ -33,15 +29,7 @@ export const CreateIssueDialog = ({
   open,
   setOpen,
 }: CreateIssueDialogProps) => {
-  const [projectId, _] = useProject();
-  const [selectedProjectId, setSelectedProjectId] =
-    useState<Id<"projects"> | null>(null);
   const [issueType, setIssueType] = useState<"story" | "bug" | "task">("story");
-  const { data: project } = useQuery(
-    convexQuery(api.projects.getByIdWithUser, {
-      projectId: projectId as Id<"projects">,
-    }),
-  );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,7 +55,7 @@ export const CreateIssueDialog = ({
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Description</Label>
-            <Input placeholder="Description" />
+            <TiptapEditor />
           </div>
         </div>
       </DialogContent>
