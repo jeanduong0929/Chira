@@ -1,4 +1,5 @@
 import React from "react";
+import { ChevronDown } from "lucide-react";
 import { SprintDropdown } from "./sprint-dropdown";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
@@ -11,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
 
 interface SprintCardProps {
   sprint: Doc<"sprints"> & {
