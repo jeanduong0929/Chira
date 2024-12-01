@@ -97,6 +97,36 @@ export const moveToTop = mutation({
   },
 });
 
+export const updateSequence = mutation({
+  args: {
+    issues: v.array(
+      v.object({
+        issueId: v.id("issues"),
+        sequence: v.number(),
+      }),
+    ),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      for (const i of args.issues) {
+        const issue = await ctx.db.get(i.issueId);
+        if (!issue) {
+          throw new Error("Issue not found");
+        }
+        await ctx.db.patch(issue._id, {
+          sequence: i.sequence,
+        });
+      }
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 export const remove = mutation({
   args: {
     issueId: v.id("issues"),

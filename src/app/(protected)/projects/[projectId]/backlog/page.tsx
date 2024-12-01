@@ -4,6 +4,7 @@ import React, { SetStateAction, Dispatch, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useDrag, useDrop } from "react-dnd";
 import { SprintCard } from "./_components/sprint-card";
 import { BacklogDropdown } from "./_components/backlog-dropdown";
 import { api } from "../../../../../../convex/_generated/api";
@@ -16,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useDrag, useDrop } from "react-dnd";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -132,20 +132,25 @@ const BacklogCard = ({
 
       <div className="flex flex-col gap-y-1">
         <div className="flex items-center justify-between gap-x-1">
-          <div className="flex items-center gap-x-1">
-            <Button
-              variant={"ghost"}
-              size={"iconXs"}
-              onClick={() => setShowBacklog(!showBacklog)}
-            >
-              <ChevronDown
-                className={cn(
-                  "transition-transform duration-300 ease-in-out",
-                  showBacklog ? "rotate-0" : "-rotate-90",
-                )}
-              />
-            </Button>
-            <p className="text-sm font-medium">Backlog</p>
+          <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-1">
+              <Button
+                variant={"ghost"}
+                size={"iconXs"}
+                onClick={() => setShowBacklog(!showBacklog)}
+              >
+                <ChevronDown
+                  className={cn(
+                    "transition-transform duration-300 ease-in-out",
+                    showBacklog ? "rotate-0" : "-rotate-90",
+                  )}
+                />
+              </Button>
+              <p className="text-sm font-medium">Backlog</p>
+            </div>
+            <p className="text-xs text-gray-500">
+              ({filteredIssues.length} issues)
+            </p>
           </div>
           <Button
             variant={"ghost"}
@@ -207,20 +212,24 @@ const DraggableIssue = ({
   projectId: Id<"projects">;
   setFilteredIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
 }) => {
+  const { mutate: updateSequence } = useMutation({
+    mutationFn: useConvexMutation(api.issues.updateSequence),
+  });
+
   const moveIssue = (fromIndex: number, toIndex: number) => {
     setFilteredIssues((prevItems) => {
       const newItems = [...prevItems];
       const [movedItem] = newItems.splice(fromIndex, 1);
       newItems.splice(toIndex, 0, movedItem);
 
-      // setTimeout(() => {
-      //   updateSequenceIssue({
-      //     issues: newItems.map((issue, idx) => ({
-      //       id: issue._id,
-      //       sequence: idx,
-      //     })),
-      //   });
-      // }, 0);
+      setTimeout(() => {
+        updateSequence({
+          issues: newItems.map((issue, idx) => ({
+            issueId: issue._id,
+            sequence: idx,
+          })),
+        });
+      }, 0);
       return newItems;
     });
   };
@@ -245,6 +254,7 @@ const DraggableIssue = ({
       canDrop: monitor.canDrop(),
     }),
   });
+
   return (
     <div
       key={issue._id}
