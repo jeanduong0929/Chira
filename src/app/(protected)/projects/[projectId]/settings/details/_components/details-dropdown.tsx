@@ -25,8 +25,6 @@ export const DetailsDropdown = () => {
 
   const [confirm, ConfirmDialog] = useConfirm();
 
-  console.log("projectId", projectId);
-
   return (
     <>
       <ConfirmDialog

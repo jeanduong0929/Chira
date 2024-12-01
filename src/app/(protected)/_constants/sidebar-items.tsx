@@ -11,18 +11,18 @@ type SidebarGroup = {
   items: SidebarItem[];
 };
 
-export const getSidebarItems = (pathname?: string): SidebarGroup[] => [
+export const getSidebarItems = (projectId?: string): SidebarGroup[] => [
   {
     label: "Planning",
     items: [
       {
         label: "Backlog",
-        href: `projects/${pathname}/backlog`,
+        href: `/projects/${projectId}/backlog`,
         icon: ScrollText,
       },
       {
         label: "Board",
-        href: `projects/${pathname}/board`,
+        href: `/projects/${projectId}/board`,
         icon: Columns3,
       },
     ],

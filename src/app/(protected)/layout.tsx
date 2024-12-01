@@ -9,6 +9,7 @@ import {
   SidebarGroup,
   SidebarGroupItem,
   SidebarGroupLabel,
+  SidebarHeader,
   SidebarTrigger,
   SidebarWrapper,
 } from "./_components/sidebar";
@@ -17,13 +18,16 @@ import { api } from "../../../convex/_generated/api";
 
 import { useUser } from "@clerk/nextjs";
 import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
+import { useProject } from "@/store/use-project";
 
 interface ProtectedLayoutProps {
   children: React.ReactNode;
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
+  const [project, setProject] = useProject();
   const [sidebarOpen, setSidebarOpen] = useState<Record<string, boolean>>(
     () => {
       const initialState: Record<string, boolean> = {};
@@ -34,6 +38,9 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     },
   );
 
+  const { data: projects, isLoading } = useQuery(
+    convexQuery(api.projects.getAllWithUser, {}),
+  );
   const { user } = useUser();
   const { mutate: createUser } = useMutation({
     mutationFn: useConvexMutation(api.users.create),
@@ -46,7 +53,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
         imageUrl: user.imageUrl ?? "",
       });
     }
-  }, [createUser, user]);
+
+    if (!project && projects && projects.length > 0) {
+      setProject(projects[0]._id);
+    }
+  }, [createUser, project, projects, setProject, user]);
 
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({
@@ -55,15 +66,18 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     }));
   };
 
+  if (isLoading) return <div>Loading...</div>;
+
   return (
     <div>
       <Navbar />
 
       <SidebarWrapper>
         <Sidebar>
+          <SidebarHeader />
           <SidebarTrigger />
           <SidebarContent>
-            {getSidebarItems("").map((group) => (
+            {getSidebarItems(projects?.[0]?._id).map((group) => (
               <SidebarGroup key={group.label}>
                 <SidebarGroupLabel
                   open={sidebarOpen[group.label]}
@@ -75,6 +89,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
                   <SidebarGroupItem
                     open={sidebarOpen[group.label]}
                     key={item.label}
+                    disabled={projects?.length === 0}
                     {...item}
                   />
                 ))}

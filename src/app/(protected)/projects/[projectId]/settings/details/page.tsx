@@ -67,9 +67,17 @@ const DetailsPage = () => {
       />
 
       <div className="flex flex-col gap-y-32">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Details</h1>
-          <DetailsDropdown />
+        <div className="flex flex-col gap-y-5">
+          <Button variant={"ghost"} className="w-fit" asChild>
+            <Link href="/projects">
+              <ChevronLeft />
+              Go back
+            </Link>
+          </Button>
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-semibold">Details</h1>
+            <DetailsDropdown />
+          </div>
         </div>
 
         <form

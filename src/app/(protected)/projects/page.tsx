@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
@@ -27,13 +27,27 @@ const ProjectsPage = () => {
     convexQuery(api.projects.getAllWithUser, {}),
   );
 
+  const [name, setName] = useState("");
+
+  const filterProjects = useMemo(() => {
+    if (!projects) return [];
+    if (name === "") return projects;
+    return projects?.filter((project) =>
+      project.name.toLowerCase().includes(name.toLowerCase()),
+    );
+  }, [name, projects]);
+
   return (
     <div className="flex flex-col gap-y-10">
       <div className="flex flex-col gap-y-5">
         <h1 className="text-2xl font-semibold">Projects</h1>
 
         <div className="relative flex w-[224px] items-center">
-          <Input placeholder="Search projects" />
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Search projects"
+          />
           <Search className="absolute right-5 size-3" />
         </div>
       </div>
@@ -48,7 +62,7 @@ const ProjectsPage = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {projects?.map((project) => (
+          {filterProjects?.map((project) => (
             <TableRow key={project._id}>
               <TableCell>
                 <Button variant={"link"} className="p-0 text-[#0B66E4]" asChild>
