@@ -6,10 +6,10 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface SprintCardProps {
   index: number;
@@ -21,7 +21,7 @@ interface SprintCardProps {
 export const SprintCard = ({ index, sprint }: SprintCardProps) => {
   return (
     <Card className="border-none bg-[#F7F8F9]">
-      <CardHeader>
+      <CardHeader className="py-1">
         <CardTitle className="text-md flex items-center justify-between">
           <div className="flex items-center gap-x-3">
             <span>{sprint.name}</span>
@@ -34,13 +34,29 @@ export const SprintCard = ({ index, sprint }: SprintCardProps) => {
         <CardDescription className="hidden" />
       </CardHeader>
 
-      <CardContent className="mx-2 rounded-lg border-2 border-dashed border-gray-200">
-        <p>Card Content</p>
-      </CardContent>
-
-      <CardFooter>
-        <p>Card Footer</p>
-      </CardFooter>
+      <EmptySprintCardContent issues={sprint.issues} />
     </Card>
   );
+};
+
+const EmptySprintCardContent = ({ issues }: { issues: Doc<"issues">[] }) => {
+  if (issues.length === 0)
+    return (
+      <CardContent
+        className={cn(
+          issues.length === 0 &&
+            "mx-5 mb-5 h-[188px] rounded-lg border-2 border-dashed border-gray-200",
+        )}
+      >
+        {issues.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center">
+            <p className="text-xs font-semibold text-muted-foreground">
+              Plan your sprint
+            </p>
+          </div>
+        ) : (
+          <p>Card Content</p>
+        )}
+      </CardContent>
+    );
 };
