@@ -48,6 +48,8 @@ const BacklogPage = () => {
     }
   }, [sprints]);
 
+  console.log(openSprints);
+
   return (
     <>
       <div className="flex flex-col gap-y-10">

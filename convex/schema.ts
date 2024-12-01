@@ -32,5 +32,7 @@ export default defineSchema({
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
     projectId: v.id("projects"),
-  }).index("by_project_id", ["projectId"]),
+  })
+    .index("by_project_id", ["projectId"])
+    .index("by_sprint_id", ["sprintId"]),
 });

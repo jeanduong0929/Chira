@@ -18,7 +18,7 @@ export const getAll = query({
       for (const s of sprints) {
         const issues = await ctx.db
           .query("issues")
-          .withIndex("by_project_id", (q) => q.eq("projectId", s.projectId))
+          .withIndex("by_sprint_id", (q) => q.eq("sprintId", s._id))
           .collect();
 
         sprintsWithIssues.push({ ...s, issues });

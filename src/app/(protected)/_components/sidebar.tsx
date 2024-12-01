@@ -250,7 +250,6 @@ const SidebarGroupItem = React.forwardRef<
   }
 >(({ className, label, href, icon: Icon, open, disabled, ...props }, ref) => {
   const pathname = usePathname();
-  console.log("href", href);
 
   if (open) {
     return (
@@ -259,7 +258,7 @@ const SidebarGroupItem = React.forwardRef<
         className={cn(
           className,
           "flex justify-start px-6 hover:bg-[#EAF3FF]",
-          pathname.includes(href.split("/").pop() ?? "") &&
+          pathname.includes(href.split("/").pop() as string) &&
             "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8]",
           disabled && "pointer-events-none opacity-50",
         )}
