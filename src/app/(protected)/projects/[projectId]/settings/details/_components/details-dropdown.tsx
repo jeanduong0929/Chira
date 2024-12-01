@@ -41,7 +41,6 @@ export const DetailsDropdown = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem
-            className="cursor-pointer"
             onClick={async () => {
               const ok = await confirm();
               if (!ok) return;

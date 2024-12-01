@@ -23,19 +23,16 @@ export const ProjectDropdown = () => {
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant={"ghost"}>
+          <Button variant={"ghost"} className="px-2">
             Projects
             <ChevronDown className="size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[320px]" align="start">
-          <DropdownMenuItem className="cursor-pointer" asChild>
+          <DropdownMenuItem asChild>
             <Link href="/projects">View all projects</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => setOpenProjectDialog(true)}
-          >
+          <DropdownMenuItem onClick={() => setOpenProjectDialog(true)}>
             Create project
           </DropdownMenuItem>
         </DropdownMenuContent>

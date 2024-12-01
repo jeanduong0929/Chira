@@ -16,14 +16,14 @@ export const getSidebarItems = (projectId?: string): SidebarGroup[] => [
     label: "Planning",
     items: [
       {
-        label: "Backlog",
-        href: `/projects/${projectId}/backlog`,
-        icon: ScrollText,
-      },
-      {
         label: "Board",
         href: `/projects/${projectId}/board`,
         icon: Columns3,
+      },
+      {
+        label: "Backlog",
+        href: `/projects/${projectId}/backlog`,
+        icon: ScrollText,
       },
     ],
   },

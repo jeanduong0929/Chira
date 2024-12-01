@@ -11,4 +11,18 @@ export default defineSchema({
     name: v.string(),
     clerkId: v.string(),
   }).index("by_clerk_id", ["clerkId"]),
+  boards: defineTable({
+    name: v.string(),
+    projectId: v.id("projects"),
+  }).index("by_project_id", ["projectId"]),
+  sprints: defineTable({
+    name: v.string(),
+    projectId: v.id("projects"),
+  }).index("by_project_id", ["projectId"]),
+  issues: defineTable({
+    title: v.string(),
+    description: v.optional(v.string()),
+    sprintId: v.optional(v.id("sprints")),
+    projectId: v.id("projects"),
+  }).index("by_project_id", ["projectId"]),
 });

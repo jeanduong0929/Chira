@@ -43,13 +43,12 @@ export const ProjectMoreActionDropdown = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem className="cursor-pointer">
+          <DropdownMenuItem asChild>
             <Link href={`/projects/${projectId}/settings/details`}>
               Project settings
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="cursor-pointer"
             onClick={async () => {
               const ok = await confirm();
               if (!ok) return;
