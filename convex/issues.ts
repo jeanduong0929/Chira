@@ -84,6 +84,23 @@ export const getById = query({
   },
 });
 
+export const getBySprintId = query({
+  args: {
+    sprintId: v.id("sprints"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      return await ctx.db
+        .query("issues")
+        .withIndex("by_sprint_id", (q) => q.eq("sprintId", args.sprintId))
+        .collect();
+    } catch (error) {
+      console.error(error);
+      return [];
+    }
+  },
+});
+
 export const update = mutation({
   args: {
     issueId: v.id("issues"),

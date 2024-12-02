@@ -56,6 +56,24 @@ export const getById = query({
   },
 });
 
+export const getActiveSprintByProjectId = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      return ctx.db
+        .query("sprints")
+        .withIndex("by_project_id_status", (q) =>
+          q.eq("projectId", args.projectId).eq("status", "active"),
+        )
+        .unique();
+    } catch (error) {
+      console.error(error);
+    }
+  },
+});
+
 export const create = mutation({
   args: {
     name: v.string(),

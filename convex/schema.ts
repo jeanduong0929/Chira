@@ -31,7 +31,9 @@ export default defineSchema({
       v.literal("completed"),
     ),
     projectId: v.id("projects"),
-  }).index("by_project_id", ["projectId"]),
+  })
+    .index("by_project_id", ["projectId"])
+    .index("by_project_id_status", ["projectId", "status"]),
   issues: defineTable({
     title: v.string(),
     description: v.optional(v.string()),

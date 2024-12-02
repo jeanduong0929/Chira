@@ -76,7 +76,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   };
 
   return (
-    <div>
+    <div className="flex h-screen flex-col">
       <Navbar />
 
       <SidebarWrapper>
@@ -107,7 +107,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
         <SidebarChildren>
           <DndProvider backend={HTML5Backend}>
-            <main className="mx-auto w-11/12 max-w-screen-2xl py-10">
+            <main className="mx-auto h-full w-11/12 max-w-screen-2xl py-10">
               {children}
             </main>
           </DndProvider>
