@@ -1,33 +1,44 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import Link from "next/link";
+import { ChevronDown, Circle } from "lucide-react";
+import { useParams } from "next/navigation";
+import { useDrop } from "react-dnd";
+import { useDrag } from "react-dnd";
+import { boardColumns } from "./_constants/board-columns";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
 import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
-import { boardColumns } from "./_constants/board-columns";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const BoardPage = () => {
+  const [issues, setIssues] = useState<Doc<"issues">[]>([]);
+
   const { projectId } = useParams();
   const { data: sprint, isLoading: isLoadingSprint } = useQuery(
     convexQuery(api.sprints.getActiveSprintByProjectId, {
       projectId: projectId as Id<"projects">,
     }),
   );
-  const { data: issues, isLoading: isLoadingIssues } = useQuery(
+  const { data: issuez, isLoading: isLoadingIssues } = useQuery(
     convexQuery(api.issues.getBySprintId, {
       sprintId: sprint?._id as Id<"sprints">,
     }),
   );
 
-  if (isLoadingSprint || isLoadingIssues)
+  useEffect(() => {
+    if (issuez) {
+      setIssues(issuez);
+    }
+  }, [issuez]);
+
+  if (isLoadingSprint)
     return (
       <div className="flex gap-x-5">
         {Object.entries(boardColumns).map(([key, _value]) => (
@@ -50,12 +61,24 @@ const BoardPage = () => {
         ))}
       </div>
 
-      <UnassignedIssues sprint={sprint ?? null} />
+      <UnassignedIssues
+        sprint={sprint ?? null}
+        issues={issues ?? []}
+        setIssues={setIssues}
+      />
     </div>
   );
 };
 
-const UnassignedIssues = ({ sprint }: { sprint: Doc<"sprints"> | null }) => {
+const UnassignedIssues = ({
+  sprint,
+  issues,
+  setIssues,
+}: {
+  sprint: Doc<"sprints"> | null;
+  issues: Doc<"issues">[];
+  setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
+}) => {
   const [showUnassigned, setShowUnassigned] = useState(true);
 
   return (
@@ -79,16 +102,102 @@ const UnassignedIssues = ({ sprint }: { sprint: Doc<"sprints"> | null }) => {
       {showUnassigned && (
         <div className="flex gap-x-5">
           {boardColumns.map(({ value }, index) => (
-            <div
+            <Column
               key={value}
-              className="h-[320px] w-[270px] rounded-md bg-[#F7F8F9]"
+              value={value as "not_started" | "in_progress" | "completed"}
+              setIssues={setIssues}
             >
               {!sprint && index === 0 && <GetStartedBacklog />}
-            </div>
+
+              <div className="flex flex-col gap-y-1 p-2">
+                {issues?.map(
+                  (issue) =>
+                    issue.status === value && (
+                      <IssueCard key={issue._id} issue={issue} />
+                    ),
+                )}
+              </div>
+            </Column>
           ))}
         </div>
       )}
     </div>
+  );
+};
+
+const Column = ({
+  value,
+  children,
+  setIssues,
+}: {
+  value: "not_started" | "in_progress" | "completed";
+  children: React.ReactNode;
+  setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
+}) => {
+  const [{ isOver }, drop] = useDrop({
+    accept: "COLUMN",
+    drop: (draggedItem: { issue: Doc<"issues">; type: string }) => {
+      if (draggedItem.type === "COLUMN" && draggedItem.issue.status !== value) {
+        setIssues((prev) =>
+          prev.map((i) => {
+            if (i._id === draggedItem.issue._id) {
+              return { ...i, status: value };
+            }
+            return i;
+          }),
+        );
+      }
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
+
+  return (
+    <div
+      ref={(node) => {
+        if (node) drop(node);
+      }}
+      className="relative h-[320px] w-[270px] rounded-md bg-[#F7F8F9]"
+    >
+      {isOver && (
+        <div className="absolute left-0 top-0 flex w-full items-center">
+          <div className="size-2 rounded-full border-2 border-blue-500" />
+          <div className="h-[2px] w-full bg-blue-500" />
+        </div>
+      )}
+      {children}
+    </div>
+  );
+};
+
+const IssueCard = ({ issue }: { issue: Doc<"issues"> }) => {
+  const [, drag] = useDrag({
+    type: "COLUMN",
+    item: { issue, type: "COLUMN" },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  return (
+    <>
+      <Card
+        ref={(node) => {
+          drag(node);
+        }}
+        className="rounded-sm"
+      >
+        <CardHeader className="pt-3">
+          <CardTitle className="flex items-center justify-between">
+            <span className="text-sm font-medium">{issue.title}</span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pb-4">
+          <p>Card Content</p>
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
