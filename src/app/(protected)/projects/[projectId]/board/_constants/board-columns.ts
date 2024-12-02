@@ -1,5 +1,10 @@
-export const boardColumns: Record<string, string> = {
-  not_started: "To Do",
-  in_progress: "In Progress",
-  completed: "Done",
+type BoardColumn = {
+  label: string;
+  value: string;
 };
+
+export const boardColumns: BoardColumn[] = [
+  { label: "To Do", value: "not_started" },
+  { label: "In Progress", value: "in_progress" },
+  { label: "Done", value: "completed" },
+];

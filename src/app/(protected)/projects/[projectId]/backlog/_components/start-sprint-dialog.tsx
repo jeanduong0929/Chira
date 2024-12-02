@@ -2,6 +2,7 @@ import React from "react";
 import { toast } from "sonner";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../../convex/_generated/dataModel";
 
@@ -35,9 +36,12 @@ export const StartSprintDialog = ({
     to: addDays(new Date(), 14),
   });
 
+  const { projectId } = useParams();
   const { mutate: startSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.startSprint),
   });
+
+  const router = useRouter();
 
   return (
     <Dialog
@@ -80,6 +84,7 @@ export const StartSprintDialog = ({
                       to: addDays(new Date(), 14),
                     });
                     setOpen(false);
+                    router.push(`/projects/${projectId}/board`);
                   }
                 },
               },
