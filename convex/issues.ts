@@ -16,8 +16,6 @@ export const create = mutation({
     try {
       await getClerkId(ctx.auth);
 
-      console.log(args.storyPoints);
-
       const issues = await ctx.db
         .query("issues")
         .withIndex("by_project_id_sequence", (q) =>
@@ -196,7 +194,6 @@ export const moveToBacklog = mutation({
   },
   handler: async (ctx, args) => {
     try {
-      console.log("Moving issue to backlog");
       await getClerkId(ctx.auth);
 
       const issue = await ctx.db.get(args.issueId);

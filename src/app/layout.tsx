@@ -25,7 +25,7 @@ export default function RootLayout({
         <Provider>
           <ConvexClerkProvider>
             <main>{children}</main>
-            <Toaster />
+            <Toaster duration={2000} />
           </ConvexClerkProvider>
         </Provider>
       </body>

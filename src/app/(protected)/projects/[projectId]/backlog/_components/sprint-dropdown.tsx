@@ -23,9 +23,13 @@ interface SprintDropdownProps {
 export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [confirm, ConfirmDialog] = useConfirm();
+  const [statusConfirm, StatusConfirmDialog] = useConfirm();
 
   const { mutate: removeSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.remove),
+  });
+  const { mutate: notStarted } = useMutation({
+    mutationFn: useConvexMutation(api.sprints.notStarted),
   });
 
   return (
@@ -37,6 +41,27 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          <DropdownMenuItem
+            onClick={async () => {
+              const ok = await statusConfirm();
+              if (!ok) return;
+
+              notStarted(
+                {
+                  sprintId: sprint._id,
+                },
+                {
+                  onSuccess: (data) => {
+                    if (data) {
+                      toast.success("Sprint status changed to not started");
+                    }
+                  },
+                },
+              );
+            }}
+          >
+            Not started
+          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpenEdit(true)}>
             Edit sprint
           </DropdownMenuItem>
@@ -72,6 +97,13 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
       <ConfirmDialog
         title={"Delete Sprint"}
         description={"Are you sure you want to delete this sprint?"}
+        variant={"destructive"}
+      />
+      <StatusConfirmDialog
+        title={"Change sprint status"}
+        description={
+          "Are you sure you want to change the status of this sprint?"
+        }
         variant={"destructive"}
       />
     </>

@@ -181,6 +181,32 @@ export const completeSprint = mutation({
   },
 });
 
+export const notStarted = mutation({
+  args: {
+    sprintId: v.id("sprints"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const sprint = await ctx.db.get(args.sprintId);
+      if (!sprint) throw new Error("Sprint not found");
+
+      // Change status to not started and clear start and end dates
+      await ctx.db.patch(args.sprintId, {
+        status: "not_started",
+        startDate: undefined,
+        endDate: undefined,
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 export const remove = mutation({
   args: {
     sprintId: v.id("sprints"),

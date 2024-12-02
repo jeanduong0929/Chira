@@ -64,6 +64,7 @@ const BacklogPage = () => {
             <SprintCard
               key={sprint._id}
               sprint={sprint}
+              sprints={sprints ?? []}
               open={openSprints[sprint._id]}
               setOpen={(open) =>
                 setOpenSprints({ ...openSprints, [sprint._id]: open })

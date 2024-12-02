@@ -15,16 +15,23 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 interface SprintCardProps {
   sprint: Doc<"sprints"> & {
     issues: Doc<"issues">[];
   };
+  sprints: Doc<"sprints">[];
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
+export const SprintCard = ({
+  sprint,
+  sprints,
+  open,
+  setOpen,
+}: SprintCardProps) => {
   const [startSprintDialogOpen, setStartSprintDialogOpen] = useState(false);
   const [completeSprintDialogOpen, setCompleteSprintDialogOpen] =
     useState(false);
@@ -77,7 +84,18 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
             </div>
             <div className="flex items-center gap-x-2">
               {sprint.status === "not_started" && (
-                <Button onClick={() => setStartSprintDialogOpen(true)}>
+                <Button
+                  onClick={() => {
+                    if (
+                      sprints.filter((s) => s.status === "active").length > 0
+                    ) {
+                      toast.error("You can only have one active sprint");
+                      return;
+                    }
+
+                    setStartSprintDialogOpen(true);
+                  }}
+                >
                   Start sprint
                 </Button>
               )}
