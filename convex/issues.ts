@@ -260,6 +260,36 @@ export const updateSequence = mutation({
   },
 });
 
+export const updateStatus = mutation({
+  args: {
+    issue: v.object({
+      id: v.id("issues"),
+      status: v.union(
+        v.literal("not_started"),
+        v.literal("in_progress"),
+        v.literal("completed"),
+      ),
+    }),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issue.id);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+      await ctx.db.patch(issue._id, {
+        status: args.issue.status,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 export const remove = mutation({
   args: {
     issueId: v.id("issues"),

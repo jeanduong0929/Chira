@@ -2,7 +2,7 @@
 
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Link from "next/link";
-import { ChevronDown, Circle } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useDrop } from "react-dnd";
 import { useDrag } from "react-dnd";
@@ -11,11 +11,13 @@ import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
 import { useQuery } from "@tanstack/react-query";
-import { convexQuery } from "@convex-dev/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const BoardPage = () => {
   const [issues, setIssues] = useState<Doc<"issues">[]>([]);
@@ -81,6 +83,8 @@ const UnassignedIssues = ({
 }) => {
   const [showUnassigned, setShowUnassigned] = useState(true);
 
+  console.log(issues);
+
   return (
     <div className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-2">
@@ -105,6 +109,7 @@ const UnassignedIssues = ({
             <Column
               key={value}
               value={value as "not_started" | "in_progress" | "completed"}
+              issues={issues}
               setIssues={setIssues}
             >
               {!sprint && index === 0 && <GetStartedBacklog />}
@@ -128,12 +133,18 @@ const UnassignedIssues = ({
 const Column = ({
   value,
   children,
+  issues,
   setIssues,
 }: {
   value: "not_started" | "in_progress" | "completed";
   children: React.ReactNode;
+  issues: Doc<"issues">[];
   setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
 }) => {
+  const { mutate: updateStatus } = useMutation({
+    mutationFn: useConvexMutation(api.issues.updateStatus),
+  });
+
   const [{ isOver }, drop] = useDrop({
     accept: "COLUMN",
     drop: (draggedItem: { issue: Doc<"issues">; type: string }) => {
@@ -146,6 +157,10 @@ const Column = ({
             return i;
           }),
         );
+
+        updateStatus({
+          issue: { id: draggedItem.issue._id, status: value },
+        });
       }
     },
     collect: (monitor) => ({

@@ -26,7 +26,11 @@ const SidebarWrapper = React.forwardRef<
   if (!mounted) return null;
 
   return (
-    <div ref={ref} className={cn(className, "flex-1 overflow-auto")} {...props}>
+    <div
+      ref={ref}
+      className={cn(className, "flex flex-1 overflow-auto")}
+      {...props}
+    >
       {children}
     </div>
   );

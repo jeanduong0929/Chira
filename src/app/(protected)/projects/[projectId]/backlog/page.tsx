@@ -296,7 +296,10 @@ const DraggableIssue = ({
       inSprint={false}
     >
       {isOver && canDrop && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />
+        <div className="absolute -top-1 left-0 flex w-full items-center">
+          <div className="size-2 rounded-full border-2 border-blue-500" />
+          <div className="h-[2px] w-full bg-blue-500" />
+        </div>
       )}
     </Issue>
   );
