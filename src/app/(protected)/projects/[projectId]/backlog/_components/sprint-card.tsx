@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { SprintDropdown } from "./sprint-dropdown";
 import { Issue } from "./issue";
+import { StartSprintDialog } from "./start-sprint-dialog";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import {
@@ -23,52 +24,80 @@ interface SprintCardProps {
 }
 
 export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
-  return (
-    <Card className="border-none bg-[#F7F8F9]">
-      <CardHeader className="py-1">
-        <CardTitle className="text-md flex items-center justify-between">
-          <div className="flex items-center gap-x-3">
-            <div className="flex items-center gap-x-1">
-              <Button
-                variant={"ghost"}
-                size={"iconXs"}
-                className="hover:bg-[#D5D9E0]"
-                onClick={() => setOpen(!open)}
-              >
-                <ChevronDown
-                  className={cn(
-                    "transition-transform duration-300 ease-in-out",
-                    open ? "rotate-0" : "-rotate-90",
-                  )}
-                />
-              </Button>
-              <span>{sprint.name}</span>
-            </div>
-            <p className="text-xs font-normal text-muted-foreground">
-              ({sprint.issues.length} issues)
-            </p>
-          </div>
-          <SprintDropdown sprint={sprint} />
-        </CardTitle>
-        <CardDescription className="hidden" />
-      </CardHeader>
+  const [startSprintDialogOpen, setStartSprintDialogOpen] = useState(false);
+  const [completeSprintDialogOpen, setCompleteSprintDialogOpen] =
+    useState(false);
 
-      {open && (
-        <>
-          <EmptySprintCardContent issues={sprint.issues} />
-          <div className="mx-2 mb-5">
-            {sprint.issues.map((issue) => (
-              <Issue
-                key={issue._id}
-                issue={issue}
-                projectId={issue.projectId}
-                inSprint={true}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </Card>
+  return (
+    <>
+      <Card className="border-none bg-[#F7F8F9]">
+        <CardHeader className="py-1">
+          <CardTitle className="text-md flex items-center justify-between py-2">
+            <div className="flex items-center gap-x-3">
+              <div className="flex items-center gap-x-1">
+                <Button
+                  variant={"ghost"}
+                  size={"iconXs"}
+                  className="hover:bg-[#D5D9E0]"
+                  onClick={() => setOpen(!open)}
+                >
+                  <ChevronDown
+                    className={cn(
+                      "transition-transform duration-300 ease-in-out",
+                      open ? "rotate-0" : "-rotate-90",
+                    )}
+                  />
+                </Button>
+                <span>{sprint.name}</span>
+              </div>
+              <p className="text-xs font-normal text-muted-foreground">
+                ({sprint.issues.length} issues)
+              </p>
+            </div>
+            <div className="flex items-center gap-x-2">
+              {sprint.status === "not_started" && (
+                <Button onClick={() => setStartSprintDialogOpen(true)}>
+                  Start sprint
+                </Button>
+              )}
+              {sprint.status === "active" && (
+                <Button
+                  variant={"secondary"}
+                  onClick={() => setCompleteSprintDialogOpen(true)}
+                  className="bg-[#E9EBEE] hover:bg-[#D5D9E0]"
+                >
+                  Complete sprint
+                </Button>
+              )}
+              <SprintDropdown sprint={sprint} />
+            </div>
+          </CardTitle>
+          <CardDescription className="hidden" />
+        </CardHeader>
+
+        {open && (
+          <>
+            <EmptySprintCardContent issues={sprint.issues} />
+            <div className="mx-2 mb-5">
+              {sprint.issues.map((issue) => (
+                <Issue
+                  key={issue._id}
+                  issue={issue}
+                  projectId={issue.projectId}
+                  inSprint={true}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </Card>
+
+      <StartSprintDialog
+        sprintId={sprint._id}
+        open={startSprintDialogOpen}
+        setOpen={setStartSprintDialogOpen}
+      />
+    </>
   );
 };
 

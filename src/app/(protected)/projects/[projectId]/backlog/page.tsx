@@ -204,7 +204,12 @@ const BacklogCard = ({
             <div className="flex flex-col">
               {searchIssues.map((issue, idx) =>
                 name ? (
-                  <Issue key={issue._id} issue={issue} projectId={projectId} />
+                  <Issue
+                    key={issue._id}
+                    issue={issue}
+                    projectId={projectId}
+                    inSprint={false}
+                  />
                 ) : (
                   <DraggableIssue
                     key={issue._id}
@@ -283,6 +288,7 @@ const DraggableIssue = ({
       ref={(node) => {
         if (node) drag(drop(node));
       }}
+      inSprint={false}
     >
       {isOver && canDrop && (
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-500" />

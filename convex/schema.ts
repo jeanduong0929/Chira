@@ -23,14 +23,21 @@ export default defineSchema({
   }).index("by_project_id", ["projectId"]),
   sprints: defineTable({
     name: v.string(),
+    startDate: v.optional(v.string()),
+    endDate: v.optional(v.string()),
+    status: v.union(
+      v.literal("not_started"),
+      v.literal("active"),
+      v.literal("completed"),
+    ),
     projectId: v.id("projects"),
   }).index("by_project_id", ["projectId"]),
   issues: defineTable({
     title: v.string(),
     description: v.optional(v.string()),
     storyPoints: v.optional(v.string()),
-    sequence: v.number(),
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
+    sequence: v.number(),
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
     projectId: v.id("projects"),
