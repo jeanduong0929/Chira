@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { SprintDropdown } from "./sprint-dropdown";
 import { Issue } from "./issue";
 import { StartSprintDialog } from "./start-sprint-dialog";
+import { CompleteSprintDialog } from "./complete-sprint-dialog";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import {
@@ -96,6 +97,11 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
         sprintId={sprint._id}
         open={startSprintDialogOpen}
         setOpen={setStartSprintDialogOpen}
+      />
+      <CompleteSprintDialog
+        sprint={sprint}
+        open={completeSprintDialogOpen}
+        setOpen={setCompleteSprintDialogOpen}
       />
     </>
   );

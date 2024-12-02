@@ -1,7 +1,6 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
 import { mutation, query } from "./_generated/server";
-import { Id } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -35,6 +34,7 @@ export const create = mutation({
         projectId: args.projectId,
         issueType: args.issueType,
         sequence: issues.length,
+        status: "not_started",
       });
     } catch (error) {
       console.error(error);
