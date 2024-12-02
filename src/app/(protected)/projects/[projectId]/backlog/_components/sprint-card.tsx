@@ -29,6 +29,20 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
   const [completeSprintDialogOpen, setCompleteSprintDialogOpen] =
     useState(false);
 
+  const getDate = () => {
+    return (
+      new Date(sprint.startDate as string).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+      }) +
+      " - " +
+      new Date(sprint.endDate as string).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+      })
+    );
+  };
+
   return (
     <>
       <Card className="border-none bg-[#F7F8F9]">
@@ -51,6 +65,7 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
                 </Button>
                 <span>{sprint.name}</span>
               </div>
+              <span className="text-xs font-normal">{getDate()}</span>
               <p className="text-xs font-normal text-muted-foreground">
                 ({sprint.issues.length} issues)
               </p>
