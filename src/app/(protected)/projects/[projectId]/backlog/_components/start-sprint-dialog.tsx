@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/date-picker-with-range";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
+import { Label } from "@/components/ui/label";
 
 interface StartSprintDialogProps {
   sprintId: Id<"sprints">;
@@ -86,10 +87,17 @@ export const StartSprintDialog = ({
           }}
           className="flex flex-col gap-y-4"
         >
-          <DatePickerWithRange date={date} setDate={setDate} />
+          <div className="flex flex-col gap-y-2">
+            <Label>Sprint dates</Label>
+            <DatePickerWithRange date={date} setDate={setDate} />
+          </div>
 
           <DialogFooter>
-            <Button type="button" variant={"outline"}>
+            <Button
+              type="button"
+              variant={"outline"}
+              onClick={() => setOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={!date}>
