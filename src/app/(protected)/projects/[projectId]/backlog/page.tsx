@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useRandomName } from "@/hooks/use-generate-name";
 
 const BacklogPage = () => {
   const [name, setName] = useState("");
@@ -126,6 +127,8 @@ const BacklogCard = ({
     }),
   );
 
+  const randomName = useRandomName();
+
   useEffect(() => {
     if (issues) {
       setFilteredIssues(issues.filter((issue) => !issue.sprintId));
@@ -177,6 +180,7 @@ const BacklogCard = ({
 
               createSprint(
                 {
+                  name: randomName,
                   projectId: projectId as Id<"projects">,
                   index: sprints?.length ?? 0,
                 },

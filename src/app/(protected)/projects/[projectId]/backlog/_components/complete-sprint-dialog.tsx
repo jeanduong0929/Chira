@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
+import { api } from "../../../../../../../convex/_generated/api";
 
 import {
   Dialog,
@@ -18,6 +20,9 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useMutation } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query";
+import { useRandomName } from "@/hooks/use-generate-name";
 
 interface CompleteSprintDialogProps {
   open: boolean;
@@ -39,6 +44,12 @@ export const CompleteSprintDialog = ({
     (issue) => issue.status !== "completed",
   );
 
+  const { mutate: completeSprint } = useMutation({
+    mutationFn: useConvexMutation(api.sprints.completeSprint),
+  });
+
+  const randomName = useRandomName();
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -50,7 +61,29 @@ export const CompleteSprintDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <form className="flex flex-col gap-y-8">
+        <form
+          className="flex flex-col gap-y-8"
+          onSubmit={(e) => {
+            e.preventDefault();
+            completeSprint(
+              {
+                name: randomName,
+                sprintId: sprint._id,
+                openIssues: moveTo,
+                issuesIds: openIssues.map((issue) => issue._id),
+              },
+              {
+                onSuccess: (data) => {
+                  if (data) {
+                    toast.success("Sprint completed");
+                    setMoveTo("backlog");
+                    setOpen(false);
+                  }
+                },
+              },
+            );
+          }}
+        >
           <div className="flex flex-col gap-y-2 text-sm">
             <p>This sprint contains:</p>
             <li className="flex items-center gap-x-2">
