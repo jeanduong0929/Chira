@@ -41,30 +41,32 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            onClick={async () => {
-              const ok = await statusConfirm();
-              if (!ok) return;
-
-              notStarted(
-                {
-                  sprintId: sprint._id,
-                },
-                {
-                  onSuccess: (data) => {
-                    if (data) {
-                      toast.success("Sprint status changed to not started");
-                    }
-                  },
-                },
-              );
-            }}
-          >
-            Not started
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpenEdit(true)}>
             Edit sprint
           </DropdownMenuItem>
+          {sprint.status === "active" && (
+            <DropdownMenuItem
+              onClick={async () => {
+                const ok = await statusConfirm();
+                if (!ok) return;
+
+                notStarted(
+                  {
+                    sprintId: sprint._id,
+                  },
+                  {
+                    onSuccess: (data) => {
+                      if (data) {
+                        toast.success("Sprint status changed to not started");
+                      }
+                    },
+                  },
+                );
+              }}
+            >
+              Not started
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={async () => {
               const ok = await confirm();
