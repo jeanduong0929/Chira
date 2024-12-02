@@ -30,6 +30,7 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
     useState(false);
 
   const getDate = () => {
+    if (!sprint.startDate || !sprint.endDate) return "";
     return (
       new Date(sprint.startDate as string).toLocaleDateString("en-US", {
         day: "numeric",
@@ -65,7 +66,11 @@ export const SprintCard = ({ sprint, open, setOpen }: SprintCardProps) => {
                 </Button>
                 <span>{sprint.name}</span>
               </div>
-              <span className="text-xs font-normal">{getDate()}</span>
+              <span
+                className={cn("text-xs font-normal", !getDate() && "hidden")}
+              >
+                {getDate()}
+              </span>
               <p className="text-xs font-normal text-muted-foreground">
                 ({sprint.issues.length} issues)
               </p>
