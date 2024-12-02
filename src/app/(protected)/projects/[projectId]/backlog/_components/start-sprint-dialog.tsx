@@ -51,7 +51,7 @@ export const StartSprintDialog = ({
         }
       }}
     >
-      <DialogContent>
+      <DialogContent className="flex flex-col gap-y-4">
         <DialogHeader>
           <DialogTitle>Start sprint</DialogTitle>
           <DialogDescription>
