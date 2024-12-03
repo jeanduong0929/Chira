@@ -1,11 +1,16 @@
+import { useState } from "react";
 import { useDrag } from "react-dnd";
-import { Bookmark, CheckIcon, Circle, User2, UserRound } from "lucide-react";
+import { Bookmark, CheckIcon, Circle } from "lucide-react";
+import { IssueCardDropdown } from "./issue-card-dropdown";
 import { IssueWithAssignee } from "../types/issue-with-assignee";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SprintEditIssueDialog } from "../../backlog/_components/sprint-edit-issue-dialog";
 
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
+  const [open, setOpen] = useState(false);
+
   const [, drag] = useDrag({
     type: "COLUMN",
     item: { issue, type: "COLUMN" },
@@ -24,7 +29,13 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
       >
         <CardHeader className="pt-3">
           <CardTitle className="flex items-center justify-between">
-            <span className="text-sm font-medium">{issue.title}</span>
+            <span
+              className="cursor-pointer text-sm font-medium hover:text-[#0B66E4]"
+              onClick={() => setOpen(true)}
+            >
+              {issue.title}
+            </span>
+            <IssueCardDropdown issueId={issue._id} />
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between pb-4">
@@ -32,6 +43,12 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
           <AssigneeAvatar assignee={issue.assignee} />
         </CardContent>
       </Card>
+
+      <SprintEditIssueDialog
+        issueId={issue._id}
+        open={open}
+        setOpen={setOpen}
+      />
     </>
   );
 };
