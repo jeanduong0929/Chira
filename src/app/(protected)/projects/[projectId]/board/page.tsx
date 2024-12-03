@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { boardColumns } from "./_constants/board-columns";
 import { UnassignedIssues } from "./_components/unassigned-issues";
+import { IssueWithAssignee } from "./types/issue-with-assignee";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -12,7 +13,9 @@ import { convexQuery } from "@convex-dev/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const BoardPage = () => {
-  const [unassignedIssues, setUnassignedIssues] = useState<Doc<"issues">[]>([]);
+  const [unassignedIssues, setUnassignedIssues] = useState<IssueWithAssignee[]>(
+    [],
+  );
 
   const { projectId } = useParams();
   const { data: sprint, isLoading: isLoadingSprint } = useQuery(
@@ -20,7 +23,7 @@ const BoardPage = () => {
       projectId: projectId as Id<"projects">,
     }),
   );
-  const { data: issuez, isLoading: isLoadingIssues } = useQuery(
+  const { data: issuez } = useQuery(
     convexQuery(api.issues.getBySprintId, {
       sprintId: sprint?._id as Id<"sprints">,
     }),

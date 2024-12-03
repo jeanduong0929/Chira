@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Column } from "./board-column";
 import { IssueCard } from "./issue-card";
+import { IssueWithAssignee } from "../types/issue-with-assignee";
 import { boardColumns } from "../_constants/board-columns";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
@@ -16,8 +17,8 @@ export const UnassignedIssues = ({
   setIssues,
 }: {
   sprint: Doc<"sprints"> | null;
-  issues: Doc<"issues">[];
-  setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
+  issues: IssueWithAssignee[];
+  setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
 }) => {
   const [showUnassigned, setShowUnassigned] = useState(true);
 

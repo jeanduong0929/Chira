@@ -12,6 +12,7 @@ export default defineSchema({
     clerkId: v.string(),
   }).index("by_clerk_id", ["clerkId"]),
   members: defineTable({
+    role: v.union(v.literal("admin"), v.literal("member")),
     projectId: v.id("projects"),
     clerkId: v.string(),
   })

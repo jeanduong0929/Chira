@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { useDrop } from "react-dnd";
+import { IssueWithAssignee } from "../types/issue-with-assignee";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../../../convex/_generated/api";
 
@@ -13,7 +14,7 @@ export const Column = ({
 }: {
   value: "not_started" | "in_progress" | "completed";
   children: React.ReactNode;
-  setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
+  setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
 }) => {
   const { mutate: updateStatus } = useMutation({
     mutationFn: useConvexMutation(api.issues.updateStatus),

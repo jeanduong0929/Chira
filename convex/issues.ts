@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
 import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 export const create = mutation({
   args: {
@@ -90,10 +91,59 @@ export const getBySprintId = query({
   },
   handler: async (ctx, args) => {
     try {
-      return await ctx.db
+      const issues = await ctx.db
         .query("issues")
         .withIndex("by_sprint_id", (q) => q.eq("sprintId", args.sprintId))
         .collect();
+
+      const issuesWithAssignee: (Doc<"issues"> & {
+        assignee:
+          | (Doc<"members"> & {
+              user: {
+                name: string;
+                imageUrl: string;
+              };
+            })
+          | null;
+      })[] = [];
+
+      // Get assignee for each issue
+      for (const issue of issues) {
+        const assignee = await ctx.db
+          .query("members")
+          .withIndex("by_clerk_id", (q) =>
+            q.eq("clerkId", issue.assigneeId as string),
+          )
+          .unique();
+
+        if (assignee) {
+          const user = await ctx.db
+            .query("users")
+            .withIndex("by_clerk_id", (q) => q.eq("clerkId", assignee.clerkId))
+            .unique();
+
+          issuesWithAssignee.push({
+            ...issue,
+            assignee: {
+              ...assignee,
+              user: {
+                name: user?.name as string,
+                imageUrl: user?.imageUrl as string,
+              },
+            },
+          });
+        } else {
+          issuesWithAssignee.push({
+            ...issue,
+            assignee: null,
+          });
+        }
+      }
+
+      console.log(issues);
+      console.log(issuesWithAssignee);
+
+      return issuesWithAssignee;
     } catch (error) {
       console.error(error);
       return [];
