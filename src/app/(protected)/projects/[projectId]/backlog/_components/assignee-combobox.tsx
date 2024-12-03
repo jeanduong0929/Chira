@@ -1,8 +1,8 @@
 "use client";
 
 import { Dispatch, SetStateAction, useState } from "react";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { Doc } from "../../../../../../../convex/_generated/dataModel";
+import { Check, ChevronsUpDown, User2 } from "lucide-react";
+import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -71,35 +71,48 @@ export function AssigneeCombobox({
             <CommandEmpty>No member found.</CommandEmpty>
             <CommandGroup>
               {members.map((member) => (
-                <CommandItem
-                  key={member.user._id}
-                  value={member.user.name}
-                  onSelect={() => {
-                    setValue(
-                      value?._id === member.user._id ? null : member.user,
-                    );
-                    setOpen(false);
-                  }}
-                >
-                  <Avatar className="size-5">
-                    <AvatarImage src={member.user.imageUrl} />
-                    <AvatarFallback>
-                      {member.user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  {member.user.name}
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      value?._id === member.user._id
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
-                </CommandItem>
+                <div key={member.user._id}>
+                  <CommandItem
+                    value={member.user.name}
+                    onSelect={() => {
+                      setValue(
+                        value?._id === member.user._id ? null : member.user,
+                      );
+                      setOpen(false);
+                    }}
+                  >
+                    <Avatar className="size-5">
+                      <AvatarImage src={member.user.imageUrl} />
+                      <AvatarFallback>
+                        {member.user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    {member.user.name}
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        value?._id === member.user._id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                  </CommandItem>
+                  <CommandItem
+                    value={undefined}
+                    onSelect={() => {
+                      setValue(null);
+                      setOpen(false);
+                    }}
+                  >
+                    <div className="flex size-5 items-center justify-center rounded-full bg-[#525D71]">
+                      <User2 className="size-3 text-white" />
+                    </div>
+                    <span>Unassigned</span>
+                  </CommandItem>
+                </div>
               ))}
             </CommandGroup>
           </CommandList>

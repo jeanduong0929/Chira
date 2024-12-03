@@ -87,6 +87,7 @@ export const SprintEditIssueDialog = ({
         issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
+        sprintId: issue?.sprintId as Id<"sprints">,
       },
       {
         onSuccess: (data) => {

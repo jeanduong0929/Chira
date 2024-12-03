@@ -17,10 +17,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 
 const BoardPage = () => {
-  const [issues, setIssues] = useState<Doc<"issues">[]>([]);
+  const [unassignedIssues, setUnassignedIssues] = useState<Doc<"issues">[]>([]);
 
   const { projectId } = useParams();
   const { data: sprint, isLoading: isLoadingSprint } = useQuery(
@@ -36,7 +35,7 @@ const BoardPage = () => {
 
   useEffect(() => {
     if (issuez) {
-      setIssues(issuez);
+      setUnassignedIssues(issuez.filter((i) => !i.assigneeId));
     }
   }, [issuez]);
 
@@ -65,8 +64,8 @@ const BoardPage = () => {
 
       <UnassignedIssues
         sprint={sprint ?? null}
-        issues={issues ?? []}
-        setIssues={setIssues}
+        issues={unassignedIssues}
+        setIssues={setUnassignedIssues}
       />
     </div>
   );
@@ -82,8 +81,6 @@ const UnassignedIssues = ({
   setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
 }) => {
   const [showUnassigned, setShowUnassigned] = useState(true);
-
-  console.log(issues);
 
   return (
     <div className="flex flex-col gap-y-3">
@@ -109,7 +106,6 @@ const UnassignedIssues = ({
             <Column
               key={value}
               value={value as "not_started" | "in_progress" | "completed"}
-              issues={issues}
               setIssues={setIssues}
             >
               {!sprint && index === 0 && <GetStartedBacklog />}
@@ -133,12 +129,10 @@ const UnassignedIssues = ({
 const Column = ({
   value,
   children,
-  issues,
   setIssues,
 }: {
   value: "not_started" | "in_progress" | "completed";
   children: React.ReactNode;
-  issues: Doc<"issues">[];
   setIssues: Dispatch<SetStateAction<Doc<"issues">[]>>;
 }) => {
   const { mutate: updateStatus } = useMutation({
