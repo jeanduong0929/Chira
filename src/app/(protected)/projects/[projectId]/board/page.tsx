@@ -40,7 +40,6 @@ const BoardPage = () => {
   const { data: members } = useQuery(
     convexQuery(api.members.getMembers, {
       projectId: projectId as Id<"projects">,
-      sprintId: sprint?._id as Id<"sprints">,
     }),
   );
 
@@ -48,18 +47,22 @@ const BoardPage = () => {
     if (issuez) {
       setUnassignedIssues(issuez.filter((i) => !i.assigneeId));
       setAssignedIssues(issuez.filter((i) => i.assigneeId));
+    }
+  }, [issuez]);
 
-      setShowAssignedColumns(() => {
-        const obj: Record<string, boolean> = {};
-        issuez.forEach((i) => {
-          if (i.assigneeId) {
-            obj[i.assigneeId] = true;
+  useEffect(() => {
+    if (members) {
+      setShowAssignedColumns((prev) => {
+        const obj: Record<string, boolean> = { ...prev };
+        members.forEach((member) => {
+          if (!(member._id in obj)) {
+            obj[member._id] = true;
           }
         });
         return obj;
       });
     }
-  }, [issuez]);
+  }, [members]);
 
   if (isLoadingSprint)
     return (
@@ -73,7 +76,7 @@ const BoardPage = () => {
     );
 
   return (
-    <div className="flex flex-col gap-y-5">
+    <div className="flex flex-col gap-y-5 pb-10">
       <div className="flex gap-x-5">
         {boardColumns.map(({ label, value }, index) => (
           <div key={value} className="w-[270px]">
@@ -114,6 +117,8 @@ const AssignedIssues = ({
   open: Record<string, boolean>;
   setOpen: Dispatch<SetStateAction<Record<string, boolean>>>;
 }) => {
+  console.log(open);
+  console.log(members);
   return members.map((member) => (
     <div key={member._id} className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-2">
