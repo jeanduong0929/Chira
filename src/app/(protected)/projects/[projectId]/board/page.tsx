@@ -5,6 +5,8 @@ import { useParams } from "next/navigation";
 import { boardColumns } from "./_constants/board-columns";
 import { UnassignedIssues } from "./_components/unassigned-issues";
 import { IssueWithAssignee } from "./types/issue-with-assignee";
+import { Column } from "./_components/board-column";
+import { IssueCard } from "./_components/issue-card";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
 
@@ -14,8 +16,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Column } from "./_components/board-column";
-import { IssueCard } from "./_components/issue-card";
 
 const BoardPage = () => {
   const [assignedIssues, setAssignedIssues] = useState<IssueWithAssignee[]>([]);

@@ -178,6 +178,7 @@ export const update = mutation({
         assigneeId: args.assigneeId,
         projectId: args.projectId,
         issueType: args.issueType,
+        status: "not_started",
       });
       return true;
     } catch (error) {
