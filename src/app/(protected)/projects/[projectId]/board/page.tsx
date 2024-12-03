@@ -37,6 +37,12 @@ const BoardPage = () => {
       sprintId: sprint?._id as Id<"sprints">,
     }),
   );
+  const { data: members } = useQuery(
+    convexQuery(api.members.getMembers, {
+      projectId: projectId as Id<"projects">,
+      sprintId: sprint?._id as Id<"sprints">,
+    }),
+  );
 
   useEffect(() => {
     if (issuez) {
@@ -79,6 +85,7 @@ const BoardPage = () => {
       </div>
 
       <AssignedIssues
+        members={members ?? []}
         issues={assignedIssues}
         setIssues={setAssignedIssues}
         open={showAssignedColumns}
@@ -95,18 +102,20 @@ const BoardPage = () => {
 };
 
 const AssignedIssues = ({
+  members,
   issues,
   setIssues,
   open,
   setOpen,
 }: {
+  members: (Doc<"members"> & { user: Doc<"users"> })[];
   issues: IssueWithAssignee[];
   setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
   open: Record<string, boolean>;
   setOpen: Dispatch<SetStateAction<Record<string, boolean>>>;
 }) => {
-  return issues.map((issue) => (
-    <div key={issue._id} className="flex flex-col gap-y-3">
+  return members.map((member) => (
+    <div key={member._id} className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-2">
         <Button
           variant="ghost"
@@ -114,21 +123,21 @@ const AssignedIssues = ({
           onClick={() => {
             setOpen((prev) => ({
               ...prev,
-              [issue.assigneeId as string]: !prev[issue.assigneeId as string],
+              [member._id]: !prev[member._id],
             }));
           }}
         >
           <ChevronDown
             className={cn(
               "size-4 transition-transform duration-300 ease-in-out",
-              open[issue.assigneeId as string] ? "rotate-0" : "-rotate-90",
+              open[member._id] ? "rotate-0" : "-rotate-90",
             )}
           />
         </Button>
-        <h3 className="text-sm">{issue?.assignee?.user.name}</h3>
+        <h3 className="text-sm">{member.user.name}</h3>
       </div>
 
-      {open[issue.assigneeId as string] && (
+      {open[member._id] && (
         <div className="flex gap-x-5">
           {boardColumns.map(({ value }) => (
             <Column
@@ -138,7 +147,7 @@ const AssignedIssues = ({
             >
               <div className="flex flex-col gap-y-1 p-2">
                 {issues
-                  ?.filter((i) => i.assigneeId === issue.assigneeId)
+                  ?.filter((i) => i.assigneeId === member.clerkId)
                   .map(
                     (issue) =>
                       issue.status === value && (
