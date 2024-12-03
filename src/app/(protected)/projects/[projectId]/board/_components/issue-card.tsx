@@ -3,10 +3,10 @@ import { useDrag } from "react-dnd";
 import { Bookmark, CheckIcon, Circle } from "lucide-react";
 import { IssueCardDropdown } from "./issue-card-dropdown";
 import { IssueWithAssignee } from "../types/issue-with-assignee";
+import { SprintEditIssueDialog } from "../../backlog/_components/sprint-edit-issue-dialog";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { SprintEditIssueDialog } from "../../backlog/_components/sprint-edit-issue-dialog";
 
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
   const [open, setOpen] = useState(false);

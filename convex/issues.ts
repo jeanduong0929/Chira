@@ -91,6 +91,8 @@ export const getBySprintId = query({
   },
   handler: async (ctx, args) => {
     try {
+      const clerkId = await getClerkId(ctx.auth);
+
       const issues = await ctx.db
         .query("issues")
         .withIndex("by_sprint_id", (q) => q.eq("sprintId", args.sprintId))
@@ -117,7 +119,7 @@ export const getBySprintId = query({
           .unique();
 
         if (assignee) {
-          const user = await ctx.db
+          const assigneeUser = await ctx.db
             .query("users")
             .withIndex("by_clerk_id", (q) => q.eq("clerkId", assignee.clerkId))
             .unique();
@@ -127,8 +129,8 @@ export const getBySprintId = query({
             assignee: {
               ...assignee,
               user: {
-                name: user?.name as string,
-                imageUrl: user?.imageUrl as string,
+                name: assigneeUser?.name as string,
+                imageUrl: assigneeUser?.imageUrl as string,
               },
             },
           });
@@ -139,9 +141,6 @@ export const getBySprintId = query({
           });
         }
       }
-
-      console.log(issues);
-      console.log(issuesWithAssignee);
 
       return issuesWithAssignee;
     } catch (error) {
