@@ -7,6 +7,7 @@ import { SprintEditIssueDialog } from "../../backlog/_components/sprint-edit-iss
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
   const [open, setOpen] = useState(false);
@@ -30,7 +31,10 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         <CardHeader className="pt-3">
           <CardTitle className="flex items-center justify-between">
             <span
-              className="cursor-pointer text-sm font-medium hover:text-[#0B66E4]"
+              className={cn(
+                "cursor-pointer text-sm font-medium hover:text-[#0B66E4]",
+                issue.status === "completed" && "line-through",
+              )}
               onClick={() => setOpen(true)}
             >
               {issue.title}

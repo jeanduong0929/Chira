@@ -78,7 +78,7 @@ const BoardPage = () => {
   return (
     <div className="flex flex-col gap-y-5 pb-10">
       <div className="flex gap-x-5">
-        {boardColumns.map(({ label, value }, index) => (
+        {boardColumns.map(({ label, value }) => (
           <div key={value} className="w-[270px]">
             <h3 className="rounded-md bg-[#F7F8F9] p-4 text-muted-foreground">
               {label}
