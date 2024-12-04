@@ -12,9 +12,15 @@ import { cn } from "@/lib/utils";
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
   const [open, setOpen] = useState(false);
 
-  const [, drag] = useDrag({
-    type: "COLUMN",
-    item: { issue, type: "COLUMN" },
+  const [{ isDragging }, drag] = useDrag({
+    type: "ISSUE",
+    item: {
+      issue,
+      type: "ISSUE",
+      sourceAssigneeId: issue.assigneeId,
+      sourceStatus: issue.status,
+      isUnassigned: !issue.assigneeId,
+    },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -26,7 +32,7 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         ref={(node) => {
           drag(node);
         }}
-        className="rounded-sm"
+        className={cn("rounded-sm", isDragging && "opacity-50")}
       >
         <CardHeader className="pt-3">
           <CardTitle className="flex items-center justify-between">

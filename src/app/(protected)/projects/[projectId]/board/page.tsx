@@ -2,6 +2,7 @@
 
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 import { boardColumns } from "./_constants/board-columns";
 import { UnassignedIssues } from "./_components/unassigned-issues";
 import { IssueWithAssignee } from "./types/issue-with-assignee";
@@ -14,7 +15,6 @@ import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const BoardPage = () => {
@@ -64,6 +64,11 @@ const BoardPage = () => {
     }
   }, [members]);
 
+  useEffect(() => {
+    console.log("unassignedIssues", unassignedIssues);
+    console.log("assignedIssues", assignedIssues);
+  }, [unassignedIssues, assignedIssues]);
+
   if (isLoadingSprint)
     return (
       <div className="flex gap-x-5">
@@ -90,7 +95,8 @@ const BoardPage = () => {
       <AssignedIssues
         members={members ?? []}
         issues={assignedIssues}
-        setIssues={setAssignedIssues}
+        setAssignedIssues={setAssignedIssues}
+        setUnassignedIssues={setUnassignedIssues}
         open={showAssignedColumns}
         setOpen={setShowAssignedColumns}
       />
@@ -98,7 +104,8 @@ const BoardPage = () => {
       <UnassignedIssues
         sprint={sprint ?? null}
         issues={unassignedIssues}
-        setIssues={setUnassignedIssues}
+        setUnassignedIssues={setUnassignedIssues}
+        setAssignedIssues={setAssignedIssues}
       />
     </div>
   );
@@ -107,18 +114,18 @@ const BoardPage = () => {
 const AssignedIssues = ({
   members,
   issues,
-  setIssues,
+  setAssignedIssues,
+  setUnassignedIssues,
   open,
   setOpen,
 }: {
   members: (Doc<"members"> & { user: Doc<"users"> })[];
   issues: IssueWithAssignee[];
-  setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  setAssignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  setUnassignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
   open: Record<string, boolean>;
   setOpen: Dispatch<SetStateAction<Record<string, boolean>>>;
 }) => {
-  console.log(open);
-  console.log(members);
   return members.map((member) => (
     <div key={member._id} className="flex flex-col gap-y-3">
       <div className="flex items-center gap-x-2">
@@ -147,8 +154,10 @@ const AssignedIssues = ({
           {boardColumns.map(({ value }) => (
             <Column
               key={value}
-              value={value as "not_started" | "in_progress" | "completed"}
-              setIssues={setIssues}
+              member={member}
+              newStatus={value as "not_started" | "in_progress" | "completed"}
+              setAssignedIssues={setAssignedIssues}
+              setUnassignedIssues={setUnassignedIssues}
             >
               <div className="flex flex-col gap-y-1 p-2">
                 {issues

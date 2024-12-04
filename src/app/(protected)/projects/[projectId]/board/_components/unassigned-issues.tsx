@@ -14,11 +14,13 @@ import { cn } from "@/lib/utils";
 export const UnassignedIssues = ({
   sprint,
   issues,
-  setIssues,
+  setUnassignedIssues,
+  setAssignedIssues,
 }: {
   sprint: Doc<"sprints"> | null;
   issues: IssueWithAssignee[];
-  setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  setUnassignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  setAssignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
 }) => {
   const [showUnassigned, setShowUnassigned] = useState(true);
 
@@ -45,8 +47,10 @@ export const UnassignedIssues = ({
           {boardColumns.map(({ value }, index) => (
             <Column
               key={value}
-              value={value as "not_started" | "in_progress" | "completed"}
-              setIssues={setIssues}
+              newStatus={value as "not_started" | "in_progress" | "completed"}
+              member={null}
+              setAssignedIssues={setAssignedIssues}
+              setUnassignedIssues={setUnassignedIssues}
             >
               {!sprint && index === 0 && <GetStartedPrompts />}
 

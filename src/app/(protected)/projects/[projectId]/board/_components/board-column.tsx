@@ -4,39 +4,143 @@ import { IssueWithAssignee } from "../types/issue-with-assignee";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../../../convex/_generated/api";
 
-import { useConvexMutation } from "@convex-dev/react-query";
-import { useMutation } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const Column = ({
-  value,
+  newStatus,
   children,
-  setIssues,
+  member,
+  setAssignedIssues,
+  setUnassignedIssues,
 }: {
-  value: "not_started" | "in_progress" | "completed";
+  newStatus: "not_started" | "in_progress" | "completed";
   children: React.ReactNode;
-  setIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  member:
+    | (Doc<"members"> & {
+        user: Doc<"users">;
+      })
+    | null;
+  setAssignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
+  setUnassignedIssues: Dispatch<SetStateAction<IssueWithAssignee[]>>;
 }) => {
   const { mutate: updateStatus } = useMutation({
     mutationFn: useConvexMutation(api.issues.updateStatus),
   });
 
   const [{ isOver }, drop] = useDrop({
-    accept: "COLUMN",
-    drop: (draggedItem: { issue: Doc<"issues">; type: string }) => {
-      if (draggedItem.type === "COLUMN" && draggedItem.issue.status !== value) {
-        setIssues((prev) =>
-          prev.map((i) => {
-            if (i._id === draggedItem.issue._id) {
-              return { ...i, status: value };
-            }
-            return i;
-          }),
-        );
+    accept: "ISSUE",
+    drop: (draggedItem: {
+      issue: Doc<"issues">;
+      type: string;
+      sourceAssigneeId: string | null;
+      sourceStatus: "not_started" | "in_progress" | "completed";
+      isUnassigned: boolean;
+    }) => {
+      const statusChanged = draggedItem.sourceStatus !== newStatus;
+      const assigneeChanged = draggedItem.issue.assigneeId !== member?.clerkId;
 
-        updateStatus({
-          issue: { id: draggedItem.issue._id, status: value },
-        });
+      console.log(draggedItem.issue);
+
+      console.log("statusChanged", statusChanged);
+      console.log("assigneeChanged", assigneeChanged);
+      console.log("isUnassigned", draggedItem.isUnassigned);
+
+      if (!statusChanged && !assigneeChanged) return;
+
+      if (statusChanged) {
+        if (draggedItem.isUnassigned) {
+          setUnassignedIssues((prev) =>
+            prev.map((prevIssue) => {
+              if (prevIssue._id === draggedItem.issue._id) {
+                return {
+                  ...prevIssue,
+                  status: statusChanged ? newStatus : prevIssue.status,
+                };
+              }
+              return prevIssue;
+            }),
+          );
+        } else {
+          setAssignedIssues((prev) =>
+            prev.map((prevIssue) => {
+              if (prevIssue._id === draggedItem.issue._id) {
+                return {
+                  ...prevIssue,
+                  status: statusChanged ? newStatus : prevIssue.status,
+                };
+              }
+              return prevIssue;
+            }),
+          );
+        }
+      } else if (assigneeChanged) {
+        if (draggedItem.isUnassigned) {
+          setUnassignedIssues((prev) =>
+            prev.filter((prevIssue) => prevIssue._id !== draggedItem.issue._id),
+          );
+
+          setAssignedIssues((prev) => [
+            ...prev,
+            {
+              ...draggedItem.issue,
+              assignee: member
+                ? {
+                    ...member,
+                    user: {
+                      imageUrl: member.user.imageUrl || "",
+                      name: member.user.name,
+                    },
+                  }
+                : null,
+              assigneeId: member ? member.clerkId : "",
+            },
+          ]);
+        } else {
+          if (member) {
+            setAssignedIssues((prev) =>
+              prev.map((prevIssue) => {
+                if (prevIssue._id === draggedItem.issue._id) {
+                  return {
+                    ...prevIssue,
+                    assignee: member
+                      ? {
+                          ...member,
+                          user: {
+                            imageUrl: member.user.imageUrl || "",
+                            name: member.user.name,
+                          },
+                        }
+                      : null,
+                    assigneeId: member ? member.clerkId : "",
+                  };
+                }
+                return prevIssue;
+              }),
+            );
+          } else {
+            setAssignedIssues((prev) =>
+              prev.filter(
+                (prevIssue) => prevIssue._id !== draggedItem.issue._id,
+              ),
+            );
+
+            setUnassignedIssues((prev) => [
+              ...prev,
+              {
+                ...draggedItem.issue,
+                assignee: null,
+                assigneeId: "",
+              },
+            ]);
+          }
+        }
       }
+
+      // updateStatus({
+      //   issue: { id: draggedItem.issue._id, status: value },
+      // });
+      // }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),
