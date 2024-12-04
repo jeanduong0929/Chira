@@ -122,7 +122,18 @@ export const remove = mutation({
         throw new Error("Project not found");
       }
 
+      // delete all members
+      const members = await ctx.db
+        .query("members")
+        .withIndex("by_project_id", (q) => q.eq("projectId", project._id))
+        .collect();
+      for (const member of members) {
+        await ctx.db.delete(member._id);
+      }
+
+      // delete project
       await ctx.db.delete(args.projectId);
+
       return true;
     } catch (e) {
       console.error(e);
