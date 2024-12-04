@@ -72,10 +72,20 @@ export const create = mutation({
     try {
       const clerkId = await getClerkId(ctx.auth);
 
-      return await ctx.db.insert("projects", {
+      // create new project
+      const projectId = await ctx.db.insert("projects", {
         name: args.name,
         clerkId,
       });
+
+      // create new member
+      await ctx.db.insert("members", {
+        clerkId: clerkId,
+        projectId,
+        role: "admin",
+      });
+
+      return projectId;
     } catch (e) {
       console.error(e);
     }
