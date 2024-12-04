@@ -4,8 +4,8 @@ import { IssueWithAssignee } from "../types/issue-with-assignee";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../../../convex/_generated/api";
 
-import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useConvexMutation } from "@convex-dev/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 export const Column = ({
   newStatus,
@@ -27,6 +27,9 @@ export const Column = ({
   const { mutate: updateStatus } = useMutation({
     mutationFn: useConvexMutation(api.issues.updateStatus),
   });
+  const { mutate: updateAssignee } = useMutation({
+    mutationFn: useConvexMutation(api.issues.updateAssignee),
+  });
 
   const [{ isOver }, drop] = useDrop({
     accept: "ISSUE",
@@ -38,13 +41,7 @@ export const Column = ({
       isUnassigned: boolean;
     }) => {
       const statusChanged = draggedItem.sourceStatus !== newStatus;
-      const assigneeChanged = draggedItem.issue.assigneeId !== member?.clerkId;
-
-      console.log(draggedItem.issue);
-
-      console.log("statusChanged", statusChanged);
-      console.log("assigneeChanged", assigneeChanged);
-      console.log("isUnassigned", draggedItem.isUnassigned);
+      const assigneeChanged = draggedItem.sourceAssigneeId !== member?.clerkId;
 
       if (!statusChanged && !assigneeChanged) return;
 
@@ -53,6 +50,10 @@ export const Column = ({
           setUnassignedIssues((prev) =>
             prev.map((prevIssue) => {
               if (prevIssue._id === draggedItem.issue._id) {
+                updateStatus({
+                  issue: { id: draggedItem.issue._id, status: newStatus },
+                });
+
                 return {
                   ...prevIssue,
                   status: statusChanged ? newStatus : prevIssue.status,
@@ -65,6 +66,10 @@ export const Column = ({
           setAssignedIssues((prev) =>
             prev.map((prevIssue) => {
               if (prevIssue._id === draggedItem.issue._id) {
+                updateStatus({
+                  issue: { id: draggedItem.issue._id, status: newStatus },
+                });
+
                 return {
                   ...prevIssue,
                   status: statusChanged ? newStatus : prevIssue.status,
@@ -101,6 +106,13 @@ export const Column = ({
             setAssignedIssues((prev) =>
               prev.map((prevIssue) => {
                 if (prevIssue._id === draggedItem.issue._id) {
+                  updateAssignee({
+                    issue: {
+                      id: draggedItem.issue._id,
+                      assigneeId: member.clerkId,
+                    },
+                  });
+
                   return {
                     ...prevIssue,
                     assignee: member
@@ -133,14 +145,16 @@ export const Column = ({
                 assigneeId: "",
               },
             ]);
+
+            updateAssignee({
+              issue: {
+                id: draggedItem.issue._id,
+                assigneeId: "",
+              },
+            });
           }
         }
       }
-
-      // updateStatus({
-      //   issue: { id: draggedItem.issue._id, status: value },
-      // });
-      // }
     },
     collect: (monitor) => ({
       isOver: monitor.isOver(),

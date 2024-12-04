@@ -340,6 +340,38 @@ export const updateStatus = mutation({
   },
 });
 
+export const updateAssignee = mutation({
+  args: {
+    issue: v.object({
+      id: v.id("issues"),
+      assigneeId: v.string(),
+    }),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issue.id);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      const user = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.issue.assigneeId))
+        .unique();
+
+      await ctx.db.patch(issue._id, {
+        assigneeId: args.issue.assigneeId,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
 export const remove = mutation({
   args: {
     issueId: v.id("issues"),
