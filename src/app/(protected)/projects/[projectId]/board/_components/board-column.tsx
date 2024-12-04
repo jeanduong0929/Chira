@@ -6,6 +6,7 @@ import { api } from "../../../../../../../convex/_generated/api";
 
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useMutation } from "@tanstack/react-query";
+import { useConfirm } from "@/hooks/use-confirm";
 
 export const Column = ({
   newStatus,
@@ -31,9 +32,11 @@ export const Column = ({
     mutationFn: useConvexMutation(api.issues.updateAssignee),
   });
 
+  const [switchConfirm, SwitchConfirmDialog] = useConfirm();
+
   const [{ isOver }, drop] = useDrop({
     accept: "ISSUE",
-    drop: (draggedItem: {
+    drop: async (draggedItem: {
       issue: Doc<"issues">;
       type: string;
       sourceAssigneeId: string | null;
@@ -80,6 +83,9 @@ export const Column = ({
           );
         }
       } else if (assigneeChanged) {
+        const ok = await switchConfirm();
+        if (!ok) return;
+
         if (draggedItem.isUnassigned) {
           setUnassignedIssues((prev) =>
             prev.filter((prevIssue) => prevIssue._id !== draggedItem.issue._id),
@@ -101,6 +107,13 @@ export const Column = ({
               assigneeId: member ? member.clerkId : "",
             },
           ]);
+
+          updateAssignee({
+            issue: {
+              id: draggedItem.issue._id,
+              assigneeId: member?.clerkId || "",
+            },
+          });
         } else {
           if (member) {
             setAssignedIssues((prev) =>
@@ -137,14 +150,16 @@ export const Column = ({
               ),
             );
 
-            setUnassignedIssues((prev) => [
-              ...prev,
-              {
-                ...draggedItem.issue,
-                assignee: null,
-                assigneeId: "",
-              },
-            ]);
+            setUnassignedIssues((prev) => {
+              return [
+                ...prev,
+                {
+                  ...draggedItem.issue,
+                  assignee: null,
+                  assigneeId: "",
+                },
+              ];
+            });
 
             updateAssignee({
               issue: {
@@ -162,19 +177,26 @@ export const Column = ({
   });
 
   return (
-    <div
-      ref={(node) => {
-        if (node) drop(node);
-      }}
-      className="relative h-[320px] w-[270px] rounded-md bg-[#F7F8F9]"
-    >
-      {isOver && (
-        <div className="absolute left-0 top-0 flex w-full items-center">
-          <div className="size-2 rounded-full border-2 border-blue-500" />
-          <div className="h-[2px] w-full bg-blue-500" />
-        </div>
-      )}
-      {children}
-    </div>
+    <>
+      <div
+        ref={(node) => {
+          if (node) drop(node);
+        }}
+        className="relative h-[320px] w-[270px] rounded-md bg-[#F7F8F9]"
+      >
+        {isOver && (
+          <div className="absolute left-0 top-0 flex w-full items-center">
+            <div className="size-2 rounded-full border-2 border-blue-500" />
+            <div className="h-[2px] w-full bg-blue-500" />
+          </div>
+        )}
+        {children}
+      </div>
+
+      <SwitchConfirmDialog
+        title="Switch Assignee"
+        description="Are you sure you want to switch the assignee?"
+      />
+    </>
   );
 };

@@ -64,10 +64,7 @@ const BoardPage = () => {
     }
   }, [members]);
 
-  useEffect(() => {
-    console.log("unassignedIssues", unassignedIssues);
-    console.log("assignedIssues", assignedIssues);
-  }, [unassignedIssues, assignedIssues]);
+  useEffect(() => {}, [unassignedIssues, assignedIssues]);
 
   if (isLoadingSprint)
     return (
