@@ -15,7 +15,8 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
     content: content,
     editorProps: {
       attributes: {
-        class: "p-10 text-sm prose",
+        class:
+          "px-5 py-10 text-sm prose leading-[0.5] [&_ul]:ml-4 [&_ul_ul]:mt-5 [&_ul_ul]:ml-0",
       },
     },
     onUpdate: ({ editor }) => {
