@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { ChevronDown, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useDrag, useDrop } from "react-dnd";
-import { SprintCard } from "./_components/sprint-card";
+import { SprintsList } from "./_components/sprints-list";
 import { Issue } from "./_components/issue";
 import { api } from "../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
@@ -26,12 +26,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useRandomName } from "@/hooks/use-generate-name";
 
 const BacklogPage = () => {
-  const [name, setName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [openSprints, setOpenSprints] = useState<
     Record<Id<"sprints">, boolean>
   >({});
-
   const { projectId } = useParams();
+
   const { data: sprints, isLoading } = useQuery(
     convexQuery(api.sprints.getAll, {
       projectId: projectId as Id<"projects">,
@@ -39,56 +39,61 @@ const BacklogPage = () => {
   );
 
   useEffect(() => {
-    if (sprints && sprints.length > 0) {
+    if (sprints?.length) {
       setOpenSprints(
         sprints.reduce(
-          (acc, sprint) => {
-            acc[sprint._id] = true;
-            return acc;
-          },
-          {} as Record<Id<"sprints">, boolean>,
+          (acc, sprint) => ({
+            ...acc,
+            [sprint._id]: true,
+          }),
+          {},
         ),
       );
     }
   }, [sprints]);
 
+  const toggleSprint = (sprintId: Id<"sprints">) => {
+    setOpenSprints((prev) => ({
+      ...prev,
+      [sprintId]: !prev[sprintId],
+    }));
+  };
+
   return (
     <div className="flex flex-col gap-y-10">
-      <BacklogHeader name={name} setName={setName} />
+      <BacklogHeader
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       <div className="flex flex-col gap-y-5">
         {isLoading ? (
           <Skeleton className="h-[252px] w-full rounded-xl" />
         ) : (
-          sprints?.map((sprint) => (
-            <SprintCard
-              key={sprint._id}
-              sprint={sprint}
+          <>
+            <SprintsList
               sprints={sprints ?? []}
-              open={openSprints[sprint._id]}
-              setOpen={(open) =>
-                setOpenSprints({ ...openSprints, [sprint._id]: open })
-              }
+              openSprints={openSprints}
+              onToggleSprint={toggleSprint}
             />
-          ))
+            <BacklogCard
+              searchQuery={searchQuery}
+              projectId={projectId as Id<"projects">}
+              sprints={sprints ?? []}
+            />
+          </>
         )}
-
-        <BacklogCard
-          name={name}
-          projectId={projectId as Id<"projects">}
-          sprints={sprints ?? []}
-        />
       </div>
     </div>
   );
 };
 
 const BacklogHeader = ({
-  name,
-  setName,
+  searchQuery,
+  setSearchQuery,
 }: {
-  name: string;
-  setName: Dispatch<SetStateAction<string>>;
+  searchQuery: string;
+  setSearchQuery: Dispatch<SetStateAction<string>>;
 }) => {
   return (
     <div className="flex flex-col gap-y-5">
@@ -96,8 +101,8 @@ const BacklogHeader = ({
 
       <div className="relative flex w-[224px] items-center">
         <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search issues"
         />
         <Search className="absolute right-5 size-3" />
@@ -107,26 +112,30 @@ const BacklogHeader = ({
 };
 
 const BacklogCard = ({
-  name,
+  searchQuery,
   projectId,
   sprints,
 }: {
-  name: string;
+  searchQuery: string;
   projectId: Id<"projects">;
   sprints: Doc<"sprints">[];
 }) => {
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
+  const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
 
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
-  const { data: issues, isLoading: issuesLoading } = useQuery(
+  const { data: issues } = useQuery(
     convexQuery(api.issues.getAll, {
       projectId: projectId as Id<"projects">,
     }),
   );
+  const { mutate: moveToBacklog } = useMutation({
+    mutationFn: useConvexMutation(api.issues.moveToBacklog),
+  });
 
   const randomName = useRandomName();
 
@@ -138,17 +147,47 @@ const BacklogCard = ({
 
   const searchIssues = useMemo(() => {
     if (!filteredIssues) return [];
-    if (name === "") return filteredIssues;
+    if (searchQuery === "") return filteredIssues;
     return filteredIssues?.filter((issue) =>
-      issue.title.toLowerCase().includes(name.toLowerCase()),
+      issue.title.toLowerCase().includes(searchQuery.toLowerCase()),
     );
-  }, [name, filteredIssues]);
+  }, [searchQuery, filteredIssues]);
+
+  const [{ isOver }, drop] = useDrop({
+    accept: "ISSUE",
+    drop: async (draggedItem: { issue: Doc<"issues"> }) => {
+      if (!draggedItem.issue.sprintId) return;
+
+      const ok = await backlogConfirm();
+      if (!ok) return;
+
+      moveToBacklog(
+        {
+          issueId: draggedItem.issue._id,
+        },
+        {
+          onSuccess: (data) => {
+            if (data) {
+              toast.success("Issue moved to backlog");
+            }
+          },
+        },
+      );
+    },
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+    }),
+  });
 
   return (
     <>
       <ConfirmDialog
         title={"Create Sprint"}
         description={"Are you sure you want to create a sprint?"}
+      />
+      <BacklogConfirmDialog
+        title={"Move to Backlog"}
+        description={"Are you sure you want to move this issue to the backlog?"}
       />
 
       <div className="flex flex-col gap-y-1">
@@ -200,7 +239,15 @@ const BacklogCard = ({
         </div>
         {showBacklog &&
           (filteredIssues?.length === 0 ? (
-            <div className="rounded-lg border-2 border-dashed border-gray-200 p-4">
+            <div
+              ref={(node) => {
+                if (node) drop(node);
+              }}
+              className={cn(
+                "rounded-lg border-2 border-dashed border-gray-200 p-4",
+                isOver && "border-blue-500",
+              )}
+            >
               <p className="text-center text-xs text-gray-500">
                 Your backlog is empty
               </p>
@@ -208,12 +255,13 @@ const BacklogCard = ({
           ) : (
             <div className="flex flex-col">
               {searchIssues.map((issue, idx) =>
-                name ? (
+                searchQuery ? (
                   <Issue
                     key={issue._id}
                     issue={issue}
                     projectId={projectId}
                     inSprint={false}
+                    sprintId={null}
                   />
                 ) : (
                   <DraggableIssue
@@ -265,9 +313,9 @@ const DraggableIssue = ({
     });
   };
 
-  const [, drag] = useDrag({
+  const [{ isDragging }, drag] = useDrag({
     type: "ISSUE",
-    item: { index, type: "ISSUE" },
+    item: { index, type: "ISSUE", issue },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
     }),
@@ -294,6 +342,8 @@ const DraggableIssue = ({
         if (node) drag(drop(node));
       }}
       inSprint={false}
+      className={cn(isDragging && "opacity-50")}
+      sprintId={null}
     >
       {isOver && canDrop && (
         <div className="absolute -top-1 left-0 flex w-full items-center">
