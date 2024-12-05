@@ -12,6 +12,7 @@ export const create = mutation({
     assigneeId: v.optional(v.string()),
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
     projectId: v.id("projects"),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
   },
   handler: async (ctx, args) => {
     try {
@@ -34,6 +35,7 @@ export const create = mutation({
         issueType: args.issueType,
         sequence: issues.length,
         status: "not_started",
+        priority: args.priority,
       });
     } catch (error) {
       console.error(error);
@@ -159,6 +161,7 @@ export const update = mutation({
     sprintId: v.optional(v.id("sprints")),
     assigneeId: v.optional(v.string()),
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
     projectId: v.id("projects"),
   },
   handler: async (ctx, args) => {
@@ -178,6 +181,7 @@ export const update = mutation({
         assigneeId: args.assigneeId,
         projectId: args.projectId,
         issueType: args.issueType,
+        priority: args.priority,
         status: "not_started",
       });
       return true;

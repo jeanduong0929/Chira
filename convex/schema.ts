@@ -47,6 +47,7 @@ export default defineSchema({
       v.literal("in_progress"),
       v.literal("completed"),
     ),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
     assigneeId: v.optional(v.string()),
     projectId: v.id("projects"),
   })

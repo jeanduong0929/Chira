@@ -47,6 +47,7 @@ export const CreateIssueDialog = ({
     Doc<"users">,
     "_creationTime"
   > | null>(null);
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
 
   const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
   const { data: members } = useQuery(
@@ -69,6 +70,7 @@ export const CreateIssueDialog = ({
         issueType: issueType,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
+        priority: priority,
       },
       {
         onSuccess: (data) => {
@@ -79,6 +81,7 @@ export const CreateIssueDialog = ({
             setAssignee(null);
             setStoryPoints("");
             setOpen(false);
+            setPriority("low");
           }
         },
       },
@@ -133,6 +136,10 @@ export const CreateIssueDialog = ({
                 }
               }}
             />
+          </div>
+          <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Priority</Label>
+            <PrioritySelect setPriority={setPriority} />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>
@@ -214,6 +221,45 @@ const IssueTypeSelect = ({
               <Circle className="size-3" fill="#fff" stroke="#fff" />
             </div>
             <span>Bug</span>
+          </div>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
+const PrioritySelect = ({
+  setPriority,
+}: {
+  setPriority: Dispatch<SetStateAction<"low" | "medium" | "high">>;
+}) => {
+  return (
+    <Select
+      defaultValue="low"
+      onValueChange={(value) => {
+        setPriority(value as "low" | "medium" | "high");
+      }}
+    >
+      <SelectTrigger className="w-[350px]">
+        <SelectValue placeholder="Bug" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem key="low" value="low">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#64BA3B]" />
+            <span>Low</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="medium" value="medium">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#0B66E4]" />
+            <span>Medium</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="high" value="high">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#E84C3D]" />
+            <span>High</span>
           </div>
         </SelectItem>
       </SelectContent>

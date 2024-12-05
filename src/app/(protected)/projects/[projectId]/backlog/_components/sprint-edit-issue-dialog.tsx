@@ -49,6 +49,7 @@ export const SprintEditIssueDialog = ({
     Doc<"users">,
     "_creationTime"
   > | null>(null);
+  const [priority, setPriority] = useState<"low" | "medium" | "high">("low");
 
   const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
   const { data: members } = useQuery(
@@ -72,6 +73,7 @@ export const SprintEditIssueDialog = ({
       setStoryPoints(issue.storyPoints?.toString() ?? "");
       setAssignee(issue.assignee);
       setIssueType(issue.issueType);
+      setPriority(issue.priority);
     }
   }, [issue]);
 
@@ -85,6 +87,7 @@ export const SprintEditIssueDialog = ({
         description: description,
         storyPoints: storyPoints,
         issueType: issueType,
+        priority: priority,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
         sprintId: issue?.sprintId as Id<"sprints">,
@@ -97,6 +100,7 @@ export const SprintEditIssueDialog = ({
             setDescription("");
             setAssignee(null);
             setStoryPoints("");
+            setPriority("low");
             setOpen(false);
           }
         },
@@ -154,6 +158,10 @@ export const SprintEditIssueDialog = ({
                 }
               }}
             />
+          </div>
+          <div className="flex flex-col gap-y-1">
+            <Label className="text-sm font-medium">Priority</Label>
+            <PrioritySelect priority={priority} setPriority={setPriority} />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>
@@ -237,6 +245,47 @@ const IssueTypeSelect = ({
               <Circle className="size-3" fill="#fff" stroke="#fff" />
             </div>
             <span>Bug</span>
+          </div>
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};
+
+const PrioritySelect = ({
+  priority,
+  setPriority,
+}: {
+  priority: "low" | "medium" | "high";
+  setPriority: Dispatch<SetStateAction<"low" | "medium" | "high">>;
+}) => {
+  return (
+    <Select
+      defaultValue={priority}
+      onValueChange={(value) => {
+        setPriority(value as "low" | "medium" | "high");
+      }}
+    >
+      <SelectTrigger className="w-[350px]">
+        <SelectValue placeholder="Bug" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem key="low" value="low">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#64BA3B]" />
+            <span>Low</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="medium" value="medium">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#0B66E4]" />
+            <span>Medium</span>
+          </div>
+        </SelectItem>
+        <SelectItem key="high" value="high">
+          <div className="flex items-center gap-x-3">
+            <div className="size-3 shrink-0 bg-[#E84C3D]" />
+            <span>High</span>
           </div>
         </SelectItem>
       </SelectContent>
