@@ -2,14 +2,15 @@ import { Auth } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 
-export const getAll = query({
-  handler: async (ctx) => {
-    return (await ctx.db.query("users").collect()).map((user) => ({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      imageUrl: user.imageUrl,
-    }));
+export const search = query({
+  args: {
+    query: v.string(),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withSearchIndex("search_users", (q) => q.search("email", args.query))
+      .take(10);
   },
 });
 

@@ -1,5 +1,6 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Search } from "lucide-react";
+import { SearchUserCombobox } from "./search-user-combobox";
 import { api } from "../../../../../../../convex/_generated/api";
 
 import { Input } from "@/components/ui/input";
@@ -15,6 +16,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { convexQuery } from "@convex-dev/react-query";
 import { useQuery } from "@tanstack/react-query";
+import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 export const BacklogHeader = ({
   searchQuery,
@@ -43,7 +45,13 @@ export const BacklogHeader = ({
 };
 
 export const AddMemberDialog = () => {
-  const { data: users } = useQuery(convexQuery(api.users.getAll, {}));
+  const [user, setUser] = useState<Doc<"users"> | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const { data: users } = useQuery(
+    convexQuery(api.users.search, { query: searchQuery }),
+  );
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -66,9 +74,15 @@ export const AddMemberDialog = () => {
         </DialogHeader>
 
         <form>
-          <div className="flex flex-col gap-y-5">
+          <div className="flex flex-col gap-y-2">
             <Label>Email</Label>
-            <Input placeholder="Search users" />
+            <SearchUserCombobox
+              users={users ?? []}
+              query={searchQuery}
+              setQuery={setSearchQuery}
+              value={user}
+              setValue={setUser}
+            />
           </div>
         </form>
       </DialogContent>
