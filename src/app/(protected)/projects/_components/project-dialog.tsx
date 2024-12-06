@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast } from "sonner";
 import { api } from "../../../../../convex/_generated/api";
+import { Id } from "../../../../../convex/_generated/dataModel";
 
 import {
   Dialog,
@@ -11,8 +12,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
+import { useProject } from "@/store/use-project";
 
 interface ProjectDialogProps {
   open: boolean;
@@ -20,8 +22,12 @@ interface ProjectDialogProps {
 }
 
 export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
+  const [projectId, setProjectId] = useProject();
   const [name, setName] = useState("");
 
+  const { data: projects } = useQuery(
+    convexQuery(api.projects.getAllUserProjects, {}),
+  );
   const { mutate: createProject } = useMutation({
     mutationFn: useConvexMutation(api.projects.create),
   });
@@ -45,6 +51,9 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
               {
                 onSuccess: (data) => {
                   if (data) {
+                    if (!projects || projects.length === 0) {
+                      setProjectId(data);
+                    }
                     toast.success("Project created");
                     setName("");
                     onOpenChange(false);

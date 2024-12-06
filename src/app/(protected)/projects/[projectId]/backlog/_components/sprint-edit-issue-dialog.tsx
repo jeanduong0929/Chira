@@ -173,6 +173,7 @@ export const SprintEditIssueDialog = ({
                   _id: user?._id as Id<"users">,
                   imageUrl: user?.imageUrl,
                   name: user?.name as string,
+                  email: user?.email as string,
                   clerkId: user?.clerkId as string,
                 });
               }}

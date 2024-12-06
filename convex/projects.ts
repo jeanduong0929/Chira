@@ -54,6 +54,7 @@ export const getAllUserProjects = query({
 
       // link members to projects
       const projectsWithMembers: (Doc<"projects"> & {
+        member: Doc<"members">;
         user: Doc<"users">;
       })[] = [];
       for (const m of members) {
@@ -69,7 +70,7 @@ export const getAllUserProjects = query({
           throw new Error("User not found");
         }
 
-        projectsWithMembers.push({ ...project, user });
+        projectsWithMembers.push({ ...project, member: m, user });
       }
 
       return projectsWithMembers;
@@ -181,6 +182,15 @@ export const remove = mutation({
       console.error(e);
       return false;
     }
+  },
+});
+
+export const getById = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.get(args.projectId);
   },
 });
 

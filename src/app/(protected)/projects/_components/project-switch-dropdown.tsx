@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Doc } from "../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../convex/_generated/api";
@@ -24,11 +24,13 @@ interface ProjectSwitchDropdownProps {
 export const ProjectSwitchDropdown = ({
   project,
 }: ProjectSwitchDropdownProps) => {
-  const { data: projects, isLoading } = useQuery(
-    convexQuery(api.projects.getAllUserProjects, {}),
-  );
+  const {
+    data: projects,
+    isLoading,
+    refetch,
+  } = useQuery(convexQuery(api.projects.getAllUserProjects, {}));
 
-  const [_, setProject] = useProject();
+  const [_, setProjectId] = useProject();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -66,7 +68,7 @@ export const ProjectSwitchDropdown = ({
               key={project._id}
               className="flex cursor-pointer items-center gap-x-3"
               onClick={() => {
-                setProject(project._id);
+                setProjectId(project._id);
 
                 const split = pathname.split("/").slice(1);
                 if (split.length > 1) {

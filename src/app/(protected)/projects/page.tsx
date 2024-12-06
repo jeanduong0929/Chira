@@ -30,8 +30,8 @@ const ProjectsPage = () => {
     convexQuery(api.projects.getAllUserProjects, {}),
   );
   const { data: access } = useQuery(
-    convexQuery(api.members.getAccess, {
-      projectId: projectId as Id<"projects">,
+    convexQuery(api.members.getProjectsAccess, {
+      projectIds: projects?.map((project) => project._id) ?? [],
     }),
   );
 
@@ -95,7 +95,7 @@ const ProjectsPage = () => {
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                {access?.role === "admin" && (
+                {project.member.role === "admin" && (
                   <ProjectMoreActionDropdown projectId={project._id} />
                 )}
               </TableCell>

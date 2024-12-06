@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 
 export const getMembers = query({
@@ -65,6 +65,24 @@ export const getAccess = query({
       }
 
       return member;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
+
+export const getProjectsAccess = query({
+  args: {
+    projectIds: v.array(v.id("projects")),
+  },
+  handler: async (ctx, args) => {
+    try {
+      const results = [];
+      for (const projectId of args.projectIds) {
+        const member = await getAccess(ctx, { projectId });
+        results.push(member);
+      }
+      return results;
     } catch (e) {
       console.error(e);
     }

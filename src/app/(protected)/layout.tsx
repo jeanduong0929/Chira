@@ -49,6 +49,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   const { data: projects } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
   );
+  const { data: projectById } = useQuery(
+    convexQuery(api.projects.getById, {
+      projectId: projectId as Id<"projects">,
+    }),
+  );
   const { user } = useUser();
   const { mutate: createUser } = useMutation({
     mutationFn: useConvexMutation(api.users.create),
@@ -58,6 +63,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     if (user) {
       createUser({
         name: (user.fullName as string) ?? "",
+        email: user.emailAddresses[0].emailAddress,
         imageUrl: user.imageUrl ?? "",
       });
     }
@@ -65,8 +71,11 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     // Set the projectId to the first project if it's not set
     if (!projectId && projects && projects.length > 0) {
       setProjectId(projects[0]._id);
+      // If the project gets deleted, set the projectId to the first project
+    } else if (projects && projects.length > 0 && !projectById) {
+      setProjectId(projects[0]._id);
     }
-  }, [createUser, projectId, projects, setProjectId, user]);
+  }, [createUser, projectById, projectId, projects, setProjectId, user]);
 
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({

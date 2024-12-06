@@ -23,6 +23,7 @@ export const getAuth = query({
 export const create = mutation({
   args: {
     name: v.string(),
+    email: v.string(),
     imageUrl: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
@@ -38,6 +39,7 @@ export const create = mutation({
         return await ctx.db.insert("users", {
           name: args.name,
           imageUrl: args.imageUrl,
+          email: args.email,
           clerkId: clerkId,
         });
       }

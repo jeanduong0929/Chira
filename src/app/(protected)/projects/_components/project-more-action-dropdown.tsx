@@ -48,6 +48,7 @@ export const ProjectMoreActionDropdown = ({
               Project settings
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem>Members</DropdownMenuItem>
           <DropdownMenuItem
             onClick={async () => {
               const ok = await confirm();

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ChevronRight, LucideIcon } from "lucide-react";
 import { ProjectSwitchDropdown } from "../projects/_components/project-switch-dropdown";
 import { Id } from "../../../../convex/_generated/dataModel";
@@ -254,6 +254,13 @@ const SidebarGroupItem = React.forwardRef<
   }
 >(({ className, label, href, icon: Icon, open, disabled, ...props }, ref) => {
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (href.includes("undefined")) {
+      router.replace("/projects");
+    }
+  }, [href, router]);
 
   if (open) {
     return (
