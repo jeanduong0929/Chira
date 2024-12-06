@@ -10,7 +10,7 @@ import { api } from "../../../../../../convex/_generated/api";
 
 import { convexQuery } from "@convex-dev/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 const BacklogPage = () => {
   const [searchQuery, setSearchQuery] = useState("");

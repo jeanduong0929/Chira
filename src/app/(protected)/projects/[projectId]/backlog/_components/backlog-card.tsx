@@ -36,6 +36,11 @@ export const BacklogCard = ({
       projectId: projectId as Id<"projects">,
     }),
   );
+  const { data: access } = useQuery(
+    convexQuery(api.members.getAccess, {
+      projectId: projectId as Id<"projects">,
+    }),
+  );
   const { mutate: moveToBacklog } = useMutation({
     mutationFn: useConvexMutation(api.issues.moveToBacklog),
   });
@@ -115,30 +120,32 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
-          <Button
-            variant={"ghost"}
-            onClick={async () => {
-              const ok = await confirm();
-              if (!ok) return;
+          {access?.role === "admin" && (
+            <Button
+              variant={"ghost"}
+              onClick={async () => {
+                const ok = await confirm();
+                if (!ok) return;
 
-              createSprint(
-                {
-                  name: randomName,
-                  projectId: projectId as Id<"projects">,
-                  index: sprints?.length ?? 0,
-                },
-                {
-                  onSuccess: (data) => {
-                    if (data) {
-                      toast.success("Sprint created");
-                    }
+                createSprint(
+                  {
+                    name: randomName,
+                    projectId: projectId as Id<"projects">,
+                    index: sprints?.length ?? 0,
                   },
-                },
-              );
-            }}
-          >
-            Create Sprint
-          </Button>
+                  {
+                    onSuccess: (data) => {
+                      if (data) {
+                        toast.success("Sprint created");
+                      }
+                    },
+                  },
+                );
+              }}
+            >
+              Create Sprint
+            </Button>
+          )}
         </div>
         {showBacklog &&
           (filteredIssues?.length === 0 ? (

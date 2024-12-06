@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import { Auth } from "convex/server";
+import { mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 
 export const getMembers = query({
@@ -36,3 +37,44 @@ export const getMembers = query({
     }
   },
 });
+
+export const getAccess = query({
+  args: {
+    projectId: v.id("projects"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      // get clerk id
+      const clerkId = await getClerkId(ctx.auth);
+
+      // get project
+      const project = await ctx.db.get(args.projectId);
+      if (!project) {
+        throw new Error("Project not found");
+      }
+
+      // check if user is in project
+      const member = await ctx.db
+        .query("members")
+        .withIndex("by_project_id_clerk_id", (q) =>
+          q.eq("projectId", project._id).eq("clerkId", clerkId),
+        )
+        .unique();
+      if (!member) {
+        throw new Error("Member not found");
+      }
+
+      return member;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
+
+const getClerkId = async (auth: Auth) => {
+  const identity = await auth.getUserIdentity();
+  if (!identity) {
+    throw new Error("Unauthorized");
+  }
+  return identity.subject;
+};

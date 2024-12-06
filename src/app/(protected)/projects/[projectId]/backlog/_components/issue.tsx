@@ -17,7 +17,16 @@ interface IssueProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
   (
-    { className, issue, projectId, inSprint, children, isOver, ...props },
+    {
+      className,
+      issue,
+      projectId,
+      inSprint,
+      children,
+      isOver,
+      sprintId,
+      ...props
+    },
     ref,
   ) => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
