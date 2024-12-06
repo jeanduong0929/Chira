@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from "react";
 import { Search } from "lucide-react";
+import { api } from "../../../../../../../convex/_generated/api";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { convexQuery } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const BacklogHeader = ({
   searchQuery,
@@ -40,6 +43,7 @@ export const BacklogHeader = ({
 };
 
 export const AddMemberDialog = () => {
+  const { data: users } = useQuery(convexQuery(api.users.getAll, {}));
   return (
     <Dialog>
       <DialogTrigger asChild>

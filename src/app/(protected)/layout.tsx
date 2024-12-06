@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { useRouter } from "next/navigation";
 import { Navbar } from "./_components/navbar";
 import {
   Sidebar,
@@ -30,6 +31,8 @@ interface ProtectedLayoutProps {
 }
 
 const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
+  const router = useRouter();
+
   const [projectId, setProjectId] = useProject();
   const [sidebarOpen, setSidebarOpen] = useState<Record<string, boolean>>(
     () => {
@@ -46,7 +49,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       projectId: projectId as Id<"projects">,
     }),
   );
-  const { data: projects } = useQuery(
+  const { data: projects, isLoading: projectsLoading } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
   );
   const { data: projectById } = useQuery(
@@ -83,6 +86,13 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       [group]: !prev[group],
     }));
   };
+
+  useEffect(() => {
+    if (projectsLoading) return;
+    if (projects && projects.length === 0) {
+      router.replace("/projects");
+    }
+  }, [projects, projectsLoading, router]);
 
   return (
     <div className="flex h-screen flex-col">
