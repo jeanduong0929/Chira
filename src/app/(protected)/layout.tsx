@@ -41,13 +41,13 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
     },
   );
 
-  const { data: project, isLoading: projectLoading } = useQuery(
+  const { data: project } = useQuery(
     convexQuery(api.projects.getByIdWithUser, {
       projectId: projectId as Id<"projects">,
     }),
   );
-  const { data: projects, isLoading } = useQuery(
-    convexQuery(api.projects.getAllWithUser, {}),
+  const { data: projects } = useQuery(
+    convexQuery(api.projects.getAllUserProjects, {}),
   );
   const { user } = useUser();
   const { mutate: createUser } = useMutation({

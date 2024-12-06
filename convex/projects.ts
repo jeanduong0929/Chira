@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
 import { mutation, query } from "./_generated/server";
+import { Doc } from "./_generated/dataModel";
 
 export const getAllWithUser = query({
   handler: async (ctx) => {
@@ -16,7 +17,9 @@ export const getAllWithUser = query({
         return [];
       }
 
-      const projectsWithUser = [];
+      const projectsWithUser: (Doc<"projects"> & {
+        user: Doc<"users">;
+      })[] = [];
       for (const p of projects) {
         const user = await ctx.db
           .query("users")
@@ -31,6 +34,45 @@ export const getAllWithUser = query({
       }
 
       return projectsWithUser;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+});
+
+export const getAllUserProjects = query({
+  handler: async (ctx) => {
+    try {
+      // get clerk id
+      const clerkId = await getClerkId(ctx.auth);
+
+      // get all members
+      const members = await ctx.db
+        .query("members")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+        .collect();
+
+      // link members to projects
+      const projectsWithMembers: (Doc<"projects"> & {
+        user: Doc<"users">;
+      })[] = [];
+      for (const m of members) {
+        const project = await ctx.db.get(m.projectId);
+        if (!project) {
+          throw new Error("Project not found");
+        }
+        const user = await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q) => q.eq("clerkId", project.clerkId))
+          .unique();
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        projectsWithMembers.push({ ...project, user });
+      }
+
+      return projectsWithMembers;
     } catch (e) {
       console.error(e);
     }

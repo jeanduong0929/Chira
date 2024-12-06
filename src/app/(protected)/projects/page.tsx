@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
-
-import { Input } from "@/components/ui/input";
-import { useQuery } from "@tanstack/react-query";
 import { ProjectMoreActionDropdown } from "./_components/project-more-action-dropdown";
+import { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 
 import {
@@ -22,10 +20,19 @@ import { convexQuery } from "@convex-dev/react-query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useProject } from "@/store/use-project";
+import { Input } from "@/components/ui/input";
+import { useQuery } from "@tanstack/react-query";
 
 const ProjectsPage = () => {
+  const [projectId, _setProjectId] = useProject();
+
   const { data: projects } = useQuery(
-    convexQuery(api.projects.getAllWithUser, {}),
+    convexQuery(api.projects.getAllUserProjects, {}),
+  );
+  const { data: access } = useQuery(
+    convexQuery(api.members.getAccess, {
+      projectId: projectId as Id<"projects">,
+    }),
   );
 
   const [_, setProject] = useProject();
@@ -88,7 +95,9 @@ const ProjectsPage = () => {
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                <ProjectMoreActionDropdown projectId={project._id} />
+                {access?.role === "admin" && (
+                  <ProjectMoreActionDropdown projectId={project._id} />
+                )}
               </TableCell>
             </TableRow>
           ))}

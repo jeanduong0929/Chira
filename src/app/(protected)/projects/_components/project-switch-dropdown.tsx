@@ -25,7 +25,7 @@ export const ProjectSwitchDropdown = ({
   project,
 }: ProjectSwitchDropdownProps) => {
   const { data: projects, isLoading } = useQuery(
-    convexQuery(api.projects.getAllWithUser, {}),
+    convexQuery(api.projects.getAllUserProjects, {}),
   );
 
   const [_, setProject] = useProject();

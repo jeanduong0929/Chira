@@ -17,6 +17,7 @@ export default defineSchema({
     clerkId: v.string(),
   })
     .index("by_project_id", ["projectId"])
+    .index("by_clerk_id", ["clerkId"])
     .index("by_project_id_clerk_id", ["projectId", "clerkId"]),
   boards: defineTable({
     name: v.string(),
