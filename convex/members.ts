@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { Auth } from "convex/server";
-import { query } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 
 export const getMembers = query({
@@ -85,6 +85,38 @@ export const getProjectsAccess = query({
       return results;
     } catch (e) {
       console.error(e);
+    }
+  },
+});
+
+export const create = mutation({
+  args: {
+    projectId: v.id("projects"),
+    clerkId: v.string(),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const existingMember = await ctx.db
+        .query("members")
+        .withIndex("by_project_id_clerk_id", (q) =>
+          q.eq("projectId", args.projectId).eq("clerkId", args.clerkId),
+        )
+        .unique();
+      if (existingMember) {
+        throw new Error("Member already exists");
+      }
+
+      return await ctx.db.insert("members", {
+        projectId: args.projectId,
+        clerkId: args.clerkId,
+        role: args.role,
+      });
+    } catch (e) {
+      console.error(e);
+      throw e;
     }
   },
 });

@@ -2,6 +2,7 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { Check } from "lucide-react";
+import { api } from "../../../../../../../convex/_generated/api";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import { cn } from "@/lib/utils";
@@ -20,25 +21,23 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { convexQuery } from "@convex-dev/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface SearchUserComboboxProps {
-  users: Doc<"users">[];
   value: Doc<"users"> | null;
   setValue: Dispatch<SetStateAction<Doc<"users"> | null>>;
-  query: string;
-  setQuery: Dispatch<SetStateAction<string>>;
 }
 
 export function SearchUserCombobox({
-  users,
   value,
   setValue,
-  query,
-  setQuery,
 }: SearchUserComboboxProps) {
+  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
 
-  console.log(users);
+  const { data: users } = useQuery(convexQuery(api.users.search, { query }));
+  const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -77,38 +76,44 @@ export function SearchUserCombobox({
           <CommandList>
             <CommandEmpty>No user found.</CommandEmpty>
             <CommandGroup>
-              {users.map((user) => (
-                <CommandItem
-                  key={user._id}
-                  value={`${user.name} ${user.email}`}
-                  onSelect={() => {
-                    setValue(value?._id === user._id ? null : user);
-                    setOpen(false);
-                  }}
-                >
-                  <Avatar className="size-8">
-                    <AvatarImage src={user.imageUrl} />
-                    <AvatarFallback>
-                      {user.name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col gap-y-1">
-                    <div className="flex items-center gap-x-2">
-                      <span>{user.name}</span>
-                      <Check
-                        className={cn(
-                          "mr-2 h-4 w-4",
-                          value?._id === user._id ? "opacity-100" : "opacity-0",
-                        )}
-                      />
+              {users
+                ?.filter((userz) => userz.clerkId !== user?.clerkId)
+                .map((user) => (
+                  <CommandItem
+                    key={user._id}
+                    value={`${user.name} ${user.email}`}
+                    onSelect={() => {
+                      setValue(value?._id === user._id ? null : user);
+                      setOpen(false);
+                    }}
+                  >
+                    <Avatar className="size-8">
+                      <AvatarImage src={user.imageUrl} />
+                      <AvatarFallback>
+                        {user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-y-1">
+                      <div className="flex items-center gap-x-2">
+                        <span>{user.name}</span>
+                        <Check
+                          className={cn(
+                            "mr-2 h-4 w-4",
+                            value?._id === user._id
+                              ? "opacity-100"
+                              : "opacity-0",
+                          )}
+                        />
+                      </div>
+                      <span className="text-xs text-[#808080]">
+                        {user.email}
+                      </span>
                     </div>
-                    <span className="text-xs text-[#808080]">{user.email}</span>
-                  </div>
-                </CommandItem>
-              ))}
+                  </CommandItem>
+                ))}
             </CommandGroup>
           </CommandList>
         </Command>
