@@ -12,8 +12,8 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useDrop } from "react-dnd";
-import { useMutation } from "@tanstack/react-query";
-import { useConvexMutation } from "@convex-dev/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface SprintCardProps {
@@ -113,6 +113,11 @@ export const SprintCard = ({
     useState(false);
   const [moveToSprintConfirm, MoveToSprintConfirmDialog] = useConfirm();
 
+  const { data: access } = useQuery(
+    convexQuery(api.members.getAccess, {
+      projectId: sprint.projectId,
+    }),
+  );
   const { mutate: moveToSprint } = useMutation({
     mutationFn: useConvexMutation(api.issues.moveToSprint),
     onSuccess: (data) => {
@@ -185,11 +190,13 @@ export const SprintCard = ({
               </p>
             </div>
 
-            <SprintActions
-              sprint={sprint}
-              onStartSprint={handleStartSprint}
-              onCompleteSprint={() => setCompleteSprintDialogOpen(true)}
-            />
+            {access?.role === "admin" && (
+              <SprintActions
+                sprint={sprint}
+                onStartSprint={handleStartSprint}
+                onCompleteSprint={() => setCompleteSprintDialogOpen(true)}
+              />
+            )}
           </CardTitle>
         </CardHeader>
 
