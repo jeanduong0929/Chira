@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useDrag } from "react-dnd";
-import { IssueCardSheet } from "./issue-card-sheet";
 import { AssigneeAvatar } from "./assignee-avatar";
 import { IssueType } from "./issue-type";
 import { IssueCardDropdown } from "./issue-card-dropdown";
@@ -12,7 +11,6 @@ import { cn } from "@/lib/utils";
 
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
   const [open, setOpen] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const [{ isDragging }, drag] = useDrag({
     type: "ISSUE",
@@ -35,7 +33,6 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
           drag(node);
         }}
         className={cn("cursor-pointer rounded-sm", isDragging && "opacity-50")}
-        onClick={() => setIsSheetOpen(true)}
       >
         <CardHeader className="pt-3">
           <CardTitle className="flex items-center justify-between">
@@ -69,11 +66,6 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         issueId={issue._id}
         open={open}
         setOpen={setOpen}
-      />
-      <IssueCardSheet
-        issue={issue}
-        isSheetOpen={isSheetOpen}
-        setIsSheetOpen={setIsSheetOpen}
       />
     </>
   );
