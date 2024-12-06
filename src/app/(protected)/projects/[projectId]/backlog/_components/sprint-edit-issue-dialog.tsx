@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Bookmark, Check, CheckCheck, CheckIcon, Circle } from "lucide-react";
+import { Bookmark, CheckIcon, Circle } from "lucide-react";
 import { TiptapEditor } from "./tiptap-editor";
 import { AssigneeCombobox } from "./assignee-combobox";
 import { api } from "../../../../../../../convex/_generated/api";
