@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { ChevronDown, Lock, Search, Trash } from "lucide-react";
+import { Lock, Search, Trash } from "lucide-react";
 import { toast } from "sonner";
+import { SwitchRoleDropdown } from "./_components/SwitchRoleDropdown";
 import { api } from "../../../../../../convex/_generated/api";
-import { Doc, Id } from "../../../../../../convex/_generated/dataModel";
+import { Id } from "../../../../../../convex/_generated/dataModel";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -21,12 +22,6 @@ import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useProject } from "@/store/use-project";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useConfirm } from "@/hooks/use-confirm";
 
 const MembersPage = () => {
@@ -154,59 +149,6 @@ const MembersPage = () => {
         </Table>
       </div>
     </>
-  );
-};
-
-const SwitchRoleDropdown = ({
-  member,
-  updateConfirm,
-}: {
-  member: Doc<"members">;
-  updateConfirm: ReturnType<typeof useConfirm>[0];
-}) => {
-  const { mutate: updateRole } = useMutation({
-    mutationFn: useConvexMutation(api.members.updateRole),
-  });
-
-  const handleUpdateRole = async (role: "admin" | "member") => {
-    const ok = await updateConfirm();
-    if (!ok) return;
-
-    updateRole(
-      {
-        memberId: member._id,
-        role,
-      },
-      {
-        onSuccess: (data) => {
-          if (data) {
-            toast.success("Role updated");
-          }
-        },
-      },
-    );
-  };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant={"secondary"}
-          className="flex h-[32px] w-[172px] justify-between"
-        >
-          <span className="capitalize">{member.role}</span>
-          <ChevronDown className="size-3" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[172px]">
-        <DropdownMenuItem onClick={() => handleUpdateRole("admin")}>
-          Admin
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleUpdateRole("member")}>
-          Member
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
   );
 };
 
