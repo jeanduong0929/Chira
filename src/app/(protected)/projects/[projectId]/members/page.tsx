@@ -33,7 +33,7 @@ const MembersPage = () => {
   const [projectId] = useProject();
   const [name, setName] = useState("");
   const [updateConfirm, ConfirmRoleDialog] = useConfirm();
-
+  const [removeConfirm, ConfirmRemoveDialog] = useConfirm();
   const { data: members } = useQuery(
     convexQuery(api.members.getMembers, {
       projectId: projectId as Id<"projects">,
@@ -45,6 +45,9 @@ const MembersPage = () => {
     }),
   );
   const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
+  const { mutate: removeMember } = useMutation({
+    mutationFn: useConvexMutation(api.members.remove),
+  });
 
   const filterMembers = useMemo(() => {
     if (!members) return [];
@@ -60,6 +63,10 @@ const MembersPage = () => {
       <ConfirmRoleDialog
         title="Confirm Role Update"
         description="Are you sure you want to update this member's role?"
+      />
+      <ConfirmRemoveDialog
+        title="Confirm Member Removal"
+        description="Are you sure you want to remove this member?"
       />
 
       <div className="flex flex-col gap-y-10">
@@ -119,7 +126,24 @@ const MembersPage = () => {
                 <TableCell className="text-right">
                   {access?.role === "admin" &&
                     member.clerkId !== user?.clerkId && (
-                      <Button variant={"destructive"} size={"iconSm"}>
+                      <Button
+                        variant={"destructive"}
+                        size={"iconSm"}
+                        onClick={async () => {
+                          const ok = await removeConfirm();
+                          if (!ok) return;
+                          removeMember(
+                            { memberId: member._id },
+                            {
+                              onSuccess: (data) => {
+                                if (data) {
+                                  toast.success("Member removed");
+                                }
+                              },
+                            },
+                          );
+                        }}
+                      >
                         <Trash />
                       </Button>
                     )}

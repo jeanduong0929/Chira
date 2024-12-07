@@ -146,6 +146,28 @@ export const updateRole = mutation({
   },
 });
 
+export const remove = mutation({
+  args: {
+    memberId: v.id("members"),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const member = await ctx.db.get(args.memberId);
+      if (!member) {
+        throw new Error("Member not found");
+      }
+
+      await ctx.db.delete(args.memberId);
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});
+
 const getClerkId = async (auth: Auth) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {
