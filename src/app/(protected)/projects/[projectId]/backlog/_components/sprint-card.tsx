@@ -1,17 +1,17 @@
 import React, { useState } from "react";
+import { toast } from "sonner";
+import { useDrop } from "react-dnd";
 import { ChevronDown } from "lucide-react";
-import { SprintDropdown } from "./sprint-dropdown";
-import { Issue } from "./issue";
+import { SprintActions } from "./sprint-actions";
+import { SprintContent } from "./sprint-content";
 import { StartSprintDialog } from "./start-sprint-dialog";
 import { CompleteSprintDialog } from "./complete-sprint-dialog";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../../../convex/_generated/api";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { useDrop } from "react-dnd";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -22,85 +22,6 @@ interface SprintCardProps {
   open: boolean;
   setOpen: (open: boolean) => void;
 }
-
-interface SprintActionsProps {
-  sprint: Doc<"sprints">;
-  onStartSprint: () => void;
-  onCompleteSprint: () => void;
-}
-
-const SprintActions = ({
-  sprint,
-  onStartSprint,
-  onCompleteSprint,
-}: SprintActionsProps) => {
-  return (
-    <div className="flex items-center gap-x-2">
-      {sprint.status === "not_started" && (
-        <Button onClick={onStartSprint}>Start sprint</Button>
-      )}
-      {sprint.status === "active" && (
-        <Button
-          variant="secondary"
-          onClick={onCompleteSprint}
-          className="bg-[#E9EBEE] hover:bg-[#D5D9E0]"
-        >
-          Complete sprint
-        </Button>
-      )}
-      <SprintDropdown sprint={sprint} />
-    </div>
-  );
-};
-
-const formatSprintDate = (startDate?: string, endDate?: string) => {
-  if (!startDate || !endDate) return "";
-
-  const formatDate = (date: string) =>
-    new Date(date).toLocaleDateString("en-US", {
-      day: "numeric",
-      month: "short",
-    });
-
-  return `${formatDate(startDate)} - ${formatDate(endDate)}`;
-};
-
-interface SprintContentProps {
-  sprint: Doc<"sprints"> & { issues: Doc<"issues">[] };
-  isOver?: boolean;
-}
-
-const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
-  if (sprint.issues.length === 0) {
-    return (
-      <CardContent
-        className={cn(
-          "mx-5 mb-5 flex h-[188px] items-center justify-center rounded-lg border-2 border-dashed border-gray-200",
-          isOver && "border-blue-500",
-        )}
-      >
-        <p className="text-xs font-semibold text-muted-foreground">
-          Plan your sprint
-        </p>
-      </CardContent>
-    );
-  }
-
-  return (
-    <div className="mx-2 mb-5">
-      {sprint.issues.map((issue) => (
-        <Issue
-          key={issue._id}
-          issue={issue}
-          projectId={issue.projectId}
-          inSprint={true}
-          sprintId={sprint._id}
-          isOver={isOver}
-        />
-      ))}
-    </div>
-  );
-};
 
 export const SprintCard = ({
   sprint,
@@ -150,6 +71,22 @@ export const SprintCard = ({
     }
     setStartSprintDialogOpen(true);
   };
+
+  function formatSprintDate(
+    startDate: string | undefined,
+    endDate: string | undefined,
+  ) {
+    if (!startDate || !endDate) return "";
+
+    const options: Intl.DateTimeFormatOptions = {
+      month: "short",
+      day: "numeric",
+    };
+    const start = new Date(startDate).toLocaleDateString(undefined, options);
+    const end = new Date(endDate).toLocaleDateString(undefined, options);
+
+    return `${start} - ${end}`;
+  }
 
   return (
     <>
