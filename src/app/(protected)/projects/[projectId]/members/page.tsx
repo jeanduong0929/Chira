@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { ChevronDown, Lock, Search, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../../../../../convex/_generated/api";
@@ -46,7 +46,14 @@ const MembersPage = () => {
   );
   const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
 
-  console.log(members);
+  const filterMembers = useMemo(() => {
+    if (!members) return [];
+    if (name === "") return members;
+
+    return members.filter((member) =>
+      member.user.name.toLowerCase().includes(name.toLowerCase()),
+    );
+  }, [members, name]);
 
   return (
     <>
@@ -57,20 +64,20 @@ const MembersPage = () => {
 
       <div className="flex flex-col gap-y-10">
         <div className="flex flex-col gap-y-5">
-          <h1 className="text-2xl font-semibold">Projects</h1>
+          <h1 className="text-2xl font-semibold">Members</h1>
 
           <div className="relative flex w-[224px] items-center">
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Search projects"
+              placeholder="Search members"
             />
             <Search className="absolute right-5 size-3" />
           </div>
         </div>
 
         <Table>
-          <TableCaption>A list of your recent projects.</TableCaption>
+          <TableCaption>A list of your recent members.</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
@@ -80,7 +87,7 @@ const MembersPage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {members?.map((member) => (
+            {filterMembers.map((member) => (
               <TableRow key={member._id}>
                 <TableCell>
                   <div className="flex items-center gap-x-2">
