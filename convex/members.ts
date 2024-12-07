@@ -121,6 +121,31 @@ export const create = mutation({
   },
 });
 
+export const updateRole = mutation({
+  args: {
+    memberId: v.id("members"),
+    role: v.union(v.literal("admin"), v.literal("member")),
+  },
+  handler: async (ctx, args) => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const member = await ctx.db.get(args.memberId);
+      if (!member) {
+        throw new Error("Member not found");
+      }
+
+      await ctx.db.patch(args.memberId, {
+        role: args.role,
+      });
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});
+
 const getClerkId = async (auth: Auth) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {

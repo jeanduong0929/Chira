@@ -3,7 +3,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Ellipsis } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
-import { Id } from "../../../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../../../convex/_generated/dataModel";
 
 import {
   DropdownMenu,
@@ -12,16 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
 
 interface ProjectMoreActionDropdownProps {
-  projectId: Id<"projects">;
+  project: Doc<"projects"> & {
+    member: Doc<"members">;
+  };
 }
 
 export const ProjectMoreActionDropdown = ({
-  projectId,
+  project,
 }: ProjectMoreActionDropdownProps) => {
   const { mutate: removeProject } = useMutation({
     mutationFn: useConvexMutation(api.projects.remove),
@@ -43,33 +45,39 @@ export const ProjectMoreActionDropdown = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
+          {project.member.role === "admin" && (
+            <DropdownMenuItem asChild>
+              <Link href={`/projects/${project._id}/settings/details`}>
+                Project settings
+              </Link>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
-            <Link href={`/projects/${projectId}/settings/details`}>
-              Project settings
-            </Link>
+            <Link href={`/projects/${project._id}/members`}>Members</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>Members</DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={async () => {
-              const ok = await confirm();
-              if (!ok) return;
+          {project.member.role === "admin" && (
+            <DropdownMenuItem
+              onClick={async () => {
+                const ok = await confirm();
+                if (!ok) return;
 
-              removeProject(
-                {
-                  projectId,
-                },
-                {
-                  onSuccess: (data) => {
-                    if (data) {
-                      toast.success("Project deleted");
-                    }
+                removeProject(
+                  {
+                    projectId: project._id,
                   },
-                },
-              );
-            }}
-          >
-            Move to trash
-          </DropdownMenuItem>
+                  {
+                    onSuccess: (data) => {
+                      if (data) {
+                        toast.success("Project deleted");
+                      }
+                    },
+                  },
+                );
+              }}
+            >
+              Move to trash
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

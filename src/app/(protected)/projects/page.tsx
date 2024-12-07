@@ -4,7 +4,6 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { ProjectMoreActionDropdown } from "./_components/project-more-action-dropdown";
-import { Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 
 import {
@@ -24,15 +23,10 @@ import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 
 const ProjectsPage = () => {
-  const [projectId, _setProjectId] = useProject();
+  const [, _setProjectId] = useProject();
 
   const { data: projects } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
-  );
-  const { data: access } = useQuery(
-    convexQuery(api.members.getProjectsAccess, {
-      projectIds: projects?.map((project) => project._id) ?? [],
-    }),
   );
 
   const [_, setProject] = useProject();
@@ -95,9 +89,7 @@ const ProjectsPage = () => {
                 </div>
               </TableCell>
               <TableCell className="text-right">
-                {project.member.role === "admin" && (
-                  <ProjectMoreActionDropdown projectId={project._id} />
-                )}
+                <ProjectMoreActionDropdown project={project} />
               </TableCell>
             </TableRow>
           ))}
