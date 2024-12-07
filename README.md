@@ -98,11 +98,11 @@ chira/
 
 ### Current Progress
 
-| Feature              | Status      |
-| -------------------- | ----------- |
-| 🟢 Sprint Management | Completed   |
-| 🟡 Ticket System     | In Progress |
-| 🟡 SCRUM Board       | In Progress |
+| Feature              | Status    |
+| -------------------- | --------- |
+| 🟢 Sprint Management | Completed |
+| 🟢 Ticket System     | Completed |
+| 🟢 SCRUM Board       | Completed |
 
 ### Future Plans
 
