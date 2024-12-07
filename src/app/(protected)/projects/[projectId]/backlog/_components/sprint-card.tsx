@@ -70,6 +70,10 @@ export const SprintCard = ({
       toast.error("You can only have one active sprint");
       return;
     }
+    if (sprint.issues.length === 0) {
+      toast.error("You need to add issues to the sprint before starting it");
+      return;
+    }
     setStartSprintDialogOpen(true);
   };
 

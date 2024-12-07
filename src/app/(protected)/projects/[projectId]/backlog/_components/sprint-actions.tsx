@@ -1,7 +1,8 @@
 import React from "react";
-import { Button } from "@/components/ui/button";
 import { SprintDropdown } from "./sprint-dropdown";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
+
+import { Button } from "@/components/ui/button";
 
 interface SprintActionsProps {
   sprint: Doc<"sprints">;
