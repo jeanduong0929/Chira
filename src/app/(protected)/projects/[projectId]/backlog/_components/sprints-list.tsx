@@ -38,23 +38,25 @@ export const SprintsList = ({
         />
       ))}
 
-      <div className="flex items-center gap-x-1">
-        <Button
-          variant={"ghost"}
-          size={"iconXs"}
-          onClick={() => setShowCompleted(!showCompleted)}
-        >
-          <ChevronDown
-            className={cn(
-              "transition-transform duration-300 ease-in-out",
-              showCompleted ? "rotate-0" : "-rotate-90",
-            )}
-          />
-        </Button>
-        <p className="text-sm font-medium">
-          Completed sprints ({completedSprints.length})
-        </p>
-      </div>
+      {completedSprints.length > 0 && (
+        <div className="flex items-center gap-x-1">
+          <Button
+            variant={"ghost"}
+            size={"iconXs"}
+            onClick={() => setShowCompleted(!showCompleted)}
+          >
+            <ChevronDown
+              className={cn(
+                "transition-transform duration-300 ease-in-out",
+                showCompleted ? "rotate-0" : "-rotate-90",
+              )}
+            />
+          </Button>
+          <p className="text-sm font-medium">
+            Completed sprints ({completedSprints.length})
+          </p>
+        </div>
+      )}
       {showCompleted &&
         completedSprints.map((sprint) => (
           <SprintCard
