@@ -22,10 +22,6 @@ export default defineSchema({
     .index("by_project_id", ["projectId"])
     .index("by_clerk_id", ["clerkId"])
     .index("by_project_id_clerk_id", ["projectId", "clerkId"]),
-  boards: defineTable({
-    name: v.string(),
-    projectId: v.id("projects"),
-  }).index("by_project_id", ["projectId"]),
   sprints: defineTable({
     name: v.string(),
     startDate: v.optional(v.string()),
