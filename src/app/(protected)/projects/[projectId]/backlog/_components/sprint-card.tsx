@@ -50,6 +50,7 @@ export const SprintCard = ({
     accept: "ISSUE",
     drop: async (draggedItem: { issue: Doc<"issues"> }) => {
       if (draggedItem.issue.sprintId === sprint._id) return;
+      if (sprint.status === "completed") return;
 
       const ok = await moveToSprintConfirm();
       if (!ok) return;
@@ -91,7 +92,11 @@ export const SprintCard = ({
   return (
     <>
       <Card
-        className="border-none bg-[#F7F8F9]"
+        className={cn(
+          "border-none bg-[#F7F8F9]",
+          sprint.status === "completed" &&
+            "pointer-events-none bg-[#E9EBEE] opacity-50",
+        )}
         ref={(node) => {
           if (node) drop(node);
         }}

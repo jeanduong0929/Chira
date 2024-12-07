@@ -47,13 +47,13 @@ const BacklogPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-y-10">
+    <div className="flex flex-col gap-y-10 pb-10">
       <BacklogHeader
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
 
-      <div className="flex flex-col gap-y-5">
+      <div className="flex flex-col gap-y-20">
         {isLoading ? (
           <Skeleton className="h-[252px] w-full rounded-xl" />
         ) : (
