@@ -10,15 +10,13 @@ import {
 } from "@/components/ui/select";
 
 export const IssueTypeSelect = ({
-  issueType,
   setIssueType,
 }: {
-  issueType: "story" | "bug" | "task";
   setIssueType: Dispatch<SetStateAction<"story" | "bug" | "task">>;
 }) => {
   return (
     <Select
-      defaultValue={issueType}
+      defaultValue="story"
       onValueChange={(value) => {
         setIssueType(value as "story" | "bug" | "task");
       }}

@@ -9,15 +9,13 @@ import {
 } from "@/components/ui/select";
 
 export const PrioritySelect = ({
-  priority,
   setPriority,
 }: {
-  priority: "low" | "medium" | "high";
   setPriority: Dispatch<SetStateAction<"low" | "medium" | "high">>;
 }) => {
   return (
     <Select
-      defaultValue={priority}
+      defaultValue="low"
       onValueChange={(value) => {
         setPriority(value as "low" | "medium" | "high");
       }}

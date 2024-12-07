@@ -1,8 +1,9 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { Bookmark, Check, CheckCheck, CheckIcon, Circle } from "lucide-react";
 import { TiptapEditor } from "./tiptap-editor";
 import { AssigneeCombobox } from "./assignee-combobox";
+import { IssueTypeSelect } from "./issue-type-select";
+import { PrioritySelect } from "./priority-select";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
 
@@ -14,13 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -181,89 +175,5 @@ export const CreateIssueDialog = ({
         </form>
       </DialogContent>
     </Dialog>
-  );
-};
-
-const IssueTypeSelect = ({
-  setIssueType,
-}: {
-  setIssueType: Dispatch<SetStateAction<"story" | "bug" | "task">>;
-}) => {
-  return (
-    <Select
-      defaultValue="story"
-      onValueChange={(value) => {
-        setIssueType(value as "story" | "bug" | "task");
-      }}
-    >
-      <SelectTrigger className="w-[350px]">
-        <SelectValue placeholder="Bug" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem key="story" value="story">
-          <div className="flex items-center gap-x-3">
-            <div className="shrink-0 bg-[#64BA3B] p-1">
-              <Bookmark className="size-3" fill="#fff" stroke="#fff" />
-            </div>
-            <span>Story</span>
-          </div>
-        </SelectItem>
-        <SelectItem key="task" value="task">
-          <div className="flex items-center gap-x-3">
-            <div className="shrink-0 bg-[#0B66E4] p-1">
-              <CheckIcon className="size-3 text-white" strokeWidth={4} />
-            </div>
-            <span>Task</span>
-          </div>
-        </SelectItem>
-        <SelectItem key="bug" value="bug">
-          <div className="flex items-center gap-x-3">
-            <div className="shrink-0 bg-[#E84C3D] p-1">
-              <Circle className="size-3" fill="#fff" stroke="#fff" />
-            </div>
-            <span>Bug</span>
-          </div>
-        </SelectItem>
-      </SelectContent>
-    </Select>
-  );
-};
-
-const PrioritySelect = ({
-  setPriority,
-}: {
-  setPriority: Dispatch<SetStateAction<"low" | "medium" | "high">>;
-}) => {
-  return (
-    <Select
-      defaultValue="low"
-      onValueChange={(value) => {
-        setPriority(value as "low" | "medium" | "high");
-      }}
-    >
-      <SelectTrigger className="w-[350px]">
-        <SelectValue placeholder="Bug" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem key="low" value="low">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#64BA3B]" />
-            <span>Low</span>
-          </div>
-        </SelectItem>
-        <SelectItem key="medium" value="medium">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#0B66E4]" />
-            <span>Medium</span>
-          </div>
-        </SelectItem>
-        <SelectItem key="high" value="high">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#E84C3D]" />
-            <span>High</span>
-          </div>
-        </SelectItem>
-      </SelectContent>
-    </Select>
   );
 };
