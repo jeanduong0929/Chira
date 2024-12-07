@@ -1,8 +1,9 @@
 import React from "react";
 import { ChevronDown } from "lucide-react";
 import { toast } from "sonner";
-import { api } from "../../../../../../convex/_generated/api";
-import { Doc } from "../../../../../../convex/_generated/dataModel";
+import { Doc } from "../../../../../../../convex/_generated/dataModel";
+import { api } from "../../../../../../../convex/_generated/api";
+
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
