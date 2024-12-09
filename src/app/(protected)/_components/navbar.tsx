@@ -4,16 +4,20 @@ import React, { useState } from "react";
 import { Expand } from "lucide-react";
 import { ProjectDropdown } from "../projects/_components/project-dropdown";
 import { CreateIssueDialog } from "../projects/[projectId]/backlog/_components/sprint-create-issue-dialog";
+import { api } from "../../../../convex/_generated/api";
 
 import { Button } from "@/components/ui/button";
 import { useAuth, UserButton } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useProject } from "@/store/use-project";
+import { convexQuery } from "@convex-dev/react-query";
 
 export const Navbar = () => {
   const { isLoaded } = useAuth();
+  const { data: projects } = useQuery(
+    convexQuery(api.projects.getAllUserProjects, {}),
+  );
 
-  const [projectId, _] = useProject();
   const [openCreateIssueDialog, setOpenCreateIssueDialog] = useState(false);
 
   return (
@@ -28,7 +32,7 @@ export const Navbar = () => {
             <ProjectDropdown />
             <Button
               onClick={() => setOpenCreateIssueDialog(true)}
-              disabled={!projectId}
+              disabled={projects?.length === 0}
             >
               Create
             </Button>
