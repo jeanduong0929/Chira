@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
 
@@ -57,6 +57,7 @@ export const ProjectMoreActionDropdown = ({
           </DropdownMenuItem>
           {project.member.role === "admin" && (
             <DropdownMenuItem
+              className="text-red-500 focus:text-red-500"
               onClick={async () => {
                 const ok = await confirm();
                 if (!ok) return;
