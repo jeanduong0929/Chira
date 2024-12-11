@@ -1,5 +1,5 @@
-import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
+import { defineSchema, defineTable } from "convex/server";
 
 export default defineSchema({
   users: defineTable({
@@ -52,5 +52,20 @@ export default defineSchema({
     projectId: v.id("projects"),
   })
     .index("by_project_id_sequence", ["projectId", "sequence"])
-    .index("by_sprint_id", ["sprintId"]),
+    .index("by_sprint_id", ["sprintId"])
+    .index("by_assignee_id", ["assigneeId"]),
+  notifications: defineTable({
+    type: v.literal("project_invite"),
+    recipientId: v.string(),
+    senderId: v.string(),
+    projectId: v.id("projects"),
+    status: v.union(
+      v.literal("pending"),
+      v.literal("accepted"),
+      v.literal("declined"),
+    ),
+  })
+    .index("by_recipient_id", ["recipientId"])
+    .index("by_sender_id", ["senderId"])
+    .index("by_project_id", ["projectId"]),
 });

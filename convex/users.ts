@@ -63,7 +63,7 @@ export const create = mutation({
   },
 });
 
-const getClerkId = async (auth: Auth) => {
+export const getClerkId = async (auth: Auth) => {
   const identity = await auth.getUserIdentity();
   if (!identity) {
     throw new Error("Unauthorized");

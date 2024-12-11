@@ -15,6 +15,7 @@ import type {
 } from "convex/server";
 import type * as issues from "../issues.js";
 import type * as members from "../members.js";
+import type * as notifications from "../notifications.js";
 import type * as projects from "../projects.js";
 import type * as sprints from "../sprints.js";
 import type * as users from "../users.js";
@@ -30,6 +31,7 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   issues: typeof issues;
   members: typeof members;
+  notifications: typeof notifications;
   projects: typeof projects;
   sprints: typeof sprints;
   users: typeof users;
