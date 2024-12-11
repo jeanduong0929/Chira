@@ -12,6 +12,7 @@ export default defineSchema({
     .searchIndex("search_users", { searchField: "email" }),
   projects: defineTable({
     name: v.string(),
+    softDeleted: v.boolean(),
     clerkId: v.string(),
   }).index("by_clerk_id", ["clerkId"]),
   members: defineTable({

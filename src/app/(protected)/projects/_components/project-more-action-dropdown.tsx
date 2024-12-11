@@ -28,16 +28,26 @@ export const ProjectMoreActionDropdown = ({
   const { mutate: removeProject } = useMutation({
     mutationFn: useConvexMutation(api.projects.remove),
   });
+  const { mutate: leaveProject } = useMutation({
+    mutationFn: useConvexMutation(api.members.remove),
+  });
 
-  const [confirm, ConfirmDialog] = useConfirm();
+  const [deleteConfirm, DeleteConfirmDialog] = useConfirm();
+  const [leaveConfirm, LeaveConfirmDialog] = useConfirm();
 
   return (
     <>
-      <ConfirmDialog
+      <DeleteConfirmDialog
         title={"Delete project"}
         description={"Are you sure you want to delete this project?"}
         variant={"destructive"}
       />
+      <LeaveConfirmDialog
+        title={"Leave project"}
+        description={"Are you sure you want to leave this project?"}
+        variant={"destructive"}
+      />
+
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant={"ghost"} size={"iconSm"}>
@@ -55,11 +65,36 @@ export const ProjectMoreActionDropdown = ({
           <DropdownMenuItem asChild>
             <Link href={`/projects/${project._id}/members`}>Members</Link>
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-yellow-500 focus:text-yellow-500"
+            onClick={async () => {
+              const ok = await leaveConfirm();
+              if (!ok) return;
+
+              leaveProject(
+                {
+                  memberId: project.member._id,
+                },
+                {
+                  onSuccess: (data) => {
+                    if (data) {
+                      toast.success("You have left the project");
+                    }
+                  },
+                  onError: (error) => {
+                    toast.error("Failed to leave the project");
+                  },
+                },
+              );
+            }}
+          >
+            Leave project
+          </DropdownMenuItem>
           {project.member.role === "admin" && (
             <DropdownMenuItem
               className="text-red-500 focus:text-red-500"
               onClick={async () => {
-                const ok = await confirm();
+                const ok = await deleteConfirm();
                 if (!ok) return;
 
                 removeProject(
