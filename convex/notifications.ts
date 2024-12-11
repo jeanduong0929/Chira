@@ -30,6 +30,7 @@ export const create = mutation({
       });
     } catch (e) {
       console.error(e);
+      throw e;
     }
   },
 });

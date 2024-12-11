@@ -8,6 +8,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -28,8 +29,8 @@ export const AddMemberDialog = ({
   const [user, setUser] = useState<Doc<"users"> | null>(null);
   const [role, setRole] = useState<"admin" | "member">("member");
 
-  const { mutate: createMember } = useMutation({
-    mutationFn: useConvexMutation(api.members.create),
+  const { mutate: createNotification } = useMutation({
+    mutationFn: useConvexMutation(api.notifications.create),
   });
 
   return (
@@ -52,28 +53,26 @@ export const AddMemberDialog = ({
           className="flex flex-col gap-y-8"
           onSubmit={(e) => {
             e.preventDefault();
-            createMember(
+            createNotification(
               {
                 projectId: projectId as Id<"projects">,
-                clerkId: user?.clerkId as string,
-                role: role,
+                recipientId: user?.clerkId as string,
               },
               {
                 onSuccess: (data) => {
                   if (data) {
-                    toast.success("Member added");
+                    toast.success("Invite sent");
+                    setOpen(false);
                     setUser(null);
                     setRole("member");
-                    setOpen(false);
                   }
                 },
                 onError: (error) => {
-                  const errorMessage = error.message?.includes(
-                    "Member already exists",
-                  )
-                    ? "This user is already a member of the project"
-                    : "Failed to add member";
-                  toast.error(errorMessage);
+                  if (error.message?.includes("Notification already exists")) {
+                    toast.error("Invite already sent");
+                  } else {
+                    toast.error("Failed to send invite");
+                  }
                 },
               },
             );
@@ -87,9 +86,19 @@ export const AddMemberDialog = ({
             <Label>Role</Label>
             <RoleSelect role={role} setRole={setRole} />
           </div>
-          <Button type="submit" disabled={!user || !role}>
-            Add member
-          </Button>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant={"outline"}
+              onClick={() => setOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={!user || !role}>
+              Add member
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
