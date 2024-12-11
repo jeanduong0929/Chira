@@ -52,16 +52,37 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   const { data: projects, isLoading: projectsLoading } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
   );
-  const { data: projectById } = useQuery(
-    convexQuery(api.projects.getById, {
-      projectId: projectId as Id<"projects">,
-    }),
-  );
   const { user } = useUser();
   const { mutate: createUser } = useMutation({
     mutationFn: useConvexMutation(api.users.create),
   });
 
+  /**
+   * Effect that redirects the user to the projects page if there are no available projects.
+   *
+   * This effect runs whenever the `projects`, `projectsLoading`, or `router` dependencies change.
+   *
+   * It performs the following checks:
+   * - If the projects are currently loading, the effect exits early.
+   * - If there are no projects available (i.e., the projects array is empty), it redirects the user to the "/projects" route.
+   */
+  useEffect(() => {
+    if (projectsLoading) return;
+    if (projects && projects.length === 0) {
+      router.replace("/projects");
+    }
+  }, [projects, projectsLoading, router]);
+
+  /**
+   * Effect that creates a user in the system when the user object is available.
+   * This effect runs whenever the `user` or `createUser` dependencies change.
+   *
+   * It checks if the `user` object is defined, and if so, it calls the `createUser`
+   * mutation function with the user's details, including:
+   * - `name`: The full name of the user, defaulting to an empty string if not available.
+   * - `email`: The email address of the user, taken from the first email address in the user's emailAddresses array.
+   * - `imageUrl`: The URL of the user's profile image, defaulting to an empty string if not available.
+   */
   useEffect(() => {
     if (user) {
       createUser({
@@ -70,29 +91,51 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
         imageUrl: user.imageUrl ?? "",
       });
     }
+  }, [user, createUser]);
 
-    // Set the projectId to the first project if it's not set
-    if (!projectId && projects && projects.length > 0) {
+  /**
+   * Effect that manages the currently selected project based on the list of available projects.
+   *
+   * This effect runs whenever the `projects`, `projectId`, `project`, or `setProjectId` dependencies change.
+   *
+   * It performs the following checks:
+   * - If there are no projects available, the effect exits early.
+   * - If no project is currently selected (`projectId` is falsy), it sets the initial project to the first project in the list.
+   * - If the current project has been deleted (i.e., it is not found in the list of projects) and we are not in the middle of a project switch, it resets the selected project to the first project in the list.
+   */
+  useEffect(() => {
+    if (!projects || projects.length === 0) return;
+
+    // Only set initial project if none selected
+    if (!projectId) {
+      console.log("Setting initial project:", projects[0]._id);
       setProjectId(projects[0]._id);
-      // If the project gets deleted, set the projectId to the first project
-    } else if (projects && projects.length > 0 && !projectById) {
-      setProjectId(projects[0]._id);
+      return;
     }
-  }, [createUser, projectById, projectId, projects, setProjectId, user]);
 
+    // Only reset to first project if current project was deleted
+    // AND we're not in the middle of a project switch
+    if (!project && projectId && !projects.some((p) => p._id === projectId)) {
+      setProjectId(projects[0]._id);
+      return;
+    }
+  }, [projects, projectId, project, setProjectId]);
+
+  /**
+   * Toggles the open state of a sidebar group.
+   *
+   * This function updates the sidebar's open state by flipping the current
+   * value of the specified group. It uses the previous state to ensure that
+   * the update is based on the most recent state.
+   *
+   * @param {string} group - The label of the sidebar group to toggle.
+   */
   const handleSidebarClick = (group: string) => {
     setSidebarOpen((prev) => ({
       ...prev,
       [group]: !prev[group],
     }));
   };
-
-  useEffect(() => {
-    if (projectsLoading) return;
-    if (projects && projects.length === 0) {
-      router.replace("/projects");
-    }
-  }, [projects, projectsLoading, router]);
 
   return (
     <div className="flex h-screen flex-col">

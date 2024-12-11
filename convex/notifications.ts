@@ -35,7 +35,6 @@ export const create = mutation({
           q.eq("projectId", args.projectId).eq("clerkId", args.recipientId),
         )
         .unique();
-      console.log(member);
       if (member) {
         throw new Error("Member already exists");
       }

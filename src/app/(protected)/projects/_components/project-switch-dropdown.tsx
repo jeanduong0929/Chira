@@ -24,13 +24,11 @@ interface ProjectSwitchDropdownProps {
 export const ProjectSwitchDropdown = ({
   project,
 }: ProjectSwitchDropdownProps) => {
-  const {
-    data: projects,
-    isLoading,
-    refetch,
-  } = useQuery(convexQuery(api.projects.getAllUserProjects, {}));
+  const { data: projects, isLoading } = useQuery(
+    convexQuery(api.projects.getAllUserProjects, {}),
+  );
 
-  const [_, setProjectId] = useProject();
+  const [projectId, setProjectId] = useProject();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -67,8 +65,9 @@ export const ProjectSwitchDropdown = ({
             <DropdownMenuItem
               key={project._id}
               className="flex cursor-pointer items-center gap-x-3"
-              onClick={() => {
+              onClick={async () => {
                 setProjectId(project._id);
+                console.log("Dropdown project._id", project._id);
 
                 const split = pathname.split("/").slice(1);
                 if (split.length > 1) {
