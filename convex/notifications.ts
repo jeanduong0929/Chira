@@ -44,7 +44,7 @@ export const create = mutation({
         .withIndex("by_project_id", (q) => q.eq("projectId", args.projectId))
         .unique();
 
-      if (notification) {
+      if (notification?.status === "pending") {
         throw new Error("Notification already exists");
       }
 
@@ -198,14 +198,16 @@ export const getWithProject = query({
       const notificationsWithProject: NotificationWithProject[] = [];
       for (const n of notifications) {
         const project = await ctx.db.get(n.projectId);
-        if (!project) {
-          throw new Error("Project not found");
-        }
+        if (n.status === "pending") {
+          if (!project) {
+            throw new Error("Project not found");
+          }
 
-        notificationsWithProject.push({
-          ...n,
-          project,
-        });
+          notificationsWithProject.push({
+            ...n,
+            project,
+          });
+        }
       }
 
       return notificationsWithProject.filter((n) => n.status === "pending");

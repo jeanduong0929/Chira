@@ -67,7 +67,7 @@ const Sidebar = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "fixed left-0 top-[56px] z-50 flex max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] flex-col border-r-4 bg-white transition-all duration-300 ease-in-out",
+        "fixed left-0 top-[56px] z-50 flex max-h-[calc(100vh-56px)] min-h-[calc(100vh-56px)] flex-col border-r-4 bg-white transition-all duration-300 ease-in-out dark:bg-background",
         isOpen ? "w-64" : "w-5",
       )}
       {...props}
@@ -162,7 +162,7 @@ const SidebarTrigger = React.forwardRef<
       ref={ref}
       className={cn(
         className,
-        "absolute -right-4 top-5 rounded-full border bg-white transition-transform duration-300 ease-in-out",
+        "absolute -right-4 top-5 rounded-full border bg-white transition-transform duration-300 ease-in-out dark:bg-background",
         isOpen ? "rotate-180" : "rotate-0",
       )}
       variant="ghost"
@@ -261,9 +261,9 @@ const SidebarGroupItem = React.forwardRef<
         ref={ref}
         className={cn(
           className,
-          "flex justify-start px-6 hover:bg-[#EAF3FF]",
+          "flex justify-start px-6 hover:bg-[#EAF3FF] dark:hover:bg-[#202024]",
           pathname.includes(href.split("/").pop() as string) &&
-            "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8]",
+            "bg-[#EAF3FF] text-[#377BE8] hover:text-[#377BE8] dark:bg-[#202024]",
           disabled && "pointer-events-none opacity-50",
         )}
         variant="ghost"

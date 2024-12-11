@@ -97,7 +97,7 @@ export const SprintCard = ({
     <>
       <Card
         className={cn(
-          "border-none bg-[#F7F8F9]",
+          "border-none bg-[#F7F8F9] dark:bg-[#202024]",
           sprint.status === "completed" &&
             "pointer-events-none bg-[#E9EBEE] opacity-50",
         )}

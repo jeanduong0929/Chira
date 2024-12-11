@@ -67,7 +67,6 @@ export const ProjectSwitchDropdown = ({
               className="flex cursor-pointer items-center gap-x-3"
               onClick={async () => {
                 setProjectId(project._id);
-                console.log("Dropdown project._id", project._id);
 
                 const split = pathname.split("/").slice(1);
                 if (split.length > 1) {

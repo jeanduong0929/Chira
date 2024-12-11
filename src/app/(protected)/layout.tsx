@@ -108,7 +108,6 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
     // Only set initial project if none selected
     if (!projectId) {
-      console.log("Setting initial project:", projects[0]._id);
       setProjectId(projects[0]._id);
       return;
     }

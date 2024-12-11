@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Expand } from "lucide-react";
 import { NotificationDropdown } from "./notification-dropdown";
+import { ModeToggle } from "./theme-toggle";
 import { ProjectDropdown } from "../projects/_components/project-dropdown";
 import { CreateIssueDialog } from "../projects/[projectId]/backlog/_components/sprint-create-issue-dialog";
 import { api } from "../../../../convex/_generated/api";
@@ -40,6 +41,7 @@ export const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-x-5">
+            <ModeToggle />
             <NotificationDropdown />
             {isLoaded ? (
               <UserButton />

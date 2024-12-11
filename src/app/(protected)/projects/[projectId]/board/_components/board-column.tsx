@@ -34,6 +34,35 @@ export const Column = ({
 
   const [switchConfirm, SwitchConfirmDialog] = useConfirm();
 
+  /**
+   * Custom hook to handle drag-and-drop functionality for issues.
+   *
+   * This hook uses the `useDrop` method from `react-dnd` to specify the behavior
+   * when an issue is dropped onto this column. It accepts issues of type "ISSUE".
+   *
+   * @param {Object} monitor - The monitor object provided by react-dnd, used to
+   * collect information about the drag-and-drop state.
+   * @returns {Object} - An object containing the `isOver` state, which indicates
+   * whether the dragged item is currently over this drop target.
+   *
+   * @param {Object} draggedItem - The item being dragged, which contains:
+   * @param {Doc<"issues">} draggedItem.issue - The issue document being dragged.
+   * @param {string} draggedItem.type - The type of the dragged item.
+   * @param {string | null} draggedItem.sourceAssigneeId - The ID of the assignee
+   * from which the issue is being dragged, or null if unassigned.
+   * @param {"not_started" | "in_progress" | "completed"} draggedItem.sourceStatus -
+   * The current status of the issue being dragged.
+   * @param {boolean} draggedItem.isUnassigned - A flag indicating whether the
+   * issue is currently unassigned.
+   *
+   * The drop function handles the following scenarios:
+   * - If the status of the issue has changed, it updates the status accordingly.
+   * - If the assignee has changed, it prompts the user for confirmation before
+   * updating the assignee.
+   *
+   * The `collect` function returns an object that contains the `isOver` state,
+   * which is used to determine if the dragged item is currently over this column.
+   */
   const [{ isOver }, drop] = useDrop({
     accept: "ISSUE",
     drop: async (draggedItem: {
@@ -182,7 +211,7 @@ export const Column = ({
         ref={(node) => {
           if (node) drop(node);
         }}
-        className="relative h-[320px] w-[270px] rounded-md bg-[#F7F8F9]"
+        className="relative h-[320px] w-[270px] rounded-md bg-[#F7F8F9] dark:bg-[#202024]"
       >
         {isOver && (
           <div className="absolute left-0 top-0 flex w-full items-center">
