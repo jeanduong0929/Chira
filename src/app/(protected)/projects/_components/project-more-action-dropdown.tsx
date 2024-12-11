@@ -26,7 +26,7 @@ export const ProjectMoreActionDropdown = ({
   project,
 }: ProjectMoreActionDropdownProps) => {
   const { mutate: removeProject } = useMutation({
-    mutationFn: useConvexMutation(api.projects.remove),
+    mutationFn: useConvexMutation(api.projects.softDelete),
   });
   const { mutate: leaveProject } = useMutation({
     mutationFn: useConvexMutation(api.members.remove),
@@ -106,6 +106,9 @@ export const ProjectMoreActionDropdown = ({
                       if (data) {
                         toast.success("Project deleted");
                       }
+                    },
+                    onError: (error) => {
+                      toast.error("Failed to delete the project");
                     },
                   },
                 );

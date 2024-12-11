@@ -32,6 +32,15 @@ const ProjectsPage = () => {
   const [_, setProject] = useProject();
   const [name, setName] = useState("");
 
+  /**
+   * Filters the list of projects based on the search input.
+   *
+   * This memoized function checks if the projects are available and filters them
+   * according to the user's input in the search field. If no input is provided,
+   * it returns all projects. The filtering is case-insensitive.
+   *
+   * @returns {Array} - An array of projects that match the search criteria.
+   */
   const filterProjects = useMemo(() => {
     if (!projects) return [];
     if (name === "") return projects;

@@ -95,6 +95,9 @@ export const getAllUserProjects = query({
         if (!project) {
           throw new Error("Project not found");
         }
+        if (project.softDeleted) {
+          continue;
+        }
         const user = await ctx.db
           .query("users")
           .withIndex("by_clerk_id", (q) => q.eq("clerkId", project.clerkId))

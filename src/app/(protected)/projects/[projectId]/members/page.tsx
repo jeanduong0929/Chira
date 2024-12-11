@@ -62,6 +62,8 @@ const MembersPage = () => {
       <ConfirmRemoveDialog
         title="Confirm Member Removal"
         description="Are you sure you want to remove this member?"
+        confirmButtonText="Remove"
+        variant="destructive"
       />
 
       <div className="flex flex-col gap-y-10">
