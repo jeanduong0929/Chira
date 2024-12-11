@@ -59,6 +59,7 @@ export default defineSchema({
     recipientId: v.string(),
     senderId: v.string(),
     projectId: v.id("projects"),
+    role: v.union(v.literal("admin"), v.literal("member")),
     status: v.union(
       v.literal("pending"),
       v.literal("accepted"),

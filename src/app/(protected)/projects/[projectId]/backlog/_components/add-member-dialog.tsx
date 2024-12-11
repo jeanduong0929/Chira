@@ -57,6 +57,7 @@ export const AddMemberDialog = ({
               {
                 projectId: projectId as Id<"projects">,
                 recipientId: user?.clerkId as string,
+                role: role,
               },
               {
                 onSuccess: (data) => {
@@ -70,6 +71,8 @@ export const AddMemberDialog = ({
                 onError: (error) => {
                   if (error.message?.includes("Notification already exists")) {
                     toast.error("Invite already sent");
+                  } else if (error.message?.includes("Member already exists")) {
+                    toast.error("Member already exists");
                   } else {
                     toast.error("Failed to send invite");
                   }

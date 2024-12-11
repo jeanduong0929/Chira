@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Expand } from "lucide-react";
+import { NotificationDropdown } from "./notification-dropdown";
 import { ProjectDropdown } from "../projects/_components/project-dropdown";
 import { CreateIssueDialog } from "../projects/[projectId]/backlog/_components/sprint-create-issue-dialog";
 import { api } from "../../../../convex/_generated/api";
@@ -38,11 +39,14 @@ export const Navbar = () => {
             </Button>
           </div>
 
-          {isLoaded ? (
-            <UserButton />
-          ) : (
-            <Skeleton className="size-[28px] rounded-full" />
-          )}
+          <div className="flex items-center gap-x-5">
+            <NotificationDropdown />
+            {isLoaded ? (
+              <UserButton />
+            ) : (
+              <Skeleton className="size-[28px] rounded-full" />
+            )}
+          </div>
         </nav>
       </div>
 
