@@ -31,7 +31,7 @@ export const BacklogHeader = ({
 
           <Button
             onClick={() => setOpenAddMemberDialog(true)}
-            className="rounded-full bg-[#E4E5E9] hover:bg-[#D0D4DA]"
+            className="rounded-full bg-[#E4E5E9] hover:bg-[#D0D4DA] dark:bg-black dark:hover:bg-black/40"
             variant={"ghost"}
             size={"icon"}
           >

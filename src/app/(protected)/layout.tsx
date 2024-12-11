@@ -168,7 +168,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
 
         <SidebarChildren>
           <DndProvider backend={HTML5Backend}>
-            <main className="mx-auto h-full w-11/12 max-w-screen-2xl py-10">
+            <main className="mx-auto h-full w-11/12 max-w-screen-2xl py-10 dark:bg-background">
               {children}
             </main>
           </DndProvider>

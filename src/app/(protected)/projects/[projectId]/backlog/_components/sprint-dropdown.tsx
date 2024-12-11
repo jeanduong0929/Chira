@@ -35,7 +35,7 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
   return (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
+        <DropdownMenuTrigger className="dark:hover:bg-[#1A1A1A]" asChild>
           <Button variant="ghost" size={"icon"} className="hover:bg-[#D5D9E0]">
             <Ellipsis />
           </Button>
@@ -68,6 +68,7 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
+            className="text-red-500 focus:text-red-500"
             onClick={async () => {
               const ok = await confirm();
               if (!ok) return;

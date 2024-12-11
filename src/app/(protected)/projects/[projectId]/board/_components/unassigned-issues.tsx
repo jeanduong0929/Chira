@@ -81,7 +81,7 @@ const GetStartedPrompts = () => {
       </p>
       <Button
         variant={"secondary"}
-        className="bg-[#E8EBEE] hover:bg-[#D5D9DF]"
+        className="bg-[#E8EBEE] hover:bg-[#D5D9DF] dark:bg-black dark:hover:bg-black/40"
         asChild
       >
         <Link href={`/projects/${projectId}/backlog`}>Go to Backlog</Link>
