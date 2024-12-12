@@ -93,10 +93,7 @@ export const getAllUserProjects = query({
       })[] = [];
       for (const m of members) {
         const project = await ctx.db.get(m.projectId);
-        if (!project) {
-          throw new Error("Project not found");
-        }
-        if (project.softDeleted) {
+        if (!project || project.softDeleted) {
           continue;
         }
         const user = await ctx.db
@@ -107,8 +104,13 @@ export const getAllUserProjects = query({
           throw new Error("User not found");
         }
 
+        console.log(project);
+        console.log(user);
+
         projectsWithMembers.push({ ...project, member: m, user });
       }
+
+      console.log("projectsWithMembers", projectsWithMembers);
 
       return projectsWithMembers;
     } catch (e) {
