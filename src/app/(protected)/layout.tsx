@@ -49,7 +49,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       projectId: projectId as Id<"projects">,
     }),
   );
-  const { data: projects, isLoading: projectsLoading } = useQuery(
+  const { data: projects } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
   );
   const { user } = useUser();
@@ -58,20 +58,31 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
   });
 
   /**
-   * Effect that redirects the user to the projects page if there are no available projects.
+   * useEffect hook to handle project loading and redirection.
    *
-   * This effect runs whenever the `projects`, `projectsLoading`, or `router` dependencies change.
+   * This effect runs whenever `projects`, `router`, `projectId`, or `setProjectId` changes.
    *
-   * It performs the following checks:
-   * - If the projects are currently loading, the effect exits early.
-   * - If there are no projects available (i.e., the projects array is empty), it redirects the user to the "/projects" route.
+   * - If `projects` is null or undefined, the effect returns early.
+   * - If `projects` is an empty array, the user is redirected to the "/projects" page.
+   * - If `projectId` is not set, it sets the `projectId` to the first project's ID.
+   *
+   * @param {Array} projects - The list of projects.
+   * @param {object} router - The router object for navigation.
+   * @param {string} projectId - The current project ID.
+   * @param {function} setProjectId - Function to set the current project ID.
    */
   useEffect(() => {
-    if (projectsLoading) return;
-    if (projects && projects.length === 0) {
+    if (projects === null || projects === undefined) return;
+
+    if (projects.length === 0) {
       router.replace("/projects");
+      return;
     }
-  }, [projects, projectsLoading, router]);
+
+    if (!projectId) {
+      setProjectId(projects[0]._id);
+    }
+  }, [projects, router, projectId, setProjectId]);
 
   /**
    * Effect that creates a user in the system when the user object is available.

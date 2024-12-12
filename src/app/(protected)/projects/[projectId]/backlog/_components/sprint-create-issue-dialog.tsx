@@ -32,7 +32,7 @@ export const CreateIssueDialog = ({
   open,
   setOpen,
 }: CreateIssueDialogProps) => {
-  const [projectId, setProjectId] = useProject();
+  const [projectId] = useProject();
   const [issueType, setIssueType] = useState<"story" | "bug" | "task">("story");
   const [summary, setSummary] = useState("");
   const [description, setDescription] = useState("");
@@ -53,6 +53,18 @@ export const CreateIssueDialog = ({
     mutationFn: useConvexMutation(api.issues.create),
   });
 
+  /**
+   * Handles the submission of the create issue form.
+   *
+   * This function is triggered when the form is submitted. It prevents the default
+   * form submission behavior and calls the `createIssue` mutation with the provided
+   * issue details. On successful creation of the issue, it resets the form fields
+   * and closes the dialog.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - The form event triggered by the submission.
+   *
+   * @returns {void} This function does not return a value.
+   */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -83,7 +95,20 @@ export const CreateIssueDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        // reset the editor content when the dialog is closed
+        if (!open) {
+          setDescription("");
+          setSummary("");
+          setStoryPoints("");
+          setAssignee(null);
+          setPriority("low");
+        }
+        setOpen(open);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create Issue</DialogTitle>

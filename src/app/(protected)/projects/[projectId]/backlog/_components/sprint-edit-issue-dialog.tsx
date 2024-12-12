@@ -60,6 +60,15 @@ export const SprintEditIssueDialog = ({
     mutationFn: useConvexMutation(api.issues.update),
   });
 
+  /**
+   * Effect that runs when the `issue` data is fetched or updated.
+   * It sets the local state variables for the issue details such as
+   * summary, description, story points, assignee, issue type, and priority.
+   *
+   * This effect will only run when the `issue` object changes.
+   *
+   * @returns {void}
+   */
   useEffect(() => {
     if (issue) {
       setSummary(issue.title);
@@ -71,6 +80,16 @@ export const SprintEditIssueDialog = ({
     }
   }, [issue]);
 
+  /**
+   * Handles the submission of the issue update form.
+   *
+   * This function is triggered when the form is submitted. It prevents the default form submission behavior,
+   * gathers the necessary data from the state, and calls the `updateIssue` mutation to update the issue in the database.
+   * Upon successful update, it displays a success message and resets the form fields.
+   *
+   * @param {React.FormEvent<HTMLFormElement>} e - The form event triggered by the submission.
+   * @returns {void}
+   */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -85,16 +104,12 @@ export const SprintEditIssueDialog = ({
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
         sprintId: issue?.sprintId as Id<"sprints">,
+        status: issue?.status as "not_started" | "in_progress" | "completed",
       },
       {
         onSuccess: (data) => {
           if (data) {
             toast.success("Issue updated");
-            setSummary("");
-            setDescription("");
-            setAssignee(null);
-            setStoryPoints("");
-            setPriority("low");
             setOpen(false);
           }
         },
@@ -103,7 +118,21 @@ export const SprintEditIssueDialog = ({
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(open) => {
+        // Reset the form to original state when the dialog is closed
+        if (!open) {
+          setSummary(issue?.title ?? "");
+          setDescription(issue?.description ?? "");
+          setIssueType(issue?.issueType ?? "story");
+          setAssignee(issue?.assignee ?? null);
+          setStoryPoints(issue?.storyPoints?.toString() ?? "");
+          setPriority(issue?.priority ?? "low");
+        }
+        setOpen(open);
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Issue</DialogTitle>

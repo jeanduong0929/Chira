@@ -3,7 +3,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Ellipsis } from "lucide-react";
 import { api } from "../../../../../convex/_generated/api";
-import { Doc, Id } from "../../../../../convex/_generated/dataModel";
+import { Doc } from "../../../../../convex/_generated/dataModel";
 
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useProject } from "@/store/use-project";
 
 interface ProjectMoreActionDropdownProps {
   project: Doc<"projects"> & {
@@ -32,6 +33,7 @@ export const ProjectMoreActionDropdown = ({
     mutationFn: useConvexMutation(api.members.remove),
   });
 
+  const [, setProjectId] = useProject();
   const [deleteConfirm, DeleteConfirmDialog] = useConfirm();
   const [leaveConfirm, LeaveConfirmDialog] = useConfirm();
 
@@ -105,9 +107,10 @@ export const ProjectMoreActionDropdown = ({
                     onSuccess: (data) => {
                       if (data) {
                         toast.success("Project deleted");
+                        setProjectId(null);
                       }
                     },
-                    onError: (error) => {
+                    onError: () => {
                       toast.error("Failed to delete the project");
                     },
                   },

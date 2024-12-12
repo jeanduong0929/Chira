@@ -24,7 +24,7 @@ export const SprintActions = ({
         <Button
           variant="secondary"
           onClick={onCompleteSprint}
-          className="bg-[#E9EBEE] hover:bg-[#D5D9E0]"
+          className="bg-[#E9EBEE] hover:bg-[#D5D9E0] dark:bg-[#262626] dark:hover:bg-[#1A1A1A]"
         >
           Complete sprint
         </Button>

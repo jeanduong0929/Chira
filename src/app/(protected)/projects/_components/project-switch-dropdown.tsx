@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Doc } from "../../../../../convex/_generated/dataModel";
 import { api } from "../../../../../convex/_generated/api";
@@ -28,7 +28,7 @@ export const ProjectSwitchDropdown = ({
     convexQuery(api.projects.getAllUserProjects, {}),
   );
 
-  const [projectId, setProjectId] = useProject();
+  const [, setProjectId] = useProject();
 
   const router = useRouter();
   const pathname = usePathname();

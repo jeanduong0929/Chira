@@ -1,8 +1,16 @@
 import { Dispatch, SetStateAction } from "react";
-import { Bold, Italic, List } from "lucide-react";
+import { Bold, Bot, Italic, List, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { api } from "../../../../../../../convex/_generated/api";
 
-import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { useEditor, EditorContent } from "@tiptap/react";
+import { Button } from "@/components/ui/button";
+import { Hint } from "@/app/(protected)/_components/hint";
+import { useMutation } from "@tanstack/react-query";
+import { useConvexAction } from "@convex-dev/react-query";
+import { useConfirm } from "@/hooks/use-confirm";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface TiptapEditorProps {
   content: string;
@@ -10,13 +18,15 @@ interface TiptapEditorProps {
 }
 
 export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
+  const [generateConfirm, GenerateConfirmDialog] = useConfirm();
+
   const editor = useEditor({
     extensions: [StarterKit],
     content: content,
     editorProps: {
       attributes: {
         class:
-          "px-5 py-10 text-sm prose leading-[0.5] [&_ul]:ml-4 [&_ul_ul]:mt-5 [&_ul_ul]:ml-0",
+          "px-5 py-10 text-sm prose leading-normal [&_ul]:ml-4 [&_ul_ul]:mt-5 [&_ul_ul]:ml-0 dark:prose-invert dark:marker:text-white marker:text-black focus:outline-none",
       },
     },
     onUpdate: ({ editor }) => {
@@ -24,40 +34,117 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
     },
   });
 
+  const { mutate: generateDescription, isPending: isGeneratingDescription } =
+    useMutation({
+      mutationFn: useConvexAction(api.issues.generateDescription),
+    });
+
+  /**
+   * Handles the generation of a task description using the content from the editor.
+   *
+   * This function first checks if the editor instance is available. If it is, it prompts the user for confirmation
+   * before proceeding to generate a description based on the current HTML content of the editor.
+   * Upon successful generation, it updates the editor's content with the new description and displays a success toast.
+   * If the generation fails, an error toast is displayed.
+   *
+   * @returns {Promise<void>} A promise that resolves when the description generation process is complete.
+   */
+  const handleGenerateDescription = async () => {
+    if (!editor) return;
+
+    if (content === "<p></p>") {
+      toast.error("Please enter some content before generating a description");
+      return;
+    }
+
+    const ok = await generateConfirm();
+    if (!ok) return;
+
+    generateDescription(
+      { content: editor.getHTML() },
+      {
+        onSuccess: (data) => {
+          if (data) {
+            editor.commands.setContent(data);
+            setContent(data);
+            toast.success("Description generated");
+          }
+        },
+        onError: () => {
+          toast.error("Failed to generate description");
+        },
+      },
+    );
+  };
+
   if (!editor) return null;
 
   return (
-    <div className="rounded-lg border">
-      <div className="flex gap-2 border-b p-2">
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBold().run()}
-          className={
-            editor.isActive("bold") ? "rounded bg-gray-200 p-2" : "p-2"
-          }
-        >
-          <Bold className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={
-            editor.isActive("italic") ? "rounded bg-gray-200 p-2" : "p-2"
-          }
-        >
-          <Italic className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={
-            editor.isActive("bulletList") ? "rounded bg-gray-200 p-2" : "p-2"
-          }
-        >
-          <List className="h-4 w-4" />
-        </button>
+    <>
+      <div className="rounded-lg border">
+        <div className="flex gap-2 border-b p-2">
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            className={
+              editor.isActive("bold")
+                ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+                : "p-2"
+            }
+          >
+            <Bold className="size-4" />
+          </Button>
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => editor.chain().focus().toggleItalic().run()}
+            className={
+              editor.isActive("italic")
+                ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+                : "p-2"
+            }
+          >
+            <Italic className="size-4" />
+          </Button>
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => editor.chain().focus().toggleBulletList().run()}
+            className={
+              editor.isActive("bulletList")
+                ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+                : "p-2"
+            }
+          >
+            <List className="size-4" />
+          </Button>
+          <Hint content="Optimize your task description" side="bottom">
+            <Button
+              variant={"ghost"}
+              type="button"
+              onClick={handleGenerateDescription}
+              disabled={isGeneratingDescription || content === "<p></p>"}
+            >
+              <Bot className="size-4" />
+            </Button>
+          </Hint>
+        </div>
+        <ScrollArea className="h-[200px]">
+          {isGeneratingDescription ? (
+            <div className="flex h-[200px] animate-pulse items-center justify-center text-sm text-muted-foreground">
+              <p>Optimizing your description...</p>
+            </div>
+          ) : (
+            <EditorContent editor={editor} />
+          )}
+        </ScrollArea>
       </div>
-      <EditorContent editor={editor} className="marker:text-black" />
-    </div>
+
+      <GenerateConfirmDialog
+        title="Generate Description"
+        description="Are you sure you want to generate a description?"
+      />
+    </>
   );
 };
