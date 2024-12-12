@@ -66,6 +66,9 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
                       onOpenChange(false);
                     }
                   },
+                  onError: (error) => {
+                    setError("Failed to create project!" + error);
+                  },
                 },
               );
             }
