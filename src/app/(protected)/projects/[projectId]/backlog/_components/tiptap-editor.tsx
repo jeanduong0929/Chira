@@ -16,7 +16,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
     editorProps: {
       attributes: {
         class:
-          "px-5 py-10 text-sm prose leading-[0.5] [&_ul]:ml-4 [&_ul_ul]:mt-5 [&_ul_ul]:ml-0",
+          "px-5 py-10 text-sm prose leading-[0.5] [&_ul]:ml-4 [&_ul_ul]:mt-5 [&_ul_ul]:ml-0 dark:prose-invert dark:marker:text-white marker:text-black",
       },
     },
     onUpdate: ({ editor }) => {
@@ -33,7 +33,9 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleBold().run()}
           className={
-            editor.isActive("bold") ? "rounded bg-gray-200 p-2" : "p-2"
+            editor.isActive("bold")
+              ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+              : "p-2"
           }
         >
           <Bold className="h-4 w-4" />
@@ -42,7 +44,9 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           className={
-            editor.isActive("italic") ? "rounded bg-gray-200 p-2" : "p-2"
+            editor.isActive("italic")
+              ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+              : "p-2"
           }
         >
           <Italic className="h-4 w-4" />
@@ -51,13 +55,15 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
           type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={
-            editor.isActive("bulletList") ? "rounded bg-gray-200 p-2" : "p-2"
+            editor.isActive("bulletList")
+              ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
+              : "p-2"
           }
         >
           <List className="h-4 w-4" />
         </button>
       </div>
-      <EditorContent editor={editor} className="marker:text-black" />
+      <EditorContent editor={editor} />
     </div>
   );
 };

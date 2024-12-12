@@ -73,7 +73,8 @@ export const getAllUserProjects = query({
   handler: async (
     ctx,
   ): Promise<
-    (Doc<"projects"> & { member: Doc<"members">; user: Doc<"users"> })[]
+    | (Doc<"projects"> & { member: Doc<"members">; user: Doc<"users"> })[]
+    | undefined
   > => {
     try {
       // get clerk id
@@ -112,7 +113,7 @@ export const getAllUserProjects = query({
       return projectsWithMembers;
     } catch (e) {
       console.error(e);
-      return [];
+      return undefined;
     }
   },
 });
