@@ -33,7 +33,6 @@ export const ProjectSwitchDropdown = ({
   const router = useRouter();
   const pathname = usePathname();
 
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

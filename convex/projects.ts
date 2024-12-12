@@ -78,7 +78,6 @@ export const getAllUserProjects = query({
     try {
       // get clerk id
       const clerkId = await getClerkId(ctx.auth);
-
       // get all members
       const members = await ctx.db
         .query("members")
@@ -92,6 +91,7 @@ export const getAllUserProjects = query({
       })[] = [];
       for (const m of members) {
         const project = await ctx.db.get(m.projectId);
+
         if (!project) {
           throw new Error("Project not found");
         }
