@@ -10,7 +10,7 @@ import { api } from "../../../../convex/_generated/api";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/store/user-sidebar";
+import { useSidebar } from "@/store/use-sidebar";
 import { Label } from "@/components/ui/label";
 import { useProject } from "@/store/use-project";
 import { useQuery } from "@tanstack/react-query";
