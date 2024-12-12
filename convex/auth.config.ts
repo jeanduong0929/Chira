@@ -1,7 +1,7 @@
 const config = {
   providers: [
     {
-      domain: "https://above-zebra-71.clerk.accounts.dev",
+      domain: "https://heroic-muskrat-59.clerk.accounts.dev",
       applicationID: "convex",
     },
   ],
