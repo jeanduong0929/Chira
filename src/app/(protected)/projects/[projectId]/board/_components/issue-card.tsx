@@ -54,7 +54,7 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         <CardContent className="flex items-center justify-between pb-4">
           <IssueType issueType={issue.issueType} />
           <div className="flex items-center gap-x-2">
-            <div className="flex size-[21px] items-center justify-center rounded-full bg-[#DCE6F4]">
+            <div className="flex size-[21px] items-center justify-center rounded-full bg-[#DCE6F4] dark:bg-gray-800">
               <span className="text-xs font-medium">{issue.storyPoints}</span>
             </div>
             <AssigneeAvatar assignee={issue.assignee} />

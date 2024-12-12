@@ -33,6 +33,7 @@ export const IssueCardDropdown = ({ issueId }: { issueId: Id<"issues"> }) => {
         <DropdownMenuContent align="start">
           <DropdownMenuItem>Move to backlog</DropdownMenuItem>
           <DropdownMenuItem
+            className="text-red-500 focus:text-red-500"
             onClick={async () => {
               const ok = await confirm();
               if (!ok) return;

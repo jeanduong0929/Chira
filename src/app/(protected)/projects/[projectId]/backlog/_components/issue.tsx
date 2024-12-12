@@ -47,7 +47,7 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
             else if (ref) ref.current = node;
           }}
           className={cn(
-            "relative flex items-center justify-between border bg-white px-10 py-2",
+            "relative flex cursor-pointer items-center justify-between border bg-white px-10 py-2 hover:bg-gray-50 dark:bg-black/70 dark:hover:bg-black/50",
             isDragging && "opacity-50",
             isOver && "border-blue-500",
             className,

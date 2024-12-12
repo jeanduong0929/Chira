@@ -40,6 +40,7 @@ const BoardPage = () => {
   );
 
   useEffect(() => {
+    console.log("issuez", issuez);
     if (issuez) {
       setUnassignedIssues(issuez.filter((i) => !i.assigneeId));
       setAssignedIssues(issuez.filter((i) => i.assigneeId));
