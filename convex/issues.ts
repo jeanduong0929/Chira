@@ -550,6 +550,52 @@ export const updateAssignee = mutation({
 });
 
 /**
+ * Clones an existing issue in the database.
+ *
+ * This mutation creates a new issue based on the provided issue ID.
+ * The new issue will have the same properties as the original issue,
+ * except for the assignee ID, which will be set to undefined.
+ *
+ * @param {Object} args - The arguments for cloning the issue.
+ * @param {string} args.issueId - The ID of the issue to clone.
+ *
+ * @returns {Promise<boolean>} Returns true if the issue was cloned successfully, otherwise false.
+ *
+ * @throws {Error} Throws an error if the authentication fails or if the issue is not found.
+ */
+export const clone = mutation({
+  args: {
+    issueId: v.id("issues"),
+  },
+  handler: async (ctx, args): Promise<boolean> => {
+    try {
+      await getClerkId(ctx.auth);
+
+      const issue = await ctx.db.get(args.issueId);
+      if (!issue) {
+        throw new Error("Issue not found");
+      }
+
+      await ctx.db.insert("issues", {
+        title: issue.title,
+        description: issue.description,
+        storyPoints: issue.storyPoints,
+        issueType: issue.issueType,
+        sequence: issue.sequence,
+        priority: issue.priority,
+        status: "not_started",
+        assigneeId: undefined,
+        projectId: issue.projectId,
+      });
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  },
+});
+
+/**
  * Removes a specific issue from the database.
  *
  * @param {Object} args - The arguments for removing the issue.

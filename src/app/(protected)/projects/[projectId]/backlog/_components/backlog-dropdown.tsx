@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Ellipsis } from "lucide-react";
 import { toast } from "sonner";
+import { SprintEditIssueDialog } from "./sprint-edit-issue-dialog";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Id } from "../../../../../../../convex/_generated/dataModel";
 
@@ -15,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
-import { SprintEditIssueDialog } from "./sprint-edit-issue-dialog";
 
 export const BacklogDropdown = ({
   issueId,
@@ -27,13 +27,17 @@ export const BacklogDropdown = ({
   inSprint: boolean;
 }) => {
   const [openEdit, setOpenEdit] = useState(false);
-  const [confirm, ConfirmDialog] = useConfirm();
+  const [deleteConfirm, DeleteConfirmDialog] = useConfirm();
+  const [cloneConfirm, CloneConfirmDialog] = useConfirm();
 
   const { mutate: removeIssue } = useMutation({
     mutationFn: useConvexMutation(api.issues.remove),
   });
   const { mutate: moveToTop } = useMutation({
     mutationFn: useConvexMutation(api.issues.moveToTop),
+  });
+  const { mutate: cloneIssue } = useMutation({
+    mutationFn: useConvexMutation(api.issues.clone),
   });
 
   return (
@@ -66,10 +70,33 @@ export const BacklogDropdown = ({
               Top of backlog
             </DropdownMenuItem>
           )}
-          <DropdownMenuSeparator />
           <DropdownMenuItem
             onClick={async () => {
-              const ok = await confirm();
+              const ok = await cloneConfirm();
+              if (!ok) return;
+
+              cloneIssue(
+                { issueId: issueId },
+                {
+                  onSuccess: (data) => {
+                    if (data) {
+                      toast.success("Issue cloned");
+                    }
+                  },
+                  onError: (error) => {
+                    toast.error("Failed to clone issue");
+                  },
+                },
+              );
+            }}
+          >
+            Clone
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            className="text-red-500 focus:text-red-500"
+            onClick={async () => {
+              const ok = await deleteConfirm();
               if (!ok) return;
 
               removeIssue(
@@ -80,6 +107,9 @@ export const BacklogDropdown = ({
                       toast.success("Issue deleted");
                     }
                   },
+                  onError: (error) => {
+                    toast.error("Failed to delete issue");
+                  },
                 },
               );
             }}
@@ -89,7 +119,7 @@ export const BacklogDropdown = ({
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <ConfirmDialog
+      <DeleteConfirmDialog
         title="Delete issue"
         description="Are you sure you want to delete this issue?"
         variant="destructive"
@@ -98,6 +128,10 @@ export const BacklogDropdown = ({
         open={openEdit}
         setOpen={setOpenEdit}
         issueId={issueId}
+      />
+      <CloneConfirmDialog
+        title="Clone issue"
+        description="Are you sure you want to clone this issue?"
       />
     </>
   );
