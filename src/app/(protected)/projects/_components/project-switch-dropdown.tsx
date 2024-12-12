@@ -42,9 +42,9 @@ export const ProjectSwitchDropdown = ({
           size={"icon"}
         >
 
-          { project?.name?.[0]
+          {project?.name?.[0]
             .toUpperCase()
-            .concat(project?.name?.[0].toUpperCase())}
+            .concat(project?.name?.[1].toUpperCase())}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-[200px]">
@@ -79,7 +79,7 @@ export const ProjectSwitchDropdown = ({
             >
               <div className="rounded-md bg-[#00A4BF]/20 px-2 py-1 text-xs font-semibold">
                 {
-                project.name[1]
+                project.name[0]
                   .toUpperCase()
                   .concat(project.name[1].toUpperCase())}
               </div>
