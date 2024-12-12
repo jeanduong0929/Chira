@@ -1,7 +1,7 @@
-import { Auth } from "convex/server";
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
+import { getClerkId } from "./users";
 
 export const getAll = query({
   args: {
@@ -244,10 +244,34 @@ export const remove = mutation({
   },
 });
 
-const getClerkId = async (auth: Auth) => {
-  const identity = await auth.getUserIdentity();
-  if (!identity) {
-    throw new Error("Unauthorized");
-  }
-  return identity.subject;
-};
+/**
+ * Removes sprints that are not associated with any project.
+ *
+ * This mutation queries all sprints in the database and checks if each sprint
+ * has an associated project. If a sprint does not have a corresponding project,
+ * it is deleted from the database.
+ *
+ * @param {Object} ctx - The context object containing authentication and database access.
+ * @param {Object} args - The arguments for the mutation (currently unused).
+ * @returns {Promise<boolean>} - A promise that resolves to true if the operation was successful,
+ * or false if an error occurred during the process.
+ *
+ * @throws {Error} - Throws an error if there is an issue querying or deleting sprints.
+ */
+export const removeSprintWithNoProject = mutation({
+  handler: async (ctx, args): Promise<boolean> => {
+    try {
+      const sprints = await ctx.db.query("sprints").collect();
+      for (const s of sprints) {
+        const project = await ctx.db.get(s.projectId);
+        if (!project) {
+          await ctx.db.delete(s._id);
+        }
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});

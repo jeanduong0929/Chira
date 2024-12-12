@@ -21,22 +21,23 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { convexQuery, useConvexMutation } from "@convex-dev/react-query";
-import { useProject } from "@/store/use-project";
 import { useConfirm } from "@/hooks/use-confirm";
+import { useProjectId } from "@/features/projects/hooks/use-project-id";
 
 const MembersPage = () => {
-  const [projectId] = useProject();
+  const projectId = useProjectId();
   const [name, setName] = useState("");
   const [updateConfirm, ConfirmRoleDialog] = useConfirm();
   const [removeConfirm, ConfirmRemoveDialog] = useConfirm();
+
   const { data: members } = useQuery(
     convexQuery(api.members.getMembers, {
-      projectId: projectId as Id<"projects">,
+      projectId,
     }),
   );
   const { data: access } = useQuery(
     convexQuery(api.members.getAccess, {
-      projectId: projectId as Id<"projects">,
+      projectId,
     }),
   );
   const { data: user } = useQuery(convexQuery(api.users.getAuth, {}));
@@ -44,6 +45,15 @@ const MembersPage = () => {
     mutationFn: useConvexMutation(api.members.remove),
   });
 
+  /**
+   * Filters the list of members based on the search input.
+   *
+   * This memoized function checks if the members are available and filters them
+   * according to the user's input in the search field. If no input is provided,
+   * it returns all members. The filtering is case-insensitive.
+   *
+   * @returns {Array} - An array of members that match the search criteria.
+   */
   const filterMembers = useMemo(() => {
     if (!members) return [];
     if (name === "") return members;

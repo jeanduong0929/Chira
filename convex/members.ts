@@ -256,3 +256,35 @@ export const remove = mutation({
     }
   },
 });
+
+/**
+ * Removes members that are not associated with any project.
+ *
+ * This mutation queries all members in the database and checks if each member
+ * has an associated project. If a member does not have a corresponding project,
+ * it is deleted from the database.
+ *
+ * @param {Object} ctx - The context object containing authentication and database access.
+ * @param {Object} args - The arguments for the mutation (currently unused).
+ * @returns {Promise<boolean>} - A promise that resolves to true if the operation was successful,
+ *                               or false if an error occurred during the process.
+ *
+ * @throws {Error} - Throws an error if there is an issue querying or deleting members.
+ */
+export const removeMemberWithNoProject = mutation({
+  handler: async (ctx, args): Promise<boolean> => {
+    try {
+      const members = await ctx.db.query("members").collect();
+      for (const m of members) {
+        const project = await ctx.db.get(m.projectId);
+        if (!project) {
+          await ctx.db.delete(m._id);
+        }
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});
