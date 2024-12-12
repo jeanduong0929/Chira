@@ -1,7 +1,11 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { action, mutation, query } from "./_generated/server";
 import { Doc } from "./_generated/dataModel";
 import { getClerkId } from "./users";
+
+import OpenAI from "openai";
+
+const openai = new OpenAI();
 
 /**
  * Creates a new issue in the database.
@@ -268,6 +272,11 @@ export const update = mutation({
     issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
     priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
     projectId: v.id("projects"),
+    status: v.union(
+      v.literal("not_started"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+    ),
   },
   handler: async (ctx, args) => {
     try {
@@ -287,7 +296,7 @@ export const update = mutation({
         projectId: args.projectId,
         issueType: args.issueType,
         priority: args.priority,
-        status: "not_started",
+        status: args.status,
       });
       return true;
     } catch (error) {
@@ -540,6 +549,7 @@ export const updateAssignee = mutation({
 
       await ctx.db.patch(issue._id, {
         assigneeId: args.issue.assigneeId,
+        status: "not_started",
       });
       return true;
     } catch (error) {
@@ -624,3 +634,82 @@ export const remove = mutation({
     }
   },
 });
+
+/**
+ * Generates a task description using OpenAI's chat completion model.
+ *
+ * @param {Object} args - The arguments for generating the description.
+ * @param {string} args.content - The content for which to generate a task description.
+ *
+ * @returns {Promise<string | null | undefined>} A promise that resolves to the generated task description,
+ * or undefined if an error occurs.
+ *
+ * @throws {Error} Throws an error if the authentication fails or if the OpenAI API call fails.
+ */
+export const generateDescription = action({
+  args: {
+    content: v.string(),
+  },
+  handler: async (ctx, args): Promise<string | null | undefined> => {
+    try {
+      await getClerkId(ctx.auth);
+      return await openAIGenerateDescription(args.content);
+    } catch (e) {
+      console.error(e);
+      return undefined;
+    }
+  },
+});
+
+/**
+ * Generates a task description using OpenAI's chat completion model.
+ *
+ * @param {string} content - The content for which to generate a task description.
+ * @returns {Promise<string | undefined>} A promise that resolves to the generated task description or undefined if an error occurs.
+ *
+ * @throws {Error} Throws an error if the OpenAI API call fails.
+ */
+const openAIGenerateDescription = async (
+  content: string,
+): Promise<string | undefined> => {
+  const completion = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a helpful assistant that generates task descriptions for a project management tool.",
+      },
+      {
+        role: "user",
+        content: `Generate a task description for the following content with only description and acceptance criteria.
+        
+        Content: ${content}
+
+        Example input:
+        <p>Integrate OpenAI to TipTap editor</p><p></p><p><strong>Acceptance Criteria:</strong></p><p>OpenAI correctly optimize description.</p>
+
+        Example output:
+        <p>Add OpenAI text optimization capabilities to TipTap editor.</p>
+        <p><strong>Acceptance Criteria:</strong></p>
+        <ul>
+        <li>Connect OpenAI API to TipTap</li>
+        <li>Add UI control for text optimization</li>
+        <li>Handle API responses and errors</li>
+        <li>Preserve text formatting</li>
+        <li>Show loading states</li>
+        <li>Allow undo/redo of AI changes</li>
+        </ul>
+        <p><strong>Technical Notes:</strong></p>
+        <ul>
+        <li>API auth handling</li>
+        <li>Error handling</li>
+        <li>Character limits</li>
+        </ul>
+        `,
+      },
+    ],
+  });
+
+  return completion.choices[0].message.content ?? undefined;
+};

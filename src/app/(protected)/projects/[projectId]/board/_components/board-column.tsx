@@ -72,6 +72,7 @@ export const Column = ({
       sourceStatus: "not_started" | "in_progress" | "completed";
       isUnassigned: boolean;
     }) => {
+      console.log(draggedItem);
       const statusChanged = draggedItem.sourceStatus !== newStatus;
       const assigneeChanged = draggedItem.sourceAssigneeId !== member?.clerkId;
 
