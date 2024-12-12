@@ -52,7 +52,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
   const handleGenerateDescription = async () => {
     if (!editor) return;
 
-    if (content === "<p></p>") {
+    if (content === "<p></p>" || content === "") {
       toast.error("Please enter some content before generating a description");
       return;
     }
@@ -124,7 +124,11 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
               variant={"ghost"}
               type="button"
               onClick={handleGenerateDescription}
-              disabled={isGeneratingDescription || content === "<p></p>"}
+              disabled={
+                isGeneratingDescription ||
+                content === "<p></p>" ||
+                content === ""
+              }
             >
               <Bot className="size-4" />
             </Button>

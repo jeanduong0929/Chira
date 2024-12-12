@@ -32,6 +32,8 @@ const ProjectsPage = () => {
   const [_, setProject] = useProject();
   const [name, setName] = useState("");
 
+  console.log(projects);
+
   /**
    * Filters the list of projects based on the search input.
    *
