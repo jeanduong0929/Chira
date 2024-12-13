@@ -21,6 +21,8 @@ interface IssueDetailsProps {
 }
 
 export const IssueDetails = ({ open, setOpen, issue }: IssueDetailsProps) => {
+
+  
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetContent className="flex min-w-[600px] flex-col gap-y-5">
@@ -76,12 +78,12 @@ export const IssueDetails = ({ open, setOpen, issue }: IssueDetailsProps) => {
                 <p className="w-[200px] font-medium">Reporter:</p>
                 <div className="flex items-center gap-x-2">
                   <Avatar className="size-6">
-                    <AvatarImage src={issue.reporter.imageUrl} />
+                    <AvatarImage src={issue.reporter?.imageUrl } />
                     <AvatarFallback>
-                      {issue.reporter.name.charAt(0)}
+                      {issue.reporter?.name.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
-                  <p className="text-muted-foreground">{issue.reporter.name}</p>
+                  <p className="text-muted-foreground">{issue.reporter?.name}</p>
                 </div>
               </div>
             </div>
