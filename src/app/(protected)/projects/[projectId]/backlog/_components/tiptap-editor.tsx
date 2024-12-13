@@ -89,7 +89,7 @@ export const TiptapEditor = ({
 
   if (readOnly) {
     return (
-      <ScrollArea className="max-h-[400px] rounded-lg border">
+      <ScrollArea className="h-[400px]">
         <EditorContent editor={editor} />
       </ScrollArea>
     );

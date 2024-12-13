@@ -82,12 +82,7 @@ export const CreateIssueDialog = ({
         onSuccess: (data) => {
           if (data) {
             toast.success("Issue created");
-            setSummary("");
-            setDescription("");
-            setAssignee(null);
-            setStoryPoints("");
             setOpen(false);
-            setPriority("low");
           }
         },
       },
@@ -105,6 +100,7 @@ export const CreateIssueDialog = ({
           setStoryPoints("");
           setAssignee(null);
           setPriority("low");
+          setIssueType("story");
         }
         setOpen(open);
       }}
@@ -120,10 +116,7 @@ export const CreateIssueDialog = ({
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
-            <IssueTypeSelect
-              issueType={issueType}
-              setIssueType={setIssueType}
-            />
+            <IssueTypeSelect issueType={"story"} setIssueType={setIssueType} />
           </div>
 
           <Separator className="" />
@@ -161,7 +154,7 @@ export const CreateIssueDialog = ({
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Priority</Label>
-            <PrioritySelect priority={priority} setPriority={setPriority} />
+            <PrioritySelect priority={"low"} setPriority={setPriority} />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>

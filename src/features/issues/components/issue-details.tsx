@@ -28,8 +28,8 @@ export const IssueDetails = ({ open, setOpen, issue }: IssueDetailsProps) => {
           <SheetTitle>{issue.title}</SheetTitle>
         </SheetHeader>
         <div className="flex flex-col gap-y-10 text-sm">
-          <div className="flex flex-col gap-y-2">
-            <p className="font-medium">Description</p>
+          <div className="rounded-lg border">
+            <p className="border-b p-4 font-medium">Description</p>
             <TiptapEditor
               content={issue.description || ""}
               setContent={() => {}}
