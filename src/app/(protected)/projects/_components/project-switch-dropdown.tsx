@@ -40,7 +40,6 @@ export const ProjectSwitchDropdown = ({
           className="size-10 shrink-0 bg-[#00A4BF] text-black hover:bg-[#00A4BF]/90"
           size={"icon"}
         >
-
           {project?.name?.[0]
             .toUpperCase()
             .concat(project?.name?.[1].toUpperCase())}
@@ -77,8 +76,7 @@ export const ProjectSwitchDropdown = ({
               }}
             >
               <div className="rounded-md bg-[#00A4BF]/20 px-2 py-1 text-xs font-semibold">
-                {
-                project.name[0]
+                {project.name[0]
                   .toUpperCase()
                   .concat(project.name[1].toUpperCase())}
               </div>
