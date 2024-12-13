@@ -80,3 +80,11 @@ CONVEX_DEPLOYMENT= <your_OCONVEX_DEPLOYMENT_URL>
 
 
 ```
+
+### Run your project
+
+```
+bun run dev
+```
+
+Happy Coding!

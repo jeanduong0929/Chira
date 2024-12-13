@@ -24,6 +24,7 @@ interface ProjectDialogProps {
 export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
   const [projectId, setProjectId] = useProject();
   const [name, setName] = useState("");
+  const [error, setError] = useState("");
 
   const { data: projects } = useQuery(
     convexQuery(api.projects.getAllUserProjects, {}),
@@ -46,6 +47,10 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
           className="flex flex-col gap-y-4"
           onSubmit={(e) => {
             e.preventDefault();
+
+            if(name.length < 3){
+              return setError("Project name should be at least 3 characters long.");
+            }
             createProject(
               { name },
               {
@@ -59,10 +64,14 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
                     onOpenChange(false);
                   }
                 },
+                onError: (error) => {
+                  setError(error.message);
+                },
               },
             );
           }}
         >
+          {error && <p className="text-red-500 text-sm" >{error}</p>}
           <Input
             placeholder="Project name"
             value={name}

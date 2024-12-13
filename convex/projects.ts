@@ -185,6 +185,10 @@ export const create = mutation({
     try {
       const clerkId = await getClerkId(ctx.auth);
 
+      if(args.name.length < 0){
+        throw new Error("Project name should be at least 3 characters long");
+      }
+
       // create new project
       const projectId = await ctx.db.insert("projects", {
         name: args.name,
