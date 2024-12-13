@@ -48,11 +48,12 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
           onSubmit={(e) => {
             e.preventDefault();
             setError("");
+
             //Validate user input
             if(name.length < 3){
-              setError("Project name must be at least 3 characters!");
+              return setError("Project name must be at least 3 characters!");
             }
-            else{
+
               createProject(
                 { name },
                 {
@@ -71,10 +72,7 @@ export const ProjectDialog = ({ open, onOpenChange }: ProjectDialogProps) => {
                   },
                 },
               );
-            }
 
-
-    
           }}
         >
           {error && <p className="text-red-500 text-sm">{error}</p>}
