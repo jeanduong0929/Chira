@@ -142,7 +142,10 @@ export const SprintEditIssueDialog = ({
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
-            <IssueTypeSelect setIssueType={setIssueType} />
+            <IssueTypeSelect
+              setIssueType={setIssueType}
+              issueType={issueType}
+            />
           </div>
 
           <Separator className="" />
@@ -181,7 +184,7 @@ export const SprintEditIssueDialog = ({
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Priority</Label>
-            <PrioritySelect setPriority={setPriority} />
+            <PrioritySelect setPriority={setPriority} priority={priority} />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>

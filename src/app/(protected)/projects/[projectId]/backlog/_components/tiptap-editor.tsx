@@ -15,14 +15,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface TiptapEditorProps {
   content: string;
   setContent: Dispatch<SetStateAction<string>>;
+  readOnly?: boolean;
 }
 
-export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
+export const TiptapEditor = ({
+  content,
+  setContent,
+  readOnly = false,
+}: TiptapEditorProps) => {
   const [generateConfirm, GenerateConfirmDialog] = useConfirm();
 
   const editor = useEditor({
     extensions: [StarterKit],
     content: content,
+    editable: !readOnly,
+    immediatelyRender: false,
     editorProps: {
       attributes: {
         class:
@@ -51,6 +58,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
    */
   const handleGenerateDescription = async () => {
     if (!editor) return;
+    if (readOnly) return;
 
     if (content === "<p></p>" || content === "") {
       toast.error("Please enter some content before generating a description");
@@ -79,6 +87,14 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
 
   if (!editor) return null;
 
+  if (readOnly) {
+    return (
+      <ScrollArea className="max-h-[400px] rounded-lg border">
+        <EditorContent editor={editor} />
+      </ScrollArea>
+    );
+  }
+
   return (
     <>
       <div className="rounded-lg border">
@@ -92,6 +108,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
                 ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
                 : "p-2"
             }
+            disabled={readOnly}
           >
             <Bold className="size-4" />
           </Button>
@@ -104,6 +121,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
                 ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
                 : "p-2"
             }
+            disabled={readOnly}
           >
             <Italic className="size-4" />
           </Button>
@@ -116,6 +134,7 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
                 ? "rounded bg-gray-200 p-2 dark:bg-gray-800"
                 : "p-2"
             }
+            disabled={readOnly}
           >
             <List className="size-4" />
           </Button>
@@ -127,7 +146,8 @@ export const TiptapEditor = ({ content, setContent }: TiptapEditorProps) => {
               disabled={
                 isGeneratingDescription ||
                 content === "<p></p>" ||
-                content === ""
+                content === "" ||
+                readOnly
               }
             >
               <Bot className="size-4" />

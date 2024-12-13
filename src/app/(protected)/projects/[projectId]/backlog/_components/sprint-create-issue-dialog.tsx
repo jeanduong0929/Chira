@@ -120,7 +120,10 @@ export const CreateIssueDialog = ({
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Issue Type</Label>
-            <IssueTypeSelect setIssueType={setIssueType} />
+            <IssueTypeSelect
+              issueType={issueType}
+              setIssueType={setIssueType}
+            />
           </div>
 
           <Separator className="" />
@@ -158,7 +161,7 @@ export const CreateIssueDialog = ({
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Priority</Label>
-            <PrioritySelect setPriority={setPriority} />
+            <PrioritySelect priority={priority} setPriority={setPriority} />
           </div>
           <div className="flex flex-col gap-y-1">
             <Label className="text-sm font-medium">Assignee</Label>

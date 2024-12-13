@@ -7,15 +7,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DisplayIssuePriority } from "@/features/issues/components/display-issue-priority";
 
 export const PrioritySelect = ({
   setPriority,
+  priority,
 }: {
   setPriority: Dispatch<SetStateAction<"low" | "medium" | "high">>;
+  priority: "low" | "medium" | "high";
 }) => {
   return (
     <Select
-      defaultValue="low"
+      defaultValue={priority}
       onValueChange={(value) => {
         setPriority(value as "low" | "medium" | "high");
       }}
@@ -25,22 +28,13 @@ export const PrioritySelect = ({
       </SelectTrigger>
       <SelectContent>
         <SelectItem key="low" value="low">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#64BA3B]" />
-            <span>Low</span>
-          </div>
+          <DisplayIssuePriority priority="low" />
         </SelectItem>
         <SelectItem key="medium" value="medium">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#0B66E4]" />
-            <span>Medium</span>
-          </div>
+          <DisplayIssuePriority priority="medium" />
         </SelectItem>
         <SelectItem key="high" value="high">
-          <div className="flex items-center gap-x-3">
-            <div className="size-3 shrink-0 bg-[#E84C3D]" />
-            <span>High</span>
-          </div>
+          <DisplayIssuePriority priority="high" />
         </SelectItem>
       </SelectContent>
     </Select>
