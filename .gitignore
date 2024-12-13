@@ -5,7 +5,6 @@
 /.pnp
 .pnp.js
 .yarn/install-state.gz
-package-lock.json
 
 # testing
 /coverage
@@ -28,7 +27,6 @@ yarn-error.log*
 
 # local env files
 .env*.local
-auth.config.ts
 
 # vercel
 .vercel
@@ -36,5 +34,3 @@ auth.config.ts
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-

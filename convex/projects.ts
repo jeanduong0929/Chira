@@ -82,6 +82,7 @@ export const getAllUserProjects = query({
     try {
       // get clerk id
       const clerkId = await getClerkId(ctx.auth);
+
       // get all members
       const members = await ctx.db
         .query("members")
@@ -184,9 +185,6 @@ export const create = mutation({
     try {
       const clerkId = await getClerkId(ctx.auth);
 
-      if(args.name.length < 3){
-        throw new Error("Project name must be at least 3 characters long.");
-      }
       // create new project
       const projectId = await ctx.db.insert("projects", {
         name: args.name,
