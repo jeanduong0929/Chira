@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Bold, Bot, Italic, List, Loader2 } from "lucide-react";
+import { Bold, Bot, Italic, List } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../../../../../../convex/_generated/api";
 

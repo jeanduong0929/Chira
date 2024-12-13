@@ -37,7 +37,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     try {
-      await getClerkId(ctx.auth);
+      const clerkId = await getClerkId(ctx.auth);
 
       const issues = await ctx.db
         .query("issues")
@@ -57,6 +57,7 @@ export const create = mutation({
         sequence: issues.length,
         status: "not_started",
         priority: args.priority,
+        reporterId: clerkId,
       });
     } catch (error) {
       console.error(error);
@@ -129,25 +130,21 @@ export const getById = query({
 });
 
 /**
- * Retrieves issues associated with a specific sprint ID.
+ * Retrieves issues associated with a specific sprint by its ID.
  *
  * @param {Object} args - The arguments for the query.
  * @param {string} args.sprintId - The ID of the sprint for which to retrieve issues.
  *
- * @returns {Promise<Array<Object>>} A promise that resolves to an array of issue objects, each including assignee information.
+ * @returns {Promise<Array<Object>>} A promise that resolves to an array of issue objects, each including the assignee and reporter information.
  *
- * Each issue object will have the following structure:
- * - id: string - The unique identifier of the issue.
- * - title: string - The title of the issue.
- * - description: string - The description of the issue.
- * - assignee: Object | null - The assignee of the issue, which may include:
- *   - id: string - The unique identifier of the member.
- *   - clerkId: string - The Clerk ID of the member.
- *   - user: Object - The user information of the assignee, which includes:
- *     - name: string - The name of the user.
- *     - imageUrl: string - The URL of the user's image.
+ * Each issue object contains:
+ * - assignee: An object representing the member assigned to the issue, or null if unassigned. The assignee object includes:
+ *   - user: An object containing the name and image URL of the assignee.
+ * - reporter: An object representing the reporter of the issue, including:
+ *   - name: The name of the reporter.
+ *   - imageUrl: The image URL of the reporter.
  *
- * @throws {Error} Throws an error if the authentication fails or if an issue retrieval fails.
+ * @throws {Error} Throws an error if the user is not authenticated or if there is an issue retrieving the data.
  */
 export const getBySprintId = query({
   args: {
@@ -166,6 +163,10 @@ export const getBySprintId = query({
             };
           })
         | null;
+      reporter: {
+        name: string;
+        imageUrl: string;
+      };
     })[]
   > => {
     try {
@@ -185,12 +186,29 @@ export const getBySprintId = query({
               };
             })
           | null;
+        reporter: {
+          name: string;
+          imageUrl: string;
+        };
       })[] = [];
 
       for (const issue of issues) {
+        // find the reporter of the issue
+        const reporter = await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q) => q.eq("clerkId", issue.reporterId))
+          .unique();
+
         // if issue is not assigned, push it to the list
         if (!issue.assigneeId) {
-          issuesWithAssignee.push({ ...issue, assignee: null });
+          issuesWithAssignee.push({
+            ...issue,
+            assignee: null,
+            reporter: {
+              name: reporter?.name || "",
+              imageUrl: reporter?.imageUrl || "",
+            },
+          });
           continue;
         }
 
@@ -206,7 +224,14 @@ export const getBySprintId = query({
 
         // if assignee is not found, push it to the list
         if (!assignee) {
-          issuesWithAssignee.push({ ...issue, assignee: null });
+          issuesWithAssignee.push({
+            ...issue,
+            assignee: null,
+            reporter: {
+              name: reporter?.name || "",
+              imageUrl: reporter?.imageUrl || "",
+            },
+          });
           continue;
         }
 
@@ -218,7 +243,14 @@ export const getBySprintId = query({
 
         // if assignee user is not found, push it to the list
         if (!assigneeUser) {
-          issuesWithAssignee.push({ ...issue, assignee: null });
+          issuesWithAssignee.push({
+            ...issue,
+            assignee: null,
+            reporter: {
+              name: reporter?.name || "",
+              imageUrl: reporter?.imageUrl || "",
+            },
+          });
           continue;
         }
 
@@ -231,6 +263,10 @@ export const getBySprintId = query({
               name: assigneeUser.name,
               imageUrl: assigneeUser.imageUrl || "",
             },
+          },
+          reporter: {
+            name: reporter?.name || "",
+            imageUrl: reporter?.imageUrl || "",
           },
         });
       }
@@ -596,6 +632,7 @@ export const clone = mutation({
         status: "not_started",
         assigneeId: undefined,
         projectId: issue.projectId,
+        reporterId: issue.reporterId,
       });
       return true;
     } catch (error) {

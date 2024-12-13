@@ -57,10 +57,6 @@ export const IssueDetails = ({ open, setOpen, issue }: IssueDetailsProps) => {
                 />
               </div>
               <div className="flex items-center gap-x-2">
-                <p className="w-[200px] font-medium">Assignee:</p>
-                <Assignee assignee={issue.assignee} />
-              </div>
-              <div className="flex items-center gap-x-2">
                 <p className="w-[200px] font-medium">Status:</p>
                 <DisplayIssueProgress status={issue.status} />
               </div>
@@ -70,6 +66,22 @@ export const IssueDetails = ({ open, setOpen, issue }: IssueDetailsProps) => {
                   <span className="text-xs font-medium">
                     {issue.storyPoints}
                   </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-x-2">
+                <p className="w-[200px] font-medium">Assignee:</p>
+                <Assignee assignee={issue.assignee} />
+              </div>
+              <div className="flex items-center gap-x-2">
+                <p className="w-[200px] font-medium">Reporter:</p>
+                <div className="flex items-center gap-x-2">
+                  <Avatar className="size-6">
+                    <AvatarImage src={issue.reporter.imageUrl} />
+                    <AvatarFallback>
+                      {issue.reporter.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <p className="text-muted-foreground">{issue.reporter.name}</p>
                 </div>
               </div>
             </div>

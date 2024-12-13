@@ -9,4 +9,8 @@ export type IssueWithAssignee = Doc<"issues"> & {
         };
       })
     | null;
+  reporter: {
+    name: string;
+    imageUrl: string;
+  };
 };

@@ -50,6 +50,7 @@ export default defineSchema({
     ),
     priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
     assigneeId: v.optional(v.string()),
+    reporterId: v.string(),
     projectId: v.id("projects"),
   })
     .index("by_project_id_sequence", ["projectId", "sequence"])
