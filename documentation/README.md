@@ -76,7 +76,15 @@ NEXT_PUBLIC_OPENAI_API_KEY=<your_OPENAI_API_KEY>
 
 
 # Deployment used by `npx convex dev`
-CONVEX_DEPLOYMENT= 
+CONVEX_DEPLOYMENT= <your_OCONVEX_DEPLOYMENT_URL>
 
 
 ```
+
+### Run your project
+
+```
+bun run dev
+```
+
+Happy Coding!
