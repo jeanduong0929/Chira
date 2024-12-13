@@ -46,8 +46,23 @@ export const SprintCard = ({
     },
   });
 
+  /**
+   * Custom hook to handle the drop functionality for issues in the sprint card.
+   *
+   * @returns {Object} An object containing the drop state and the drop target ref.
+   * @property {boolean} isOver - Indicates whether an issue is currently being dragged over the sprint card.
+   * @property {function} drop - A ref function to be attached to the drop target.
+   */
   const [{ isOver }, drop] = useDrop({
     accept: "ISSUE",
+    /**
+     * Handles the drop event when an issue is dropped onto the sprint card.
+     *
+     * @param {Object} draggedItem - The item being dragged, containing issue details.
+     * @param {Doc<"issues">} draggedItem.issue - The issue document being dragged.
+     *
+     * @returns {Promise<void>} A promise that resolves when the drop action is complete.
+     */
     drop: async (draggedItem: { issue: Doc<"issues"> }) => {
       if (draggedItem.issue.sprintId === sprint._id) return;
       if (sprint.status === "completed") return;
@@ -60,11 +75,26 @@ export const SprintCard = ({
         sprintId: sprint._id,
       });
     },
+    /**
+     * Collects the drop state from the monitor.
+     *
+     * @param {Object} monitor - The monitor object from react-dnd.
+     * @returns {Object} An object containing the drop state.
+     * @property {boolean} isOver - Indicates whether the drop target is currently being hovered over.
+     */
     collect: (monitor) => ({
       isOver: monitor.isOver(),
     }),
   });
 
+  /**
+   * Handles the action of starting a sprint.
+   *
+   * This function checks if there is already an active sprint and if the current sprint has any issues.
+   * If there is an active sprint, it displays an error message indicating that only one active sprint is allowed.
+   * If the current sprint has no issues, it displays an error message prompting the user to add issues before starting the sprint.
+   * If both conditions are satisfied, it opens the dialog to start the sprint.
+   */
   const handleStartSprint = () => {
     if (sprints.filter((s) => s.status === "active").length > 0) {
       toast.error("You can only have one active sprint");
@@ -77,10 +107,18 @@ export const SprintCard = ({
     setStartSprintDialogOpen(true);
   };
 
-  function formatSprintDate(
+  /**
+   * Formats the start and end dates of a sprint into a readable string.
+   *
+   * @param {string | undefined} startDate - The start date of the sprint. If undefined, the function will return an empty string.
+   * @param {string | undefined} endDate - The end date of the sprint. If undefined, the function will return an empty string.
+   * @returns {string} A formatted string representing the date range of the sprint in the format "MMM DD - MMM DD".
+   * If either the startDate or endDate is not provided, an empty string is returned.
+   */
+  const formatSprintDate = (
     startDate: string | undefined,
     endDate: string | undefined,
-  ) {
+  ) => {
     if (!startDate || !endDate) return "";
 
     const options: Intl.DateTimeFormatOptions = {
@@ -91,7 +129,7 @@ export const SprintCard = ({
     const end = new Date(endDate).toLocaleDateString(undefined, options);
 
     return `${start} - ${end}`;
-  }
+  };
 
   return (
     <>

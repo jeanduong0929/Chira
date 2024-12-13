@@ -4,6 +4,7 @@ import { Doc } from "../../../../../../../convex/_generated/dataModel";
 
 import { cn } from "@/lib/utils";
 import { CardContent } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface SprintContentProps {
   sprint: Doc<"sprints"> & { issues: Doc<"issues">[] };
@@ -27,7 +28,7 @@ export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
   }
 
   return (
-    <div className="mx-2 mb-5">
+    <ScrollArea className="mx-2 mb-5 h-[540px]">
       {sprint.issues.map((issue) => (
         <Issue
           key={issue._id}
@@ -38,6 +39,6 @@ export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
           isOver={isOver}
         />
       ))}
-    </div>
+    </ScrollArea>
   );
 };
