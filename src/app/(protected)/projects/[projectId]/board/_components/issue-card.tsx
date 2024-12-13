@@ -8,9 +8,11 @@ import { SprintEditIssueDialog } from "../../backlog/_components/sprint-edit-iss
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { IssueDetails } from "@/features/issues/components/issue-details";
 
 export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
   const [open, setOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
 
   const [{ isDragging }, drag] = useDrag({
     type: "ISSUE",
@@ -33,6 +35,7 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
           drag(node);
         }}
         className={cn("cursor-pointer rounded-sm", isDragging && "opacity-50")}
+        onClick={() => setSheetOpen(true)}
       >
         <CardHeader className="pt-3">
           <CardTitle className="flex items-center justify-between">
@@ -67,6 +70,7 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         open={open}
         setOpen={setOpen}
       />
+      <IssueDetails open={sheetOpen} setOpen={setSheetOpen} issue={issue} />
     </>
   );
 };
