@@ -134,6 +134,10 @@ export const Column = ({
                   }
                 : null,
               assigneeId: member ? member.clerkId : "",
+              reporter: {
+                imageUrl: draggedItem.issue.reporterId,
+                name: draggedItem.issue.reporterId,
+              },
             },
           ]);
 
@@ -186,6 +190,10 @@ export const Column = ({
                   ...draggedItem.issue,
                   assignee: null,
                   assigneeId: "",
+                  reporter: {
+                    imageUrl: draggedItem.issue.reporterId,
+                    name: draggedItem.issue.reporterId,
+                  },
                 },
               ];
             });
