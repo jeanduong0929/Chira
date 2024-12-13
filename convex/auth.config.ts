@@ -1,7 +1,7 @@
 const config = {
   providers: [
     {
-      domain: "https://heroic-muskrat-59.clerk.accounts.dev",
+      domain: process.env.CLERK_ISSUER_URL!,
       applicationID: "convex",
     },
   ],

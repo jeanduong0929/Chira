@@ -5,10 +5,10 @@ import { atomWithStorage } from "jotai/utils";
 import { useEffect } from "react";
 import { useState } from "react";
 
-export const userSidebarAtom = atomWithStorage<boolean>("sidebarState", true);
+export const useSidebarAtom = atomWithStorage<boolean>("sidebarState", true);
 
 export const useSidebar = () => {
-  const [isOpen, setIsOpen] = useAtom(userSidebarAtom);
+  const [isOpen, setIsOpen] = useAtom(useSidebarAtom);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

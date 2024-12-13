@@ -56,18 +56,21 @@ export const getAllWithUser = query({
 });
 
 /**
- * Retrieves all projects associated with the authenticated user, along with their corresponding member and user information.
+ * Retrieves all user projects along with their associated members and users.
  *
- * This query fetches the clerk ID of the authenticated user, retrieves all members associated with that clerk ID,
- * and then links each member to their respective project and user. If a project or user cannot be found,
- * an error is thrown.
+ * This query fetches all projects that the authenticated user is a member of.
+ * It first retrieves the clerk ID of the authenticated user, then collects all members
+ * associated with that clerk ID. For each member, it fetches the corresponding project
+ * and user information. If a project is soft deleted, it is skipped.
+ * The result is an array of project documents, each augmented with the corresponding
+ * member and user documents.
  *
  * @param {Object} ctx - The context object containing authentication and database access.
+ * @returns {Promise<(Doc<"projects"> & { member: Doc<"members">; user: Doc<"users"> })[] | undefined>}
+ * - A promise that resolves to an array of project documents, each containing the associated
+ * member and user documents. If no projects are found or an error occurs, it returns undefined.
  *
- * @returns {Promise<(Doc<"projects"> & { member: Doc<"members">; user: Doc<"users"> })[]>} - A promise that resolves to an array of project documents,
- * each augmented with the corresponding member and user documents. If no projects are found, an empty array is returned.
- *
- * @throws {Error} - Throws an error if a project or user associated with a member cannot be found.
+ * @throws {Error} - Throws an error if a user associated with a project cannot be found.
  */
 export const getAllUserProjects = query({
   handler: async (
@@ -79,6 +82,7 @@ export const getAllUserProjects = query({
     try {
       // get clerk id
       const clerkId = await getClerkId(ctx.auth);
+
       // get all members
       const members = await ctx.db
         .query("members")
@@ -103,13 +107,8 @@ export const getAllUserProjects = query({
           throw new Error("User not found");
         }
 
-        console.log(project);
-        console.log(user);
-
         projectsWithMembers.push({ ...project, member: m, user });
       }
-
-      console.log("projectsWithMembers", projectsWithMembers);
 
       return projectsWithMembers;
     } catch (e) {
@@ -186,9 +185,6 @@ export const create = mutation({
     try {
       const clerkId = await getClerkId(ctx.auth);
 
-      if(args.name.length < 3){
-        throw new Error("Project name must be at least 3 characters long.");
-      }
       // create new project
       const projectId = await ctx.db.insert("projects", {
         name: args.name,

@@ -216,3 +216,34 @@ export const getWithProject = query({
     }
   },
 });
+
+/**
+ * Removes notifications that are not in a pending state.
+ *
+ * This mutation queries all notifications in the database and deletes those
+ * that do not have a status of "pending". This is useful for cleaning up
+ * notifications that have already been processed or are no longer relevant.
+ *
+ * @param {Object} ctx - The context object containing authentication and database access.
+ * @param {Object} args - The arguments for the mutation (currently unused).
+ * @returns {Promise<boolean>} - A promise that resolves to true if the operation was successful,
+ * or false if an error occurred during the process.
+ *
+ * @throws {Error} - Throws an error if there is an issue querying or deleting notifications.
+ */
+export const removeNonPendingNotifications = mutation({
+  handler: async (ctx, args): Promise<boolean> => {
+    try {
+      const notifications = await ctx.db.query("notifications").collect();
+      for (const n of notifications) {
+        if (n.status !== "pending") {
+          await ctx.db.delete(n._id);
+        }
+      }
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+});
