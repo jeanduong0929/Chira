@@ -56,10 +56,12 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
         >
           <Button
             variant="ghost"
-            className="p-0 text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]"
+            className={cn(
+              "p-0 text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]",
+              issue.status === "completed" && "line-through")}
             onClick={() => setIsDialogOpen(true)}
           >
-            {issue.title}
+            {issue.title} 
           </Button>
 
           <div className="flex items-center gap-x-2">
