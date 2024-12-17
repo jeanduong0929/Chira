@@ -41,7 +41,9 @@ export const create = mutation({
 
       const notification = await ctx.db
         .query("notifications")
-        .withIndex("by_project_id", (q) => q.eq("projectId", args.projectId))
+        .withIndex("by_project_id_recipient_id", (q) =>
+          q.eq("projectId", args.projectId).eq("recipientId", args.recipientId),
+        )
         .unique();
 
       if (notification?.status === "pending") {

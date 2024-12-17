@@ -70,5 +70,6 @@ export default defineSchema({
   })
     .index("by_recipient_id", ["recipientId"])
     .index("by_sender_id", ["senderId"])
-    .index("by_project_id", ["projectId"]),
+    .index("by_project_id", ["projectId"])
+    .index("by_project_id_recipient_id", ["projectId", "recipientId"]),
 });
