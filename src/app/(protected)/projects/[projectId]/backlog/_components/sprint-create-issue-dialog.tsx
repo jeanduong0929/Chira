@@ -54,6 +54,25 @@ export const CreateIssueDialog = ({
   });
 
   /**
+   * Resets the form fields to their initial state.
+   *
+   * This function clears the values of the summary, description, story points,
+   * assignee, priority, and issue type fields. It is typically called when the
+   * form is submitted successfully or when the dialog is closed to ensure that
+   * the form is ready for a new issue creation.
+   *
+   * @returns {void} This function does not return a value.
+   */
+  const resetForm = () => {
+    setSummary("");
+    setDescription("");
+    setStoryPoints("");
+    setAssignee(null);
+    setPriority("low");
+    setIssueType("story");
+  };
+
+  /**
    * Handles the submission of the create issue form.
    *
    * This function is triggered when the form is submitted. It prevents the default
@@ -82,6 +101,7 @@ export const CreateIssueDialog = ({
         onSuccess: (data) => {
           if (data) {
             toast.success("Issue created");
+            resetForm();
             setOpen(false);
           }
         },
@@ -95,12 +115,7 @@ export const CreateIssueDialog = ({
       onOpenChange={(open) => {
         // reset the editor content when the dialog is closed
         if (!open) {
-          setDescription("");
-          setSummary("");
-          setStoryPoints("");
-          setAssignee(null);
-          setPriority("low");
-          setIssueType("story");
+          resetForm();
         }
         setOpen(open);
       }}
