@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { useMutation } from "@tanstack/react-query";
 import { useConvexMutation } from "@convex-dev/react-query";
 import { useConfirm } from "@/hooks/use-confirm";
+import { CloneIssueDialog } from "@/features/issues/components/clone-issue-dialog";
 
 export const BacklogDropdown = ({
   issueId,
@@ -29,6 +30,7 @@ export const BacklogDropdown = ({
   const [openEdit, setOpenEdit] = useState(false);
   const [deleteConfirm, DeleteConfirmDialog] = useConfirm();
   const [cloneConfirm, CloneConfirmDialog] = useConfirm();
+  const [cloneIssueDialog, setCloneIssueDialog] = useState(false);
 
   const { mutate: removeIssue } = useMutation({
     mutationFn: useConvexMutation(api.issues.remove),
@@ -70,26 +72,7 @@ export const BacklogDropdown = ({
               Top of backlog
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            onClick={async () => {
-              const ok = await cloneConfirm();
-              if (!ok) return;
-
-              cloneIssue(
-                { issueId: issueId },
-                {
-                  onSuccess: (data) => {
-                    if (data) {
-                      toast.success("Issue cloned");
-                    }
-                  },
-                  onError: (error) => {
-                    toast.error("Failed to clone issue");
-                  },
-                },
-              );
-            }}
-          >
+          <DropdownMenuItem onClick={() => setCloneIssueDialog(true)}>
             Clone
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -129,10 +112,15 @@ export const BacklogDropdown = ({
         setOpen={setOpenEdit}
         issueId={issueId}
       />
-      <CloneConfirmDialog
+      <CloneIssueDialog
+        issueId={issueId}
+        open={cloneIssueDialog}
+        setOpen={setCloneIssueDialog}
+      />
+      {/* <CloneConfirmDialog
         title="Clone issue"
         description="Are you sure you want to clone this issue?"
-      />
+      /> */}
     </>
   );
 };

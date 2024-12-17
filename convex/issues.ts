@@ -598,41 +598,62 @@ export const updateAssignee = mutation({
 /**
  * Clones an existing issue in the database.
  *
- * This mutation creates a new issue based on the provided issue ID.
- * The new issue will have the same properties as the original issue,
- * except for the assignee ID, which will be set to undefined.
- *
  * @param {Object} args - The arguments for cloning the issue.
- * @param {string} args.issueId - The ID of the issue to clone.
+ * @param {string} args.title - The title of the new issue.
+ * @param {string} [args.description] - An optional description for the new issue.
+ * @param {string} [args.storyPoints] - An optional string representing story points for the new issue.
+ * @param {string} [args.sprintId] - An optional ID of the sprint associated with the new issue.
+ * @param {string} [args.assigneeId] - An optional ID of the user assigned to the new issue.
+ * @param {"story" | "bug" | "task"} args.issueType - The type of the new issue (story, bug, or task).
+ * @param {"low" | "medium" | "high"} args.priority - The priority of the new issue (low, medium, or high).
+ * @param {string} args.projectId - The ID of the project to which the new issue belongs.
+ * @param {"not_started" | "in_progress" | "completed"} args.status - The status of the new issue.
+ * @param {string} args.reporterId - The ID of the user reporting the new issue.
  *
  * @returns {Promise<boolean>} Returns true if the issue was cloned successfully, otherwise false.
  *
- * @throws {Error} Throws an error if the authentication fails or if the issue is not found.
+ * @throws {Error} Throws an error if the authentication fails or if there is an issue with the database operation.
  */
 export const clone = mutation({
   args: {
-    issueId: v.id("issues"),
+    title: v.string(),
+    description: v.optional(v.string()),
+    storyPoints: v.optional(v.string()),
+    sprintId: v.optional(v.id("sprints")),
+    assigneeId: v.optional(v.string()),
+    issueType: v.union(v.literal("story"), v.literal("bug"), v.literal("task")),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    projectId: v.id("projects"),
+    status: v.union(
+      v.literal("not_started"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+    ),
+    reporterId: v.string(),
   },
-  handler: async (ctx, args): Promise<boolean> => {
+  handler: async (ctx, args) => {
     try {
       await getClerkId(ctx.auth);
 
-      const issue = await ctx.db.get(args.issueId);
-      if (!issue) {
-        throw new Error("Issue not found");
-      }
+      const issues = await ctx.db
+        .query("issues")
+        .withIndex("by_project_id_sequence", (q) =>
+          q.eq("projectId", args.projectId),
+        )
+        .collect();
 
       await ctx.db.insert("issues", {
-        title: issue.title,
-        description: issue.description,
-        storyPoints: issue.storyPoints,
-        issueType: issue.issueType,
-        sequence: issue.sequence,
-        priority: issue.priority,
-        status: "not_started",
-        assigneeId: undefined,
-        projectId: issue.projectId,
-        reporterId: issue.reporterId,
+        title: args.title,
+        description: args.description,
+        storyPoints: args.storyPoints,
+        sprintId: args.sprintId,
+        assigneeId: args.assigneeId,
+        projectId: args.projectId,
+        issueType: args.issueType,
+        priority: args.priority,
+        status: args.status,
+        reporterId: args.reporterId,
+        sequence: issues.length + 1,
       });
       return true;
     } catch (error) {

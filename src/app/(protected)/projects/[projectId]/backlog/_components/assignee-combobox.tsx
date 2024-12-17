@@ -67,7 +67,7 @@ export function AssigneeCombobox({
       <PopoverContent className="w-[350px] p-0">
         <Command>
           <CommandInput placeholder="Search member..." />
-          <CommandList>
+          <CommandList className="max-h-[200px] overflow-auto">
             <CommandEmpty>No member found.</CommandEmpty>
             <CommandGroup>
               <CommandItem
