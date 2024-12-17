@@ -100,6 +100,8 @@ export const update = mutation({
   args: {
     sprintId: v.id("sprints"),
     name: v.string(),
+    startDate: v.string(),
+    endDate: v.string(),
   },
   handler: async (ctx, args) => {
     try {
@@ -109,6 +111,8 @@ export const update = mutation({
 
       await ctx.db.patch(args.sprintId, {
         name: args.name,
+        startDate: args.startDate,
+        endDate: args.endDate,
       });
       return true;
     } catch (error) {

@@ -117,10 +117,6 @@ export const BacklogDropdown = ({
         open={cloneIssueDialog}
         setOpen={setCloneIssueDialog}
       />
-      {/* <CloneConfirmDialog
-        title="Clone issue"
-        description="Are you sure you want to clone this issue?"
-      /> */}
     </>
   );
 };

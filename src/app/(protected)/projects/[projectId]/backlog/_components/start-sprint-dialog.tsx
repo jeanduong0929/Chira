@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import { addDays } from "date-fns";
 import { DateRange } from "react-day-picker";
@@ -31,7 +31,7 @@ export const StartSprintDialog = ({
   open,
   setOpen,
 }: StartSprintDialogProps) => {
-  const [date, setDate] = React.useState<DateRange | undefined>({
+  const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
     to: addDays(new Date(), 14),
   });
