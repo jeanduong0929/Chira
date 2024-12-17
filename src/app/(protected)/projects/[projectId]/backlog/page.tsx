@@ -26,7 +26,7 @@ const BacklogPage = () => {
   );
 
   useEffect(() => {
-    if (sprints?.length) {
+    if (sprints?.length && Object.keys(openSprints).length === 0) {
       setOpenSprints(
         sprints.reduce(
           (acc, sprint) => ({
@@ -37,7 +37,7 @@ const BacklogPage = () => {
         ),
       );
     }
-  }, [sprints]);
+  }, [openSprints, sprints]);
 
   const toggleSprint = (sprintId: Id<"sprints">) => {
     setOpenSprints((prev) => ({
