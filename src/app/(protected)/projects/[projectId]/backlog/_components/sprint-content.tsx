@@ -28,7 +28,7 @@ export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
   }
 
   return (
-    <ScrollArea className="mx-2 mb-5 h-[540px]">
+    <CardContent className="max-h-[400px] overflow-y-auto">
       {sprint.issues.map((issue) => (
         <Issue
           key={issue._id}
@@ -39,6 +39,6 @@ export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
           isOver={isOver}
         />
       ))}
-    </ScrollArea>
+    </CardContent>
   );
 };
