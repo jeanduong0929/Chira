@@ -105,7 +105,7 @@ export const CreateIssueDialog = ({
         setOpen(open);
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Create Issue</DialogTitle>
           <DialogDescription>
