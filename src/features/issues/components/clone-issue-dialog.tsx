@@ -109,7 +109,7 @@ export const CloneIssueDialog = ({
         priority: priority,
         assigneeId: assignee?.clerkId,
         projectId: projectId as Id<"projects">,
-        sprintId: issue?.sprintId as Id<"sprints">,
+        sprintId: sprint ?? undefined,
         status: issue?.status as "not_started" | "in_progress" | "completed",
         reporterId: user?._id as Id<"users">,
       },

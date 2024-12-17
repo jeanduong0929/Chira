@@ -46,10 +46,6 @@ const BoardPage = () => {
     }
   }, [issuez]);
 
-  useEffect(() => {
-    console.log(members);
-  }, [members]);
-
   /**
    * Updates the visibility state of assigned columns based on the current members.
    * This effect runs whenever the `members` array changes.
