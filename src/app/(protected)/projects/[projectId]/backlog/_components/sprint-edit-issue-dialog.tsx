@@ -133,7 +133,7 @@ export const SprintEditIssueDialog = ({
         setOpen(open);
       }}
     >
-      <DialogContent>
+      <DialogContent className="max-h-[95vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Edit Issue</DialogTitle>
           <DialogDescription>Edit the issue.</DialogDescription>

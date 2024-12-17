@@ -20,6 +20,8 @@ export const getMembers = query({
   },
   handler: async (ctx, args) => {
     try {
+      const clerkId = await getClerkId(ctx.auth);
+
       const members = await ctx.db
         .query("members")
         .withIndex("by_project_id", (q) => q.eq("projectId", args.projectId))
@@ -29,7 +31,32 @@ export const getMembers = query({
       }
 
       const result: (Doc<"members"> & { user: Doc<"users"> })[] = [];
-      for (const m of members) {
+
+      // get current member
+      const currentUserMember = members.find((m) => m.clerkId === clerkId);
+      if (!currentUserMember) {
+        throw new Error("Member not found");
+      }
+      // get current user of current member
+      const currentUser = await ctx.db
+        .query("users")
+        .withIndex("by_clerk_id", (q) => q.eq("clerkId", clerkId))
+        .unique();
+      if (!currentUser) {
+        throw new Error("User not found");
+      }
+
+      // get other members
+      const otherMembers = members.filter((m) => m.clerkId !== clerkId);
+
+      // add current member to result
+      result.push({
+        ...currentUserMember,
+        user: currentUser,
+      });
+
+      // add other members to result
+      for (const m of otherMembers) {
         const user = await ctx.db
           .query("users")
           .withIndex("by_clerk_id", (q) => q.eq("clerkId", m.clerkId))

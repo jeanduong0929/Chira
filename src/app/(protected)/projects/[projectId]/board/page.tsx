@@ -47,6 +47,21 @@ const BoardPage = () => {
   }, [issuez]);
 
   useEffect(() => {
+    console.log(members);
+  }, [members]);
+
+  /**
+   * Updates the visibility state of assigned columns based on the current members.
+   * This effect runs whenever the `members` array changes.
+   *
+   * It checks if each member's ID is already present in the `showAssignedColumns` state.
+   * If a member's ID is not present, it adds the ID to the state and sets its value to true,
+   * indicating that the assigned column for that member should be shown.
+   *
+   * @param {Array<Doc<"members">>} members - The list of members associated with the project.
+   * @returns {void}
+   */
+  useEffect(() => {
     if (members) {
       setShowAssignedColumns((prev) => {
         const obj: Record<string, boolean> = { ...prev };
@@ -59,8 +74,6 @@ const BoardPage = () => {
       });
     }
   }, [members]);
-
-  useEffect(() => {}, [unassignedIssues, assignedIssues]);
 
   if (isLoadingSprint)
     return (
