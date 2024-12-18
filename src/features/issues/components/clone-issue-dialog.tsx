@@ -84,6 +84,7 @@ export const CloneIssueDialog = ({
       setAssignee(issue.assignee);
       setIssueType(issue.issueType);
       setPriority(issue.priority);
+      setSprint(issue.sprintId ?? null);
     }
   }, [issue]);
 
@@ -99,6 +100,8 @@ export const CloneIssueDialog = ({
    */
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    console.log(sprint);
 
     cloneIssue(
       {
@@ -118,10 +121,21 @@ export const CloneIssueDialog = ({
           if (data) {
             toast.success("Issue cloned");
             setOpen(false);
+            resetForm();
           }
         },
       },
     );
+  };
+
+  const resetForm = () => {
+    setSummary(issue?.title ?? "");
+    setDescription(issue?.description ?? "");
+    setIssueType(issue?.issueType ?? "story");
+    setAssignee(issue?.assignee ?? null);
+    setStoryPoints(issue?.storyPoints?.toString() ?? "");
+    setPriority(issue?.priority ?? "low");
+    setSprint(issue?.sprintId ?? null);
   };
 
   return (
@@ -130,12 +144,7 @@ export const CloneIssueDialog = ({
       onOpenChange={(open) => {
         // Reset the form to original state when the dialog is closed
         if (!open) {
-          setSummary(issue?.title ?? "");
-          setDescription(issue?.description ?? "");
-          setIssueType(issue?.issueType ?? "story");
-          setAssignee(issue?.assignee ?? null);
-          setStoryPoints(issue?.storyPoints?.toString() ?? "");
-          setPriority(issue?.priority ?? "low");
+          resetForm();
         }
         setOpen(open);
       }}
