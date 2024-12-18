@@ -10,6 +10,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { useConfirm } from "@/hooks/use-confirm";
@@ -67,6 +68,9 @@ export const SprintDropdown = ({ sprint }: SprintDropdownProps) => {
               Not started
             </DropdownMenuItem>
           )}
+
+          <DropdownMenuSeparator />
+
           <DropdownMenuItem
             className="text-red-500 focus:text-red-500"
             onClick={async () => {
