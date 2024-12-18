@@ -44,13 +44,11 @@ const BacklogPage = () => {
 
   // Also add a log in your toggle function
   const toggleSprint = (sprintId: Id<"sprints">) => {
-    console.log("Toggling sprint:", sprintId);
     setOpenSprints((prev) => {
       const newState = {
         ...prev,
         [sprintId]: !prev[sprintId],
       };
-      console.log("New toggle state:", newState);
       return newState;
     });
   };

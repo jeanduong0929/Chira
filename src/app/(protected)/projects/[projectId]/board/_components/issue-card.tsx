@@ -51,7 +51,9 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
             >
               {issue.title}
             </span>
-            <IssueCardDropdown issueId={issue._id} />
+            <div onClick={(e) => e.stopPropagation()}>
+              <IssueCardDropdown issueId={issue._id} />
+            </div>
           </CardTitle>
         </CardHeader>
         <CardContent className="flex items-center justify-between pb-4">

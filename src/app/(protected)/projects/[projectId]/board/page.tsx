@@ -1,6 +1,12 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useParams } from "next/navigation";
 import { boardColumns } from "./_constants/board-columns";
 import { UnassignedIssues } from "./_components/unassigned-issues";
@@ -21,6 +27,8 @@ const BoardPage = () => {
   const [showAssignedColumns, setShowAssignedColumns] = useState<
     Record<string, boolean>
   >({});
+
+  const initialized = useRef(false);
 
   const { projectId } = useParams();
   const { data: sprint, isLoading: isLoadingSprint } = useQuery(
@@ -58,7 +66,7 @@ const BoardPage = () => {
    * @returns {void}
    */
   useEffect(() => {
-    if (members) {
+    if (members && !initialized.current) {
       setShowAssignedColumns((prev) => {
         const obj: Record<string, boolean> = { ...prev };
         members.forEach((member) => {

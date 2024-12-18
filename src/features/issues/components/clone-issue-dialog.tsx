@@ -142,8 +142,10 @@ export const CloneIssueDialog = ({
     >
       <DialogContent className="max-h-[95vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Issue</DialogTitle>
-          <DialogDescription>Edit the issue.</DialogDescription>
+          <DialogTitle>Clone Issue</DialogTitle>
+          <DialogDescription>
+            Clone the issue to a current sprint or a new sprint.
+          </DialogDescription>
         </DialogHeader>
 
         <form className="flex flex-col gap-y-5" onSubmit={handleSubmit}>
