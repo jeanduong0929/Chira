@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "next/navigation";
 import { SprintsList } from "./_components/sprints-list";
 import { BacklogHeader } from "./_components/backlog-header";
@@ -19,6 +19,8 @@ const BacklogPage = () => {
   >({});
   const { projectId } = useParams();
 
+  const initialized = useRef(false);
+
   const { data: sprints, isLoading } = useQuery(
     convexQuery(api.sprints.getAll, {
       projectId: projectId as Id<"projects">,
@@ -26,7 +28,8 @@ const BacklogPage = () => {
   );
 
   useEffect(() => {
-    if (sprints?.length && Object.keys(openSprints).length === 0) {
+    if (sprints?.length && !initialized.current) {
+      initialized.current = true;
       setOpenSprints(
         sprints.reduce(
           (acc, sprint) => ({
@@ -37,13 +40,19 @@ const BacklogPage = () => {
         ),
       );
     }
-  }, [openSprints, sprints]);
+  }, [sprints]);
 
+  // Also add a log in your toggle function
   const toggleSprint = (sprintId: Id<"sprints">) => {
-    setOpenSprints((prev) => ({
-      ...prev,
-      [sprintId]: !prev[sprintId],
-    }));
+    console.log("Toggling sprint:", sprintId);
+    setOpenSprints((prev) => {
+      const newState = {
+        ...prev,
+        [sprintId]: !prev[sprintId],
+      };
+      console.log("New toggle state:", newState);
+      return newState;
+    });
   };
 
   return (
