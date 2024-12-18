@@ -38,10 +38,10 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         onClick={() => setSheetOpen(true)}
       >
         <CardHeader className="pt-3">
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-start justify-between">
             <span
               className={cn(
-                "cursor-pointer text-sm font-medium hover:text-[#0B66E4]",
+                "w-3/4 cursor-pointer text-sm font-medium hover:text-[#0B66E4]",
                 issue.status === "completed" && "line-through",
               )}
               onClick={(e) => {

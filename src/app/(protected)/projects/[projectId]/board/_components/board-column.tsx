@@ -212,7 +212,7 @@ export const Column = ({
         ref={(node) => {
           if (node) drop(node);
         }}
-        className="relative max-h-[320px] min-h-[400px] w-[270px] overflow-y-auto rounded-md bg-[#F7F8F9] dark:bg-[#202024]"
+        className="relative max-h-[320px] min-h-[400px] w-[300px] overflow-y-auto rounded-md bg-[#F7F8F9] dark:bg-[#202024]"
       >
         {isOver && (
           <div className="absolute left-0 top-0 flex w-full items-center">
