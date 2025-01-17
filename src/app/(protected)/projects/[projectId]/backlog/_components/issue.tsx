@@ -63,8 +63,10 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
           >
             {issue.title} 
           </Button>
-          <div className={`text-sm `}>
-          <p><span className={` rounded-xl mr-2 py-0.6 px-2 bg-priority-${issue.priority === "low" ? "low" : issue.priority === "medium" ? "medium" : "high"}`}> </span> {issue.priority[0].toUpperCase()}{issue.priority.slice(1)}</p>
+          <div className={`flex align-center justify-center  w-[150px]`}>
+              
+                <div className={`rounded-full w-4 h-4 mr-2 bg-priority-${issue.priority === "low" ? "low" : issue.priority === "medium" ? "medium" : "high"}`}> </div> 
+                <p className="text-right">{issue.priority[0].toUpperCase()}{issue.priority.slice(1)}</p>
             </div>
 
           <div className="flex items-center gap-x-2">

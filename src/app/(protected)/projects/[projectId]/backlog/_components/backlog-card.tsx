@@ -94,10 +94,13 @@ export const BacklogCard = ({
   const filterIssuesByPriority = (selectedPriority:string) => {
     if(selectedPriority == "None"){
       setFilteredIssues(allFilteredIssues);
+      setFilterCard(false);
       return;
     }
     const filteredIssues : Doc<"issues">[] = allFilteredIssues.filter(issue => issue.priority === selectedPriority.toLowerCase());
     setFilteredIssues(filteredIssues);
+    setFilterCard(false);
+
   }
 
   return (
@@ -139,7 +142,7 @@ export const BacklogCard = ({
               <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
             </div>
 
-            <div className="absolute z-10">
+            <div className="absolute z-10 left-350">
               {displayFilterCard && <FilterCard filterPriority = {filterIssuesByPriority}></FilterCard>}
 
             </div>
