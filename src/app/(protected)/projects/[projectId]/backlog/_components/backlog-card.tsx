@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRandomName } from "@/hooks/use-generate-name";
+import { Filter } from "@/components/ui/filter";
+import { FilterCard } from "@/components/ui/filter-card";
 
 export const BacklogCard = ({
   searchQuery,
@@ -26,8 +28,9 @@ export const BacklogCard = ({
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
   const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
+  const [displayFilterCard, setFilterCard] = useState(false);
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
-
+  const [allFilteredIssues, setAllFilteredIssues] = useState<Doc<"issues">[]>([]);
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -50,6 +53,7 @@ export const BacklogCard = ({
   useEffect(() => {
     if (issues) {
       setFilteredIssues(issues.filter((issue) => !issue.sprintId));
+      setAllFilteredIssues(issues.filter((issue) => !issue.sprintId));
     }
   }, [issues]);
 
@@ -87,6 +91,15 @@ export const BacklogCard = ({
     }),
   });
 
+  const filterIssuesByPriority = (selectedPriority:string) => {
+    if(selectedPriority == "None"){
+      setFilteredIssues(allFilteredIssues);
+      return;
+    }
+    const filteredIssues : Doc<"issues">[] = allFilteredIssues.filter(issue => issue.priority === selectedPriority.toLowerCase());
+    setFilteredIssues(filteredIssues);
+  }
+
   return (
     <>
       <ConfirmDialog
@@ -120,6 +133,18 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
+
+          <div>
+            <div className="mb-5">
+              <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
+            </div>
+
+            <div className="absolute z-10">
+              {displayFilterCard && <FilterCard filterPriority = {filterIssuesByPriority}></FilterCard>}
+
+            </div>
+          </div>
+       
           {access?.role === "admin" && (
             <Button
               variant={"ghost"}
