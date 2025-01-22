@@ -31,6 +31,7 @@ export const BacklogCard = ({
   const [displayFilterCard, setFilterCard] = useState(false);
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
   const [allFilteredIssues, setAllFilteredIssues] = useState<Doc<"issues">[]>([]);
+  const [isFadingOut, setIsFadingOut] = useState(false);
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -102,6 +103,7 @@ export const BacklogCard = ({
     setFilterCard(false);
 
   }
+   
 
   return (
     <>
@@ -115,8 +117,8 @@ export const BacklogCard = ({
       />
 
       <div className="flex flex-col gap-y-1">
-        <div className="flex items-center justify-between gap-x-1">
-          <div className="flex items-center gap-x-2">
+        <div className="flex items-center justify-between gap-x-1 ">
+          <div className="flex items-center gap-x-2 flex-1">
             <div className="flex items-center gap-x-1">
               <Button
                 variant={"ghost"}
@@ -136,20 +138,23 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
-
-          <div>
-            <div className="mb-5">
+          <div className="ml-2 relative">
+            <div>
               <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
+                <div className={`absolute z-10 transition-opacity duration-700 
+                  ${displayFilterCard ? 'opacity-100' : 'opacity-0 pointer-events-none'}
+                  ` }>
+                {displayFilterCard && 
+              
+                <FilterCard filterPriority = {filterIssuesByPriority} closeFilterCard = {() => setFilterCard(false)} ></FilterCard>}
+
+                </div>
             </div>
 
-            <div className="absolute z-10 left-350">
-              {displayFilterCard && <FilterCard filterPriority = {filterIssuesByPriority}></FilterCard>}
-
-            </div>
           </div>
        
           {access?.role === "admin" && (
-            <Button
+            <Button className="flex-1 justify-end mr-12"
               variant={"ghost"}
               onClick={async () => {
                 const ok = await confirm();

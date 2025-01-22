@@ -7,9 +7,10 @@ import { PriorityMark } from "@/app/(protected)/projects/[projectId]/board/_comp
 
 interface FilterCardProperty{
     filterPriority: (selection:string) => void;
+    closeFilterCard: () => void;
 }
 
-export const FilterCard = ({filterPriority}:FilterCardProperty) => {
+export const FilterCard = ({filterPriority, closeFilterCard}:FilterCardProperty) => {
 
     const priorities:string[]= ["High", "Medium", "Low", "None"];
     const [selectedPriority, setSelectedPriority] = useState("None");
@@ -19,8 +20,12 @@ export const FilterCard = ({filterPriority}:FilterCardProperty) => {
     }
 
     return (
-       <div className="bg-slate-100 pt-5 pb-6 px-12 rounded-lg flex flex-col items-start w-[350px]">
-      <label htmlFor="priorities" className="text-md text-slate-600	">By Priority:</label>
+       <div className="bg-slate-100 pt-5 mt-3 pb-6 px-12 rounded-lg flex flex-col items-start w-[250px]">
+            <div className="flex align-center justify-between w-full">
+                <label htmlFor="priorities" className="text-md text-slate-600 ">By Priority:</label>
+                <label className="text-red-400 transition ease-in-out font-extrabold cursor-pointer hover:text-red-600" onClick={closeFilterCard}>X</label>
+            </div>
+
 
       <select name="priorities" className="mt-4 w-full rounded-sm px-2" onChange={handleSelectionChange}>
         {
