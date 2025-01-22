@@ -57,19 +57,20 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
           <Button
             variant="ghost"
             className={cn(
-              "p-0 text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]",
+              "p-0 text-sm text-left justify-start font-medium hover:bg-transparent hover:text-[#0B66E4] flex-1",
               issue.status === "completed" && "line-through")}
             onClick={() => setIsDialogOpen(true)}
           >
+
             {issue.title} 
           </Button>
-          <div className={`flex align-center justify-center  w-[150px]`}>
+          <div className={`flex items-center flex-1 justify-start`}>
               
                 <div className={`rounded-full w-4 h-4 mr-2 bg-priority-${issue.priority === "low" ? "low" : issue.priority === "medium" ? "medium" : "high"}`}> </div> 
                 <p className="text-right">{issue.priority[0].toUpperCase()}{issue.priority.slice(1)}</p>
             </div>
 
-          <div className="flex items-center gap-x-2">
+          <div className="flex items-center gap-x-2 ">
             <MoveToDropdown
               sprintId={issue.sprintId as Id<"sprints">}
               projectId={projectId}
