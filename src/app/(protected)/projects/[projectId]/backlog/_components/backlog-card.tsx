@@ -144,8 +144,7 @@ export const BacklogCard = ({
                 <div className={`absolute z-10 transition-opacity duration-700 
                   ${displayFilterCard ? 'opacity-100' : 'opacity-0 pointer-events-none'}
                   ` }>
-                {displayFilterCard && 
-              
+              {
                 <FilterCard filterPriority = {filterIssuesByPriority} closeFilterCard = {() => setFilterCard(false)} ></FilterCard>}
 
                 </div>
