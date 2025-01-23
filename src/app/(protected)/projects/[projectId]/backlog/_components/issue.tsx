@@ -57,7 +57,7 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
           <Button
             variant="ghost"
             className={cn(
-              "p-0 text-sm text-left justify-start font-medium hover:bg-transparent hover:text-[#0B66E4] flex-1",
+              "p-0 text-sm mr-12 text-left line-clamp-3 flex-column justify-start font-medium hover:bg-transparent hover:text-[#0B66E4] border-2 border-slay-200 flex-1",
               issue.status === "completed" && "line-through")}
             onClick={() => setIsDialogOpen(true)}
           >
@@ -70,7 +70,7 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
                 <p className="text-right">{issue.priority[0].toUpperCase()}{issue.priority.slice(1)}</p>
             </div>
 
-          <div className="flex items-center gap-x-2 ">
+          <div className="flex items-center gap-x-2">
             <MoveToDropdown
               sprintId={issue.sprintId as Id<"sprints">}
               projectId={projectId}

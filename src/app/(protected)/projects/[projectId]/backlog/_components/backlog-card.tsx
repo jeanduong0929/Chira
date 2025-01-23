@@ -138,10 +138,10 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
-          <div className="ml-2 relative">
+          <div className="mr-4 flex-1 relative">
             <div>
               <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
-                <div className={`absolute z-10 transition-opacity duration-700 
+                <div className={`absolute z-10 transition-opacity duration-700 left-[40%]
                   ${displayFilterCard ? 'opacity-100' : 'opacity-0 pointer-events-none'}
                   ` }>
               {
@@ -151,9 +151,9 @@ export const BacklogCard = ({
             </div>
 
           </div>
-       
+          <div className="justify-end flex-1 flex">
           {access?.role === "admin" && (
-            <Button className="flex-1 justify-end mr-12"
+            <Button className="block justify-end"
               variant={"ghost"}
               onClick={async () => {
                 const ok = await confirm();
@@ -178,6 +178,8 @@ export const BacklogCard = ({
               Create Sprint
             </Button>
           )}
+            </div>   
+          
         </div>
         {showBacklog &&
           (filteredIssues?.length === 0 ? (
