@@ -57,12 +57,12 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
           <Button
             variant="ghost"
             className={cn(
-              "p-0 text-sm mr-12 text-left line-clamp-3 flex-column justify-start font-medium hover:bg-transparent hover:text-[#0B66E4] border-2 border-slay-200 flex-1",
+              "p-0 text-sm mr-12 text-left line-clamp-3 flex-column justify-start font-medium hover:bg-transparent hover:text-[#0B66E4] flex-1",
               issue.status === "completed" && "line-through")}
             onClick={() => setIsDialogOpen(true)}
           >
 
-            {issue.title} 
+            {issue.title.length < 90 ? issue.title:  issue.title.substring(0, 80) + "..."} 
           </Button>
           <div className={`flex items-center flex-1 justify-start`}>
               
