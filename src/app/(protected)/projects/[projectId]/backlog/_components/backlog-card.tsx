@@ -13,8 +13,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRandomName } from "@/hooks/use-generate-name";
-import { Filter } from "@/components/ui/filter";
-import { FilterCard } from "@/components/ui/filter-card";
 
 export const BacklogCard = ({
   searchQuery,
@@ -28,10 +26,8 @@ export const BacklogCard = ({
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
   const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
-  const [displayFilterCard, setFilterCard] = useState(false);
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
-  const [allFilteredIssues, setAllFilteredIssues] = useState<Doc<"issues">[]>([]);
-  const [isFadingOut, setIsFadingOut] = useState(false);
+
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -54,7 +50,6 @@ export const BacklogCard = ({
   useEffect(() => {
     if (issues) {
       setFilteredIssues(issues.filter((issue) => !issue.sprintId));
-      setAllFilteredIssues(issues.filter((issue) => !issue.sprintId));
     }
   }, [issues]);
 
@@ -92,19 +87,6 @@ export const BacklogCard = ({
     }),
   });
 
-  const filterIssuesByPriority = (selectedPriority:string) => {
-    if(selectedPriority == "None"){
-      setFilteredIssues(allFilteredIssues);
-      setFilterCard(false);
-      return;
-    }
-    const filteredIssues : Doc<"issues">[] = allFilteredIssues.filter(issue => issue.priority === selectedPriority.toLowerCase());
-    setFilteredIssues(filteredIssues);
-    setFilterCard(false);
-
-  }
-   
-
   return (
     <>
       <ConfirmDialog
@@ -117,8 +99,8 @@ export const BacklogCard = ({
       />
 
       <div className="flex flex-col gap-y-1">
-        <div className="flex items-center justify-between gap-x-1 ">
-          <div className="flex items-center gap-x-2 flex-1">
+        <div className="flex items-center justify-between gap-x-1">
+          <div className="flex items-center gap-x-2">
             <div className="flex items-center gap-x-1">
               <Button
                 variant={"ghost"}
@@ -138,22 +120,8 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
-          <div className="ml-2 relative">
-            <div>
-              <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
-                <div className={`absolute z-10 transition-opacity duration-700 
-                  ${displayFilterCard ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-                  ` }>
-              {
-                <FilterCard filterPriority = {filterIssuesByPriority} closeFilterCard = {() => setFilterCard(false)} ></FilterCard>}
-
-                </div>
-            </div>
-
-          </div>
-       
           {access?.role === "admin" && (
-            <Button className="flex-1 justify-end mr-12"
+            <Button
               variant={"ghost"}
               onClick={async () => {
                 const ok = await confirm();

@@ -61,12 +61,6 @@ const config: Config = {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
-        priority:{
-          DEFAULT: "hsl(var(--priority))",
-          low: "hsl(var(--priority-low))",
-          medium:"hsl(var(--priority-medium))",
-          high:"hsl(var(--priority-high))",
-        }
       },
     },
   },
