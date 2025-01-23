@@ -62,7 +62,7 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
             onClick={() => setIsDialogOpen(true)}
           >
 
-            {issue.title.length < 90 ? issue.title:  issue.title.substring(0, 80) + "..."} 
+            {issue.title.length < 120 ? issue.title:  issue.title.substring(0, 95) + "..."} 
           </Button>
           <div className={`flex items-center flex-1 justify-start`}>
               
