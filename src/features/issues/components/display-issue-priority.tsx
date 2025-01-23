@@ -11,7 +11,7 @@ export const DisplayIssuePriority = ({
   if (priority === "low") {
     return (
       <div className={cn("flex items-center gap-x-3", className)}>
-        <div className="size-3 shrink-0 rounded-full bg-priority-low" />
+        <div className="size-3 shrink-0 rounded-full bg-[#64BA3B]" />
         <span>Low</span>
       </div>
     );
@@ -19,14 +19,14 @@ export const DisplayIssuePriority = ({
   if (priority === "medium") {
     return (
       <div className={cn("flex items-center gap-x-3", className)}>
-        <div className="size-3 shrink-0 rounded-full bg-priority-medium" />
+        <div className="size-3 shrink-0 rounded-full bg-[#0B66E4]" />
         <span>Medium</span>
       </div>
     );
   }
   return (
     <div className={cn("flex items-center gap-x-3", className)}>
-      <div className="size-3 shrink-0 rounded-full bg-priority-high" />
+      <div className="size-3 shrink-0 rounded-full bg-[#E84C3D]" />
       <span>High</span>
     </div>
   );
