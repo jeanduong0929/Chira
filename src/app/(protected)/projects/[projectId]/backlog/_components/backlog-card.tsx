@@ -13,8 +13,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRandomName } from "@/hooks/use-generate-name";
-import { Filter } from "@/components/ui/filter";
-import { FilterCard } from "@/components/ui/filter-card";
+
 
 export const BacklogCard = ({
   searchQuery,
@@ -138,19 +137,7 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
-          <div className="mr-4 flex-1 relative">
-            <div>
-              <Filter openFilterCard={() => setFilterCard(prev => !prev)}></Filter>
-                <div className={`absolute z-10 transition-opacity duration-700 left-[40%]
-                  ${displayFilterCard ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-                  ` }>
-              {
-                <FilterCard filterPriority = {filterIssuesByPriority} closeFilterCard = {() => setFilterCard(false)} ></FilterCard>}
 
-                </div>
-            </div>
-
-          </div>
           <div className="justify-end flex-1 flex">
           {access?.role === "admin" && (
             <Button className="block justify-end"
