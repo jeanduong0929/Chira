@@ -70,7 +70,7 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
             <div
               className={`mr-2 size-3 rounded-full bg-priority-${issue.priority === "low" ? "low" : issue.priority === "medium" ? "medium" : "high"}`}
             />
-            <p className="text-right text-sm">
+            <p className="text-right text-sm text-muted-foreground">
               {issue.priority[0].toUpperCase()}
               {issue.priority.slice(1)}
             </p>
