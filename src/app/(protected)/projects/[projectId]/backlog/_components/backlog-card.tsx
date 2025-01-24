@@ -14,7 +14,6 @@ import { cn } from "@/lib/utils";
 import { useConfirm } from "@/hooks/use-confirm";
 import { useRandomName } from "@/hooks/use-generate-name";
 
-
 export const BacklogCard = ({
   searchQuery,
   projectId,
