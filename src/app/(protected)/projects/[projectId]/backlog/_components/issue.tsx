@@ -57,14 +57,12 @@ export const Issue = React.forwardRef<HTMLDivElement, IssueProps>(
           <Button
             variant="ghost"
             className={cn(
-              "flex-column mr-12 line-clamp-3 flex-1 justify-start p-0 text-left text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]",
+              "flex-1 justify-start overflow-x-hidden p-0 text-left text-sm font-medium hover:bg-transparent hover:text-[#0B66E4]",
               issue.status === "completed" && "line-through",
             )}
             onClick={() => setIsDialogOpen(true)}
           >
-            {issue.title.length < 120
-              ? issue.title
-              : issue.title.substring(0, 95) + "..."}
+            <span className="w-[95%] truncate">{issue.title}</span>
           </Button>
           <div className={`flex flex-1 items-center justify-start`}>
             <div
