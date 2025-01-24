@@ -28,7 +28,6 @@ export const BacklogCard = ({
   const [confirm, ConfirmDialog] = useConfirm();
   const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
-  const [allFilteredIssues, setAllFilteredIssues] = useState<Doc<"issues">[]>([]);
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -51,7 +50,6 @@ export const BacklogCard = ({
   useEffect(() => {
     if (issues) {
       setFilteredIssues(issues.filter((issue) => !issue.sprintId));
-      setAllFilteredIssues(issues.filter((issue) => !issue.sprintId));
     }
   }, [issues]);
 
@@ -102,8 +100,8 @@ export const BacklogCard = ({
       />
 
       <div className="flex flex-col gap-y-1">
-        <div className="flex items-center justify-between gap-x-1 ">
-          <div className="flex items-center gap-x-2 flex-1">
+        <div className="flex items-center justify-between gap-x-1">
+          <div className="flex items-center gap-x-2">
             <div className="flex items-center gap-x-1">
               <Button
                 variant={"ghost"}
@@ -124,9 +122,8 @@ export const BacklogCard = ({
             </p>
           </div>
 
-          <div className="justify-end flex-1 flex">
           {access?.role === "admin" && (
-            <Button className="block justify-end"
+            <Button
               variant={"ghost"}
               onClick={async () => {
                 const ok = await confirm();
@@ -151,7 +148,6 @@ export const BacklogCard = ({
               Create Sprint
             </Button>
           )}
-            </div>   
           
         </div>
         {showBacklog &&
