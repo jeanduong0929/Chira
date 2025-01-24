@@ -6,7 +6,9 @@ export const PriorityMark = ({issuePriority} : {
   }) => {
    
     return(
-       <div className={`bg-priority-${issuePriority} px-2 py-1 text-stone-100		text-xs rounded-xl	font-bold	`}>{issuePriority[0].toUpperCase()}</div>
+       <div className={`bg-priority-${issuePriority} pl-[0.3px] pr-[1px] text-stone-100 rounded-full w-6 h-6 flex items-center justify-center font-bold`}>
+        <span className="text-[11px]">{issuePriority[0].toUpperCase()}</span>
+        </div>
     )
 
 }

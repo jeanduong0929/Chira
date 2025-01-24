@@ -27,10 +27,8 @@ export const BacklogCard = ({
   const [showBacklog, setShowBacklog] = useState(true);
   const [confirm, ConfirmDialog] = useConfirm();
   const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
-  const [displayFilterCard, setFilterCard] = useState(false);
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
   const [allFilteredIssues, setAllFilteredIssues] = useState<Doc<"issues">[]>([]);
-  const [isFadingOut, setIsFadingOut] = useState(false);
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -91,18 +89,6 @@ export const BacklogCard = ({
     }),
   });
 
-  const filterIssuesByPriority = (selectedPriority:string) => {
-    if(selectedPriority == "None"){
-      setFilteredIssues(allFilteredIssues);
-      setFilterCard(false);
-      return;
-    }
-    const filteredIssues : Doc<"issues">[] = allFilteredIssues.filter(issue => issue.priority === selectedPriority.toLowerCase());
-    setFilteredIssues(filteredIssues);
-    setFilterCard(false);
-
-  }
-   
 
   return (
     <>
