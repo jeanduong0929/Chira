@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDrag } from "react-dnd";
 import { AssigneeAvatar } from "./assignee-avatar";
+import { PriorityMark } from "./priority-mark";
 import { IssueType } from "./issue-type";
 import { IssueCardDropdown } from "./issue-card-dropdown";
 import { IssueWithAssignee } from "../types/issue-with-assignee";
@@ -63,8 +64,12 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
               <span className="text-xs font-medium">{issue.storyPoints}</span>
             </div>
             <AssigneeAvatar assignee={issue.assignee} />
+            <PriorityMark issuePriority={issue.priority}></PriorityMark>
           </div>
+          <span className="text-sm"></span>
+
         </CardContent>
+
       </Card>
 
       <SprintEditIssueDialog
@@ -72,6 +77,7 @@ export const IssueCard = ({ issue }: { issue: IssueWithAssignee }) => {
         open={open}
         setOpen={setOpen}
       />
+
       <IssueDetails open={sheetOpen} setOpen={setSheetOpen} issue={issue} />
     </>
   );

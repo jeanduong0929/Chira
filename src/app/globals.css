@@ -6,6 +6,13 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
+  
+  /*Colors*/
+  --priority:0, 70.59%, 84.71%;
+  --priority-low: 83, 68%, 45%;
+  --priority-medium: 44, 100%, 49%;
+  --priority-high: 358, 100%, 62%;
+
 }
 
 @media (prefers-color-scheme: dark) {

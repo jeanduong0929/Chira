@@ -27,7 +27,6 @@ export const BacklogCard = ({
   const [confirm, ConfirmDialog] = useConfirm();
   const [backlogConfirm, BacklogConfirmDialog] = useConfirm();
   const [filteredIssues, setFilteredIssues] = useState<Doc<"issues">[]>([]);
-
   const { mutate: createSprint } = useMutation({
     mutationFn: useConvexMutation(api.sprints.create),
   });
@@ -87,6 +86,7 @@ export const BacklogCard = ({
     }),
   });
 
+
   return (
     <>
       <ConfirmDialog
@@ -120,6 +120,7 @@ export const BacklogCard = ({
               ({filteredIssues.length} issues)
             </p>
           </div>
+
           {access?.role === "admin" && (
             <Button
               variant={"ghost"}
@@ -146,6 +147,7 @@ export const BacklogCard = ({
               Create Sprint
             </Button>
           )}
+          
         </div>
         {showBacklog &&
           (filteredIssues?.length === 0 ? (
