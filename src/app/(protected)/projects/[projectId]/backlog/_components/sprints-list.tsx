@@ -26,6 +26,10 @@ export const SprintsList = ({
     (sprint) => sprint.status !== "completed",
   );
 
+  const filterTaskByPriority = ():void => {
+
+  }
+
   return (
     <div className="flex flex-col gap-y-5">
       {activeSprints.map((sprint) => (
@@ -52,11 +56,13 @@ export const SprintsList = ({
               )}
             />
           </Button>
+
           <p className="text-sm font-medium">
             Completed sprints ({completedSprints.length})
           </p>
         </div>
       )}
+
       {showCompleted &&
         completedSprints.map((sprint) => (
           <SprintCard

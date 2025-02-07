@@ -33,7 +33,7 @@ export const SprintCard = ({
   const [completeSprintDialogOpen, setCompleteSprintDialogOpen] =
     useState(false);
   const [moveToSprintConfirm, MoveToSprintConfirmDialog] = useConfirm();
-
+  const [selectedPriority, setSelectedPriority] = useState("Not Selected");
   const { data: access } = useQuery(
     convexQuery(api.members.getAccess, {
       projectId: sprint.projectId,
@@ -46,6 +46,9 @@ export const SprintCard = ({
     },
   });
 
+  const updateIssueFilterByPriority = (priority:string) => {
+    setSelectedPriority(priority);
+  }
   /**
    * Custom hook to handle the drop functionality for issues in the sprint card.
    *
@@ -178,13 +181,13 @@ export const SprintCard = ({
               <SprintActions
                 sprint={sprint}
                 onStartSprint={handleStartSprint}
+                updateIssueFilterByPriority={updateIssueFilterByPriority}
                 onCompleteSprint={() => setCompleteSprintDialogOpen(true)}
               />
             )}
           </CardTitle>
         </CardHeader>
-
-        {open && <SprintContent sprint={sprint} isOver={isOver} />}
+        {open && <SprintContent sprint={sprint} isOver={isOver} priority={selectedPriority}/>}
       </Card>
 
       <StartSprintDialog

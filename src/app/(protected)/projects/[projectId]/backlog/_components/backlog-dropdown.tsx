@@ -54,6 +54,7 @@ export const BacklogDropdown = ({
           <DropdownMenuItem onClick={() => setOpenEdit(true)}>
             Edit
           </DropdownMenuItem>
+          
           {!inSprint && (
             <DropdownMenuItem
               onClick={() => {

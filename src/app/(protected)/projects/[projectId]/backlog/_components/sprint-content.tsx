@@ -9,9 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface SprintContentProps {
   sprint: Doc<"sprints"> & { issues: Doc<"issues">[] };
   isOver?: boolean;
+  priority?: string;
 }
 
-export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
+export const SprintContent = ({ sprint, isOver, priority }: SprintContentProps) => {
   if (sprint.issues.length === 0) {
     return (
       <CardContent
@@ -27,18 +28,43 @@ export const SprintContent = ({ sprint, isOver }: SprintContentProps) => {
     );
   }
 
-  return (
-    <CardContent className="max-h-[400px] overflow-y-auto">
-      {sprint.issues.map((issue) => (
-        <Issue
-          key={issue._id}
-          issue={issue}
-          projectId={issue.projectId}
-          inSprint={true}
-          sprintId={sprint._id}
-          isOver={isOver}
-        />
-      ))}
-    </CardContent>
-  );
+  if(priority === "Not Selected"){
+    return (
+      <CardContent className="max-h-[400px] overflow-y-auto">
+        {
+        sprint.issues.map((issue) => (
+          <Issue
+            key={issue._id}
+            issue={issue}
+            projectId={issue.projectId}
+            inSprint={true}
+            sprintId={sprint._id}
+            isOver={isOver}
+          />
+        ))
+        }
+      
+      </CardContent>
+    );
+  }
+  else{
+    let filteredissues = sprint.issues.filter((issue) => issue.priority.toLowerCase() === priority?.toLowerCase());
+    return (
+      <CardContent className="max-h-[400px] overflow-y-auto">
+        {
+        filteredissues.map((issue) => (
+          <Issue
+            key={issue._id}
+            issue={issue}
+            projectId={issue.projectId}
+            inSprint={true}
+            sprintId={sprint._id}
+            isOver={isOver}
+          />
+        ))
+        }
+      
+      </CardContent>
+  )}
+  
 };
