@@ -30,8 +30,8 @@ export const FilterDropDown = ({filterByPriority}:FilterProps) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         {
-            priorities.map((priority) => (
-                <DropdownMenuItem onClick={() => filterByPriority(priority)}>{priority}</DropdownMenuItem>
+            priorities.map((priority, key) => (
+                <DropdownMenuItem key={key} onClick={() => filterByPriority(priority)}>{priority}</DropdownMenuItem>
             ))
         }
 
