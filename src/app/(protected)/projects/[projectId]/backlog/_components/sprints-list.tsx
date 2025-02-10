@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { SprintCard } from "./sprint-card";
 import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -25,10 +24,6 @@ export const SprintsList = ({
   const activeSprints = sprints.filter(
     (sprint) => sprint.status !== "completed",
   );
-
-  const filterTaskByPriority = ():void => {
-
-  }
 
   return (
     <div className="flex flex-col gap-y-5">

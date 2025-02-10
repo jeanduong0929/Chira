@@ -2,11 +2,10 @@ import React from "react";
 import { SprintDropdown } from "./sprint-dropdown";
 import { api } from "../../../../../../../convex/_generated/api";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
-
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { convexQuery } from "@convex-dev/react-query";
-import { FilterDropDown } from "@/components/ui/filter-drop-down";
+import { FilterDropDown } from "../_components/priority-filter-drop-down";
 
 interface SprintActionsProps {
   sprint: Doc<"sprints">;
@@ -28,7 +27,6 @@ export const SprintActions = ({
   );
 
   const filterByPriority = (priority: string) => {
-    // Implement filtering logic here
     updateIssueFilterByPriority(priority);
   };
 

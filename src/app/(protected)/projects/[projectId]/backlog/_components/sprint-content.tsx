@@ -1,7 +1,6 @@
 import React from "react";
 import { Issue } from "./issue";
 import { Doc } from "../../../../../../../convex/_generated/dataModel";
-
 import { cn } from "@/lib/utils";
 import { CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
