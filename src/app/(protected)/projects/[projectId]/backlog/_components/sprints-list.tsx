@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { SprintCard } from "./sprint-card";
 import { Doc, Id } from "../../../../../../../convex/_generated/dataModel";
-
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -52,11 +51,13 @@ export const SprintsList = ({
               )}
             />
           </Button>
+
           <p className="text-sm font-medium">
             Completed sprints ({completedSprints.length})
           </p>
         </div>
       )}
+
       {showCompleted &&
         completedSprints.map((sprint) => (
           <SprintCard
